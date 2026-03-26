@@ -57,7 +57,6 @@ All functions are available directly without any prefix.
 | `log_setup(title)` | Setup logging with terminal color status |
 | `minute()` | Current minute (0-59) |
 | `month()` | Current month (1-12) |
-| `ocr(...)` | Extract text from screen using OCR |
 | `press(...)` | Press keyboard keys |
 | `read(...)` | Read text from screen, files, or Selenium browser window |
 | `run(item)` | Run a file or application |
