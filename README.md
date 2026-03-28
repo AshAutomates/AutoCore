@@ -1,8 +1,21 @@
 # AutoCore
 
-Automate Core Actions
 
-A Python library that combines GUI automation, headless browser control and common actions into a single library.
+Automate Core actions
+
+A Python library that combines GUI automation, headless browser control, and common actions into a single library.
+
+---
+
+## Security & Privacy
+
+AutoCore runs entirely on your local machine. No data is sent to any external server at any point.
+
+This makes it suitable for:
+- On-premise deployments with strict data security policies
+- Automation involving sensitive or confidential data
+- Compliance-sensitive industries like finance, healthcare, and legal
+
 ---
 
 ## Installation
@@ -78,12 +91,13 @@ PDF, DOCX, PPTX, ODT, RTF, CSV, TSV, XLSX, SQLite, JSON, YAML, XML, INI/CFG, TXT
 
 ## Platform Support
 
-Supported: Windows, Linux
-Not Supported: macOS
+| Supported | Not Supported |
+|----------|-------------|
+| Windows, Linux | macOS |
 
 ---
 
-## Quick Examples
+## Quick Example
 
 ```python
 from autocore import *
@@ -92,12 +106,12 @@ from autocore import *
 log_setup("demo_script")
 
 # Open browser and click a button
-d1 = browser('https://example.com')
-click(d1, 'id', 'login-button')
+dr = browser('https://example.com')
+click(dr, 'id', 'login-button')
 
 # Write and press keys on the initiated browser
-write(d1, 'id', 'username', 'myuser')
-press(d1, 'enter')
+write(dr, 'id', 'username', 'myuser')
+press(dr, 'enter')
 
 # OCR - read text from screen
 text = read()
