@@ -1,0 +1,23 @@
+opencv-python
+numpy<2.3
+Pillow
+pyautogui
+pyperclip
+keyboard
+easyocr
+beautifulsoup4
+selenium
+webdriver-manager
+PyPDF2
+python-docx
+openpyxl
+python-pptx
+ebooklib
+odfpy
+extract-msg
+striprtf
+pyttsx3
+pyyaml
+
+[:sys_platform == "win32"]
+pywin32

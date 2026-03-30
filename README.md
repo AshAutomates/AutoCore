@@ -20,6 +20,9 @@ This makes it suitable for:
 
 ## Installation
 
+> Requires Python 3.12.
+Fully tested on Python 3.12. Higher versions are not supported yet due to dependency compatibility.
+
 ```bash
 pip install autocore
 ```

@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+setup.py
+autocore/__init__.py
+autocore/automation.py
+autocore.egg-info/PKG-INFO
+autocore.egg-info/SOURCES.txt
+autocore.egg-info/dependency_links.txt
+autocore.egg-info/requires.txt
+autocore.egg-info/top_level.txt
