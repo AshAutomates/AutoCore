@@ -5,7 +5,7 @@ Summary: Automate Core Actions
 Home-page: https://github.com/AshAutomates/AutoCore
 Author: Ash
 Requires-Dist: opencv-python
-Requires-Dist: numpy<2.3
+Requires-Dist: numpy<2
 Requires-Dist: Pillow
 Requires-Dist: pyautogui
 Requires-Dist: pyperclip

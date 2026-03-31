@@ -1,5 +1,5 @@
 opencv-python
-numpy<2.3
+numpy<2
 Pillow
 pyautogui
 pyperclip

@@ -5,12 +5,19 @@ import platform
 class PostInstall(install):
     def run(self):
         install.run(self)
+        print("\n" + "="*60)
+        print("AutoCore v0.1.0 installed successfully!")
+        print("Usage: from autocore import *")
+        print("Docs:  https://github.com/AshAutomates/AutoCore")
         if platform.system() == "Linux":
-            print("\n" + "="*60)
-            print("AutoCore: Linux dependencies required for full functionality:")
-            print("  Ubuntu/Debian:      sudo apt-get install wmctrl xdotool")
-            print("  RHEL/CentOS/Fedora: sudo yum install wmctrl xdotool")
-            print("="*60 + "\n")
+            print("\n" + "!"*60)
+            print("!! IMPORTANT: Linux dependencies required !!")
+            print("!! Run the following commands to ensure full functionality !!")
+            print("!!")
+            print("!!  Ubuntu/Debian:      sudo apt-get install wmctrl xdotool")
+            print("!!  RHEL/CentOS/Fedora: sudo yum install wmctrl xdotool")
+            print("!"*60)
+        print("="*60 + "\n")
 
 setup(
     name="autocore",
