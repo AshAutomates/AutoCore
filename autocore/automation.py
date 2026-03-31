@@ -57,8 +57,9 @@ from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 
 # Third-party imports - Windows automation
-import win32con
-import win32gui
+if platform.system() == "Windows":
+    import win32con
+    import win32gui
 
 # Third-party imports - Document processing
 from PyPDF2 import PdfReader

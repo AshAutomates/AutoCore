@@ -32,10 +32,10 @@ After installing, run the following based on your distro:
 
 ```bash
 # Ubuntu/Debian
-sudo apt-get install wmctrl xdotool
+sudo apt-get install wmctrl xdotool python3-tk
 
 # RHEL/CentOS/Fedora
-sudo yum install wmctrl xdotool
+sudo yum install wmctrl xdotool python3-tkinter
 ```
 
 ---
