@@ -27,7 +27,7 @@ import xml.etree.ElementTree as et
 from difflib import get_close_matches
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import cast, Tuple
+from typing import cast, Tuple, Optional
 
 # Third-party imports - Image processing
 import cv2  # pip install opencv-python
@@ -207,14 +207,18 @@ def _get_ocr_reader():
     Lazy initialize OCR reader - only creates when first needed.
     Tries GPU first, falls back to CPU if GPU unavailable.
     Shared across all OCR functions.
+    On first run, downloads OCR models (~100MB) and prints status messages.
+    Subsequent runs load instantly from cache.
     """
     if not hasattr(_get_ocr_reader, 'reader'):
         try:
+            print("Initializing OCR engine (first run downloads models, please wait)...")
             # Try GPU first
             _get_ocr_reader.reader = easyocr.Reader(['en'], gpu=True, verbose=False)
         except:
             # Fall back to CPU if GPU fails
             _get_ocr_reader.reader = easyocr.Reader(['en'], gpu=False, verbose=False)
+        print("OCR engine ready.")
     return _get_ocr_reader.reader
 
 
@@ -376,6 +380,21 @@ def browser(url, headless=False, implicit_wait=30, cookie_path=None):
 
         # Headless mode
         driver = browser('https://google.com', headless=True)
+
+    Note:
+    Requires Google Chrome to be installed.
+
+    Windows:
+        winget install Google.Chrome
+
+    Linux (Ubuntu/Debian/Mint):
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo dpkg -i google-chrome-stable_current_amd64.deb
+        sudo apt-get install -f -y
+
+    Linux (RHEL/CentOS/Fedora):
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+        sudo rpm -i google-chrome-stable_current_x86_64.rpm
     """
     # Auto-add https:// if protocol is missing
     if not url.startswith(('http://', 'https://')):
@@ -3611,7 +3630,6 @@ def wait_retry(x_wait, y_wait, target, timeout=90, x_retry_click=None, y_retry_c
     print(f"\nTimeout reached. Target not found.")
     return False
 
-
 def window(action=None, target=None, *args):
     """
     Unified window management function for Windows and Linux.
@@ -3673,6 +3691,10 @@ def window(action=None, target=None, *args):
     Linux Dependencies:
         sudo apt-get install wmctrl xdotool        # Ubuntu/Debian
         sudo yum install wmctrl xdotool            # RHEL/CentOS/Fedora
+
+    Note:
+        On Linux, resize and move automatically remove maximized/minimized
+        state before applying changes, ensuring consistent behavior.
 
     Returns:
         - List of strings: When action is None or 'list'
@@ -3776,7 +3798,6 @@ def window(action=None, target=None, *args):
         # FOCUS - Bring window to foreground
         # ============================================================
         elif action == 'focus':
-            # Find window with case-insensitive matching
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
 
@@ -3790,7 +3811,6 @@ def window(action=None, target=None, *args):
 
                 return False
 
-            # Use first match
             window_title = matches[0]
 
             if system == "Windows":
@@ -3823,7 +3843,6 @@ def window(action=None, target=None, *args):
         # CLOSE - Close window
         # ============================================================
         elif action == 'close':
-            # Find window with case-insensitive matching
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
 
@@ -3862,7 +3881,6 @@ def window(action=None, target=None, *args):
         # MINIMIZE - Minimize window
         # ============================================================
         elif action == 'minimize':
-            # Find window with case-insensitive matching
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
 
@@ -3893,7 +3911,6 @@ def window(action=None, target=None, *args):
                 return False
 
             elif system == "Linux":
-                # Get window ID
                 result = subprocess.run(['wmctrl', '-l'], capture_output=True, text=True)
                 if result.returncode == 0:
                     for line in result.stdout.strip().split('\n'):
@@ -3907,13 +3924,11 @@ def window(action=None, target=None, *args):
         # MAXIMIZE - Maximize window
         # ============================================================
         elif action == 'maximize':
-            # First, focus the window (required for maximize to work)
             if not window('focus', target):
-                return False  # If focus failed, don't proceed
+                return False
 
-            wait(0.5)  # Brief delay to ensure focus is established
+            time.sleep(0.5)
 
-            # Find window with case-insensitive matching
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
 
@@ -3953,7 +3968,6 @@ def window(action=None, target=None, *args):
         # RESIZE - Resize window to specific dimensions
         # ============================================================
         elif action == 'resize':
-            # Validate parameters
             if len(args) < 2:
                 raise ValueError("Action 'resize' requires width and height: window('resize', 'Chrome', 800, 600)")
 
@@ -3966,13 +3980,11 @@ def window(action=None, target=None, *args):
             if width <= 0 or height <= 0:
                 raise ValueError("Width and height must be positive")
 
-            # First, focus the window (required for resize to work)
             if not window('focus', target):
-                return False  # If focus failed, don't proceed
+                return False
 
-            wait(0.5)  # Brief delay to ensure focus is established
+            time.sleep(0.5)
 
-            # Find window with case-insensitive matching
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
 
@@ -3998,23 +4010,22 @@ def window(action=None, target=None, *args):
 
                 hwnd = find_window_hwnd(window_title)
                 if hwnd:
-                    # Get current position
                     rect = win32gui.GetWindowRect(hwnd)
                     x, y = rect[0], rect[1]
-                    # Resize keeping same position
                     win32gui.MoveWindow(hwnd, x, y, width, height, True)
                     return True
                 return False
 
             elif system == "Linux":
-                # Get window ID
                 result = subprocess.run(['wmctrl', '-l'], capture_output=True, text=True)
                 if result.returncode == 0:
                     for line in result.stdout.strip().split('\n'):
                         if window_title in line:
                             window_id = line.split()[0]
-                            # Resize: -e flag with geometry (gravity, x, y, width, height)
-                            # Use -1 for x,y to keep current position
+                            # Remove maximized/minimized state before resizing
+                            subprocess.run(['wmctrl', '-i', '-r', window_id, '-b', 'remove,maximized_vert,maximized_horz'])
+                            subprocess.run(['xdotool', 'windowmap', window_id])  # restore if minimized
+                            time.sleep(0.3)
                             subprocess.run(['wmctrl', '-i', '-r', window_id, '-e', f'0,-1,-1,{width},{height}'])
                             return True
                 return False
@@ -4023,7 +4034,6 @@ def window(action=None, target=None, *args):
         # MOVE - Move window to specific coordinates
         # ============================================================
         elif action == 'move':
-            # Validate parameters
             if len(args) < 2:
                 raise ValueError("Action 'move' requires x and y coordinates: window('move', 'Chrome', 100, 200)")
 
@@ -4036,13 +4046,11 @@ def window(action=None, target=None, *args):
             if x < 0 or y < 0:
                 raise ValueError("X and Y coordinates must be non-negative")
 
-            # First, focus the window (required for move to work without any miss)
             if not window('focus', target):
-                return False  # If focus failed, don't proceed
+                return False
 
-            wait(0.5)  # Brief delay to ensure focus is established
+            time.sleep(0.5)
 
-            # Find window with case-insensitive matching
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
 
@@ -4068,24 +4076,23 @@ def window(action=None, target=None, *args):
 
                 hwnd = find_window_hwnd(window_title)
                 if hwnd:
-                    # Get current size
                     rect = win32gui.GetWindowRect(hwnd)
                     width = rect[2] - rect[0]
                     height = rect[3] - rect[1]
-                    # Move keeping same size
                     win32gui.MoveWindow(hwnd, x, y, width, height, True)
                     return True
                 return False
 
             elif system == "Linux":
-                # Get window ID
                 result = subprocess.run(['wmctrl', '-l'], capture_output=True, text=True)
                 if result.returncode == 0:
                     for line in result.stdout.strip().split('\n'):
                         if window_title in line:
                             window_id = line.split()[0]
-                            # Move: -e flag with geometry (gravity, x, y, width, height)
-                            # Use -1 for width/height to keep current size
+                            # Remove maximized/minimized state before moving
+                            subprocess.run(['wmctrl', '-i', '-r', window_id, '-b', 'remove,maximized_vert,maximized_horz'])
+                            subprocess.run(['xdotool', 'windowmap', window_id])  # restore if minimized
+                            time.sleep(0.3)
                             subprocess.run(['wmctrl', '-i', '-r', window_id, '-e', f'0,{x},{y},-1,-1'])
                             return True
                 return False
@@ -4272,14 +4279,14 @@ def zoom(*args):
                     # Zoom in
                     for _ in range(value):
                         driver_obj.find_element(By.TAG_NAME, 'body').send_keys(Keys.CONTROL, Keys.ADD)
-                        wait(0.3, countdown=False)
+                        time.sleep(0.3)
                     print(f"Zoomed in {value} step(s)")
                 elif value < 0:
                     # Zoom out
                     steps = abs(value)
                     for _ in range(steps):
                         driver_obj.find_element(By.TAG_NAME, 'body').send_keys(Keys.CONTROL, Keys.SUBTRACT)
-                        wait(0.3, countdown=False)
+                        time.sleep(0.3)
                     print(f"Zoomed out {steps} step(s)")
                 return True
 
@@ -4308,14 +4315,14 @@ def zoom(*args):
                 # Zoom in
                 for _ in range(value):
                     pyautogui.hotkey('ctrl', '+')
-                    wait(0.3, countdown=False)
+                    time.sleep(0.3)
                 print(f"Zoomed in {value} step(s)")
             elif value < 0:
                 # Zoom out
                 steps = abs(value)
                 for _ in range(steps):
                     pyautogui.hotkey('ctrl', '-')
-                    wait(0.3, countdown=False)
+                    time.sleep(0.3)
                 print(f"Zoomed out {steps} step(s)")
 
             return True

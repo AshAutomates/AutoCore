@@ -1,7 +1,6 @@
 # AutoCore
 
-
-Automate Core actions
+Automate Core Actions
 
 A Python library that combines GUI automation, headless browser control, and common actions into a single library.
 
@@ -20,7 +19,7 @@ This makes it suitable for:
 
 ## Installation
 
-> This has been fully tested on Python 3.12, using other versions may lead to compatibility issues with dependencies.
+This has been fully tested on Python 3.12, using other versions may lead to compatibility issues with dependencies.
 
 ```bash
 pip install autocore
@@ -36,6 +35,28 @@ sudo apt-get install wmctrl xdotool python3-tk
 
 # RHEL/CentOS/Fedora
 sudo yum install wmctrl xdotool python3-tkinter
+```
+
+### Chrome Installation
+
+AutoCore uses Chrome for browser automation. Install it before using `browser()`.
+
+**Windows:**
+```bash
+winget install Google.Chrome
+```
+
+**Linux (Ubuntu/Debian/Mint):**
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f -y
+```
+
+**Linux (RHEL/CentOS/Fedora):**
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+sudo rpm -i google-chrome-stable_current_x86_64.rpm
 ```
 
 ---
@@ -93,9 +114,8 @@ PDF, DOCX, PPTX, ODT, RTF, CSV, TSV, XLSX, SQLite, JSON, YAML, XML, INI/CFG, TXT
 
 ## Platform Support
 
-| Supported | Not Supported |
-|----------|-------------|
-| Windows, Linux | macOS |
+Supported: Windows, Linux
+Not Supported: macOS
 
 ---
 
