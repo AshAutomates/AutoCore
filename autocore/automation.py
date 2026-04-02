@@ -12,6 +12,7 @@ import configparser
 import csv
 import datetime
 import email
+import io
 import json
 import logging
 import os
@@ -92,6 +93,20 @@ _log_folder: Path = Path("logs")
 _script_had_error = False  # Track if unhandled exception occurred
 
 
+def _preprocess_for_ocr(image):
+    """
+    Preprocess image for better OCR accuracy.
+    Accepts numpy array, returns cleaned binary image ready for EasyOCR.
+    """
+    gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    gray_image = cv2.resize(gray_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+    denoised = cv2.fastNlMeansDenoising(gray_image, h=10)
+    threshold_img = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
+    cleaned = cv2.morphologyEx(threshold_img, cv2.MORPH_CLOSE, kernel)
+    return cleaned
+
+
 def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
     """
     Click on text found via OCR on screen.
@@ -129,14 +144,7 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
 
         # Convert RGB to BGR for OpenCV
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        # Preprocessing for better OCR accuracy
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        gray_image = cv2.resize(gray_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-        denoised = cv2.fastNlMeansDenoising(gray_image, h=10)
-        threshold_img = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
-        cleaned = cv2.morphologyEx(threshold_img, cv2.MORPH_CLOSE, kernel)
+        cleaned = _preprocess_for_ocr(image)
 
         # Extract text with bounding boxes using EasyOCR
         results = reader.readtext(cleaned)
@@ -2231,14 +2239,7 @@ def read(*args):
 
             # Convert PIL image to numpy array
             image = np.array(image)
-
-            # ===== PREPROCESSING FOR BETTER OCR ACCURACY (ONLY ONCE!) =====
-            gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-            gray_image = cv2.resize(gray_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-            denoised = cv2.fastNlMeansDenoising(gray_image, h=10)
-            threshold_img = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
-            cleaned = cv2.morphologyEx(threshold_img, cv2.MORPH_CLOSE, kernel)
+            cleaned = _preprocess_for_ocr(image)
 
             # Extract text using EasyOCR
             results = reader.readtext(cleaned, detail=0)
@@ -2267,25 +2268,15 @@ def read(*args):
     # ============================================================
     elif len(args) == 1 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
-        temp_path = 'temp_browser_screenshot.png'
 
         try:
-            # Take screenshot of browser window
-            driver_obj.save_screenshot(temp_path)
-
-            # Open screenshot as numpy array
-            image = np.array(Image.open(temp_path))
-
-            # Preprocessing for better OCR accuracy
             reader = _get_ocr_reader()
-            gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-            gray_image = cv2.resize(gray_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-            denoised = cv2.fastNlMeansDenoising(gray_image, h=10)
-            threshold_img = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 1))
-            cleaned = cv2.morphologyEx(threshold_img, cv2.MORPH_CLOSE, kernel)
 
-            # Extract text using EasyOCR
+            # Get screenshot as bytes directly without saving to disk
+            png_bytes = driver_obj.get_screenshot_as_png()
+            image = np.array(Image.open(io.BytesIO(png_bytes)))
+            cleaned = _preprocess_for_ocr(image)
+
             results = reader.readtext(cleaned, detail=0)
 
             if not results:
@@ -2298,11 +2289,6 @@ def read(*args):
         except Exception as e:
             print(f"Could not read text from browser window: {e}")
             return None
-
-        finally:
-            # Always delete temp screenshot
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
 
     # ============================================================
     # MODE 5: File reading - 1 string (file path)
