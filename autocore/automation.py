@@ -437,7 +437,7 @@ def browser(url, headless=False, implicit_wait=30, cookie_path=None):
 
     # Attempt to initialize the Chrome driver
     try:
-        driver_instance = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+        driver_instance = webdriver.Chrome(options=options)
     except Exception as e:
         print(f"Error initializing Chrome Driver: {e}")
         return None
