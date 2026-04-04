@@ -1,0 +1,198 @@
+2026-04-04 13:48:08 -> Logging started for: integration_test (Session 1)
+2026-04-04 13:48:08 -> Log file: logs\log_integration_test_2026-04-04_13-48-08_India Standard Time_session-1.txt
+2026-04-04 13:48:08 -> Log setup working
+2026-04-04 13:48:08 -> This should appear in logs folder
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 ->  Import test done
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 ->  Date & Time tests
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 -> Year       :
+2026-04-04 13:48:08 -> 2026
+2026-04-04 13:48:08 -> Month      :
+2026-04-04 13:48:08 -> 4
+2026-04-04 13:48:08 -> Date       :
+2026-04-04 13:48:08 -> 4
+2026-04-04 13:48:08 -> Day        :
+2026-04-04 13:48:08 -> saturday
+2026-04-04 13:48:08 -> Hour       :
+2026-04-04 13:48:08 -> 13
+2026-04-04 13:48:08 -> Minute     :
+2026-04-04 13:48:08 -> 48
+2026-04-04 13:48:08 -> Second     :
+2026-04-04 13:48:08 -> 8
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 -> String & Data tests
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 -> find_str   :
+2026-04-04 13:48:08 -> World
+2026-04-04 13:48:08 -> find_key id    :
+2026-04-04 13:48:08 -> [1, 2]
+2026-04-04 13:48:08 -> find_key name  :
+2026-04-04 13:48:08 -> ['Ash', 'Bob']
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 ->  OCR test
+2026-04-04 13:48:08 -> ==============================
+2026-04-04 13:48:08 -> Initializing OCR engine (first run downloads models, please wait)...
+2026-04-04 13:48:10 -> OCR engine ready.
+2026-04-04 13:48:17 -> C:\Program Files\Python312\Lib\site-packages\torch\utils\data\dataloader.py:775: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+2026-04-04 13:48:21 -> OCR text   :
+2026-04-04 13:48:21 -> deconstructing harry (1.997) imdb mulholland drive (2001 google sc img com/search/all?name tadalafil python 001 claude chatgpt ij  ac autocore y9 main current file readmemd 2 automationpy integration_test-py 2 test-py pyproject toml setup.py integration_test x cla' starting session 1 for integration_test caautoc setup working auti say est requires speakers this should appear in folder in athe m print(" say test import test done rrocessing auti print(3o date & time tests tes1 say ( "autocore integration test under progress 2 say ( text: "testing volume' =0 . 5) year 2026 print(30 month 4 vow updat u pyr date 4 m! rei ocr() ins saturday seti 83 hour 13 ocr rep] press combina ons dh extern minute 48 2" scratc second 8 print(" ress combinations test print(3o rece' string & data tests bgr for print("press ctrl+a press ( #kevs: ctrl pytho find_ str world olor(imag print("press ctrl+c press( *keys: ctrl find id 2] print("press tab presse #kevs: tab find name {1 ash" bob " or bette print("press shiftttab 3 press ( *keys: tab cvtcolor print(3o ocr test resizelg initializing ocr engine (first run downloads model please wait) astnlmean ocr engine ready _ cv2.thres cleanup structuri for in ['test txt test. json test csv convert test csv ' convert test.xlsx' ] : rphologye if 0s . path exists( f 05 remove ( f with: 276 print(f"deleted print( "25 _ cleanup done" python print(3o print("all integration tests completed" cleaned preprocess_for print(3o in read replaceall three p python cleaned _preprocess_for problems file project errors vulnerable dependencies al self-review 0 6 5 0 no problems integration_testpy reply _ q9 test_account free plan claude aulocore tests 276.33 crlf utf-8   c 4 spaces python 3.12 (2) 0 0.0 k/s 1.4810 pm regained my privacy b' aa ab laut chalen (1995 stop over-complicating 0 _ 2 0 3 & w x downloads file explor python library 001 clal mingw64:/c/users/usel download python pyth integration_test autocore integration eng ci q 0.0 kls 04-apr-26 library log logs day key key ls,
+2026-04-04 13:48:21 -> OCR type   :
+2026-04-04 13:48:21 -> <class 'str'>
+2026-04-04 13:48:21 -> ==============================
+2026-04-04 13:48:21 -> Screenshot tests
+2026-04-04 13:48:21 -> ==============================
+2026-04-04 13:48:21 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\screenshot_2026-04-04_13-48-21_1775290701.png
+2026-04-04 13:48:22 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\test_full.png
+2026-04-04 13:48:22 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\screenshot_2026-04-04_13-48-22_1775290702.png
+2026-04-04 13:48:22 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\test_region.png
+2026-04-04 13:48:22 -> ==============================
+2026-04-04 13:48:22 ->  Browser launch tests
+2026-04-04 13:48:22 -> ==============================
+2026-04-04 13:48:26 -> Browser type        :
+2026-04-04 13:48:26 -> <class 'selenium.webdriver.chrome.webdriver.WebDriver'>
+2026-04-04 13:48:30 -> Browser headless    :
+2026-04-04 13:48:30 -> <class 'selenium.webdriver.chrome.webdriver.WebDriver'>
+2026-04-04 13:48:30 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\headless_browser.png
+2026-04-04 13:48:30 -> Screenshot of headless browser taken.
+2026-04-04 13:48:30 -> ==============================
+2026-04-04 13:48:30 ->  Browser read test using OCR
+2026-04-04 13:48:30 -> ==============================
+2026-04-04 13:48:38 -> Browser read text for visible browser  :
+2026-04-04 13:48:38 -> youtube search sign in home shorts try searching to get started start watching videos to help us build feed of videos you"il love: subscriptions you history in to like videos, comment, and subscribe. sign in explore shopping d music movies show more more from youtube youtube premium youtube music youtube kids f report history about press   copyright contact us creators advertise developers terms privacy policy _ safety how youtube works test new features goodle sign '
+2026-04-04 13:48:38 -> --------------------
+2026-04-04 13:48:43 -> Browser read text for headless browser  :
+2026-04-04 13:48:43 -> in youtube search sign in home shorts try searching to get started start watching videos to help us build a feed of videos love_ subscriptions you history sign in to like videos, comment; and subscrbe sign in explore shopping music movies show more more from youtube youtube premium youtube music youtube kids f report history about press   copyright contact us creators  advertise developers terms   privacy policy & safety how youtube works yoult
+2026-04-04 13:48:43 -> ==============================
+2026-04-04 13:48:43 -> Browser read test using copy
+2026-04-04 13:48:43 -> ==============================
+2026-04-04 13:48:45 -> Browser read text for visible browser  :
+2026-04-04 13:48:45 -> IN
+
+Skip navigation
+Search
+
+
+
+Sign in
+Home
+Shorts
+Subscriptions
+You
+History
+Sign in to like videos, comment, and subscribe.
+Sign in
+Explore
+Shopping
+Music
+Movies
+Show more
+More from YouTube
+YouTube Premium
+YouTube Music
+YouTube Kids
+Report history
+AboutPressCopyrightContact usCreatorsAdvertiseDevelopers
+TermsPrivacyPolicy & SafetyHow YouTube worksTest new features
+© 2026 Google LLC
+Try searching to get started
+Start watching videos to help us build a feed of videos you'll love.
+2026-04-04 13:48:45 -> --------------------
+2026-04-04 13:48:47 -> No content returned from copy()
+2026-04-04 13:48:47 -> Browser read text for headless browser  :
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:47 ->  Selenium click tests
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:47 -> Click selenium      :
+2026-04-04 13:48:47 -> True
+2026-04-04 13:48:47 -> Click selenium      :
+2026-04-04 13:48:47 -> True
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:47 ->  Write & Press tests
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:47 -> Write result        :
+2026-04-04 13:48:47 -> True
+2026-04-04 13:48:47 -> Write result        :
+2026-04-04 13:48:47 -> True
+2026-04-04 13:48:47 -> Press result        :
+2026-04-04 13:48:47 -> True
+2026-04-04 13:48:47 -> Press result        :
+2026-04-04 13:48:47 -> True
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:47 ->  Erase test
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:47 -> Cleared element: name - search_query
+2026-04-04 13:48:47 -> Cleared element: name - search_query
+2026-04-04 13:48:47 ->  Scroll tests
+2026-04-04 13:48:47 -> ==============================
+2026-04-04 13:48:51 -> [Selenium] Scrolling down 3 time(s)...
+2026-04-04 13:49:00 -> Scrolled down 3 time(s)
+2026-04-04 13:49:00 -> Scroll down 3       :
+2026-04-04 13:49:00 -> True
+2026-04-04 13:49:00 -> [Selenium] Scrolling up 2 time(s)...
+2026-04-04 13:49:06 -> Scrolled up 2 time(s)
+2026-04-04 13:49:06 -> Scroll up 2         :
+2026-04-04 13:49:06 -> True
+2026-04-04 13:49:06 -> [Selenium] Scrolling to top...
+2026-04-04 13:49:09 -> Scrolled to top
+2026-04-04 13:49:09 -> Scroll top       :
+2026-04-04 13:49:09 -> True
+2026-04-04 13:49:09 -> [Selenium] Scrolling to bottom (timeout=40s)...
+2026-04-04 13:49:15 -> Reached bottom after 1 scrolls (6.0s)
+2026-04-04 13:49:15 -> Scroll bottom          :
+2026-04-04 13:49:15 -> True
+2026-04-04 13:49:15 -> [Selenium] Scrolling down 3 time(s)...
+2026-04-04 13:49:24 -> Scrolled down 3 time(s)
+2026-04-04 13:49:24 -> Scroll down 3       :
+2026-04-04 13:49:24 -> True
+2026-04-04 13:49:24 -> [Selenium] Scrolling up 2 time(s)...
+2026-04-04 13:49:30 -> Scrolled up 2 time(s)
+2026-04-04 13:49:30 -> Scroll up 2         :
+2026-04-04 13:49:30 -> True
+2026-04-04 13:49:30 -> [Selenium] Scrolling to top...
+2026-04-04 13:49:33 -> Scrolled to top
+2026-04-04 13:49:33 -> Scroll top       :
+2026-04-04 13:49:33 -> True
+2026-04-04 13:49:33 -> [Selenium] Scrolling to bottom (timeout=40s)...
+2026-04-04 13:49:39 -> Reached bottom after 1 scrolls (6.0s)
+2026-04-04 13:49:39 -> Scroll bottom          :
+2026-04-04 13:49:39 -> True
+2026-04-04 13:49:39 -> ==============================
+2026-04-04 13:49:39 -> Zoom test
+2026-04-04 13:49:39 -> ==============================
+2026-04-04 13:49:40 -> Zoomed in 3 step(s)
+2026-04-04 13:49:40 -> Zoom in 3           :
+2026-04-04 13:49:40 -> True
+2026-04-04 13:49:41 -> Zoomed out 3 step(s)
+2026-04-04 13:49:41 -> Zoom out 3          :
+2026-04-04 13:49:41 -> True
+2026-04-04 13:49:41 -> Zoom reset to 100%
+2026-04-04 13:49:41 -> Zoom reset          :
+2026-04-04 13:49:41 -> True
+2026-04-04 13:49:42 -> Zoomed in 3 step(s)
+2026-04-04 13:49:42 -> Zoom in 3           :
+2026-04-04 13:49:42 -> True
+2026-04-04 13:49:43 -> Zoomed out 3 step(s)
+2026-04-04 13:49:43 -> Zoom out 3          :
+2026-04-04 13:49:43 -> True
+2026-04-04 13:49:43 -> Zoom reset to 100%
+2026-04-04 13:49:43 -> Zoom reset          :
+2026-04-04 13:49:43 -> True
+2026-04-04 13:49:43 -> ==============================
+2026-04-04 13:49:43 ->  Wait download test
+2026-04-04 13:49:43 -> ==============================
+2026-04-04 13:49:48 -> Monitoring downloads in: C:\Users\user\Downloads
+2026-04-04 13:49:48 -> Checking for active downloads...
+2026-04-04 13:49:58 -> New download started: 'Unconfirmed 126574.crdownload'
+2026-04-04 13:49:58 -> Waiting for 'Unconfirmed 126574.crdownload' to finish downloading... (elapsed: 0:00:10)
+2026-04-04 13:50:08 -> Waiting for 'Unconfirmed 126574.crdownload' to finish downloading... (elapsed: 0:00:20)
+2026-04-04 13:50:18 -> Verifying download... (elapsed: 0:00:30)
+2026-04-04 13:50:21 -> Traceback (most recent call last):
+  File "C:\Users\user\Documents\git_work\AutoCore\tests\integration_test.py", line 168, in <module>
+    print("Wait download       :", wait_download(5))
+                                   ^^^^^^^^^^^^^^^^
+  File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 3538, in wait_download
+    time.sleep(1)
+KeyboardInterrupt

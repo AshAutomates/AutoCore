@@ -125,14 +125,14 @@ print(30 * '=')
 print(" Erase test ")
 print(30 * '=')
 erase(dr, 'name', "search_query")
-erase(dr2, 'name', "search_query"
+erase(dr2, 'name', "search_query")
+print(30 * '=')
 
 # ============================================================
 #  SCROLL TESTS
 # ============================================================
 print(" Scroll tests ")
 print(30 * '=')
-dr = browser('https://google.com')
 print("Scroll down 3       :", scroll(dr, 'down', 3))
 print("Scroll up 2         :", scroll(dr, 'up', 2))
 print("Scroll top       :", scroll(dr, 'top'))
@@ -180,11 +180,12 @@ print(30 * '=')
 # ============================================================
 #  DROPDOWN TEST
 # ============================================================
-# print(" Dropdown test ")
-# print(30*'=')
-# dr = browser('https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_select')
-# print("Dropdown result     :", dropdown_select(dr, 'id', 'cars', 'Saab'))
-# print(30*'=')
+print(" Dropdown test ")
+print(30*'=')
+dr.get("https://www.globalsqa.com/demo-site/select-dropdown-menu/")
+print("Dropdown result     :", dropdown_select(dr, 'xpath', "(//select)[1]" , 'United States'))
+wait(3)
+print(30*'=')
 
 # ============================================================
 #  WINDOW TESTS
@@ -270,12 +271,11 @@ print(30 * '=')
 # ============================================================
 # CLEANUP
 # ============================================================
-for f in ['test.txt', 'test.json', 'test.csv', 'convert_test.csv', 'convert_test.xlsx']:
-    if
-os.path.exists(f):
-os.remove(f)
-print(f"Deleted             : {f}")
-print("25. Cleanup done")
+# for f in ['test.txt', 'test.json', 'test.csv', 'convert_test.csv', 'convert_test.xlsx']:
+#     if os.path.exists(f):
+#         os.remove(f)
+#         print(f"Deleted             : {f}")
+# print("25. Cleanup done")
 print(30 * '=')
 print("All integration tests completed")
 print(30 * '=')

@@ -1,0 +1,274 @@
+2026-04-04 14:01:33 -> --- Logging error ---
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 292220: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 302231: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 327395: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 377714: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 478343: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 679592: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 1082081: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 1887050: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 3496979: character maps to <undefined>
+2026-04-04 14:01:33 -> 
+During handling of the above exception, another exception occurred:
+2026-04-04 14:01:33 -> Traceback (most recent call last):
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1163, in emit
+    stream.write(msg + self.terminator)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-04-04 14:01:33 -> UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 6716828: character maps to <undefined>
+2026-04-04 14:01:33 -> Call stack:
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 1789, in set_error_color
+    print(error_msg, file=sys.stderr, end='')
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1609, in log
+    self._log(level, msg, args, **kwargs)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1684, in _log
+    self.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1700, in handle
+    self.callHandlers(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1762, in callHandlers
+    hdlr.handle(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1028, in handle
+    self.emit(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\handlers.py", line 75, in emit
+    logging.FileHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1280, in emit
+    StreamHandler.emit(self, record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1168, in emit
+    self.handleError(record)
+2026-04-04 14:01:33 ->   File "C:\Program Files\Python312\Lib\logging\__init__.py", line 1098, in handleError
+    sys.stderr.write('Message: %r\n'
+2026-04-04 14:01:33 ->   File "C:\Users\user\Documents\git_work\AutoCore\autocore\automation.py", line 351, in write
+    self.logger.log(self.level, message.rstrip())

@@ -1,0 +1,298 @@
+2026-04-05 04:18:24 -> Logging started for: integration_test (Session 4)
+2026-04-05 04:18:24 -> Log file: logs\log_integration_test_2026-04-05_04-18-24_India Standard Time_session-4.txt
+2026-04-05 04:18:24 -> Log setup working
+2026-04-05 04:18:24 -> This should appear in logs folder
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 ->  Import test done
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 ->  Date & Time tests
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 -> Year       :
+2026-04-05 04:18:24 -> 2026
+2026-04-05 04:18:24 -> Month      :
+2026-04-05 04:18:24 -> 4
+2026-04-05 04:18:24 -> Date       :
+2026-04-05 04:18:24 -> 5
+2026-04-05 04:18:24 -> Day        :
+2026-04-05 04:18:24 -> sunday
+2026-04-05 04:18:24 -> Hour       :
+2026-04-05 04:18:24 -> 4
+2026-04-05 04:18:24 -> Minute     :
+2026-04-05 04:18:24 -> 18
+2026-04-05 04:18:24 -> Second     :
+2026-04-05 04:18:24 -> 24
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 -> String & Data tests
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 -> find_str   :
+2026-04-05 04:18:24 -> World
+2026-04-05 04:18:24 -> find_key id    :
+2026-04-05 04:18:24 -> [1, 2]
+2026-04-05 04:18:24 -> find_key name  :
+2026-04-05 04:18:24 -> ['Ash', 'Bob']
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 ->  OCR test
+2026-04-05 04:18:24 -> ==============================
+2026-04-05 04:18:24 -> Initializing OCR engine (first run downloads models, please wait)...
+2026-04-05 04:18:25 -> OCR engine ready.
+2026-04-05 04:18:59 -> C:\Program Files\Python312\Lib\site-packages\torch\utils\data\dataloader.py:775: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  super().__init__(loader)
+2026-04-05 04:19:13 -> OCR text   :
+2026-04-05 04:19:13 -> autocore 89 main current file q { start free trial m! readme.md automation py integration_testpy test py pyproject.toml setup py caautoc from autocore import aut' 88 0 log setup test 13 aut' print("log setup test tesi print(30 setup("integration_test' print("log setup working @ print("this should appear in logs folder" _ print(3o import test print(" import test done print(30 3 date 6 time tests {} print(" date 6 time tests 3 print(30 print("year year() ) pyr print("month month() m! re} print("date date() seti print(' day ( ) ) print("hour hour 0)) dh extern print("minute minute()) =" scratc print("second second( ) print(30 string 6 data tests debug integration_test pydevd 00 ~ + & ^ 0 fb threads & variables console 5 3l @ @ >>> 8 p9 autocore tests integration_test-py 31.1 crlf utf-8 q spaces python 3.12 0 0.1 kls 4.18.25 am regained my privacy b' (29) aa ab laut chalen / stop over-complicating realtek audio console j x bewafaa 2005 file expl new tab brave mingw6a:ic/users/usei autocore _ integration_ 5 def window(action-nor eng ci q) 0.8 ks 05-apr-26 log__ "day
+2026-04-05 04:19:13 -> OCR type   :
+2026-04-05 04:19:13 -> <class 'str'>
+2026-04-05 04:19:13 -> ==============================
+2026-04-05 04:19:13 -> Screenshot tests
+2026-04-05 04:19:13 -> ==============================
+2026-04-05 04:19:13 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\screenshot_2026-04-05_04-19-13_1775342953.png
+2026-04-05 04:19:13 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\test_full.png
+2026-04-05 04:19:13 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\screenshot_2026-04-05_04-19-13_1775342953.png
+2026-04-05 04:19:13 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\test_region.png
+2026-04-05 04:19:13 -> ==============================
+2026-04-05 04:19:13 ->  Browser launch tests
+2026-04-05 04:19:13 -> ==============================
+2026-04-05 04:19:18 -> Browser type        :
+2026-04-05 04:19:18 -> <class 'selenium.webdriver.chrome.webdriver.WebDriver'>
+2026-04-05 04:19:20 -> Browser headless    :
+2026-04-05 04:19:20 -> <class 'selenium.webdriver.chrome.webdriver.WebDriver'>
+2026-04-05 04:19:23 -> Screenshot saved: C:\Users\user\Documents\git_work\AutoCore\tests\headless_browser.png
+2026-04-05 04:19:23 -> Screenshot of headless browser taken.
+2026-04-05 04:19:23 -> ==============================
+2026-04-05 04:19:23 ->  Browser read test using OCR
+2026-04-05 04:19:23 -> ==============================
+2026-04-05 04:19:28 -> Browser read text for visible browser  :
+2026-04-05 04:19:28 -> in youlube search sign in home shorts try searching to get started start watching videos to help us build a feed of videos you'il love subscriptions you history sign in to like videos, comment; and subscrbe sign in explore shopping music moves show more more from youtube youtube premium youtube music youtube kids f report about press  copyright contact us creators advertise developers terms privacy policy & safety how youtube works test new features history
+2026-04-05 04:19:28 -> --------------------
+2026-04-05 04:19:33 -> Browser read text for headless browser  :
+2026-04-05 04:19:33 -> in youtube search sign in home shorts try searching to get started start watching videos to help us build a feed of videos love_ subscriptions you history sign in to like videos, comment; and subscrbe sign in explore shopping music movies show more more from youtube youtube premium youtube music youtube kids f report history about press   copyright contact us creators  advertise developers terms   privacy policy & safety how youtube works yoult
+2026-04-05 04:19:33 -> ==============================
+2026-04-05 04:19:33 -> Browser read test using copy
+2026-04-05 04:19:33 -> ==============================
+2026-04-05 04:19:35 -> Browser read text for visible browser  :
+2026-04-05 04:19:35 -> IN
+
+Skip navigation
+Search
+
+
+
+Sign in
+Home
+Shorts
+Subscriptions
+You
+History
+Sign in to like videos, comment, and subscribe.
+Sign in
+Explore
+Shopping
+Music
+Movies
+Show more
+More from YouTube
+YouTube Premium
+YouTube Music
+YouTube Kids
+Report history
+AboutPressCopyrightContact usCreatorsAdvertiseDevelopers
+TermsPrivacyPolicy & SafetyHow YouTube worksTest new features
+© 2026 Google LLC
+Try searching to get started
+Start watching videos to help us build a feed of videos you'll love.
+2026-04-05 04:19:35 -> --------------------
+2026-04-05 04:19:37 -> No content returned from copy()
+2026-04-05 04:19:37 -> Browser read text for headless browser  :
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 ->  Selenium click tests
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 -> Click selenium      :
+2026-04-05 04:19:37 -> True
+2026-04-05 04:19:37 -> Click selenium      :
+2026-04-05 04:19:37 -> True
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 ->  Write & Press tests
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 -> Write result        :
+2026-04-05 04:19:37 -> True
+2026-04-05 04:19:37 -> Write result        :
+2026-04-05 04:19:37 -> True
+2026-04-05 04:19:37 -> Press result        :
+2026-04-05 04:19:37 -> True
+2026-04-05 04:19:37 -> Press result        :
+2026-04-05 04:19:37 -> True
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 ->  Erase test
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 -> Cleared element: name - search_query
+2026-04-05 04:19:37 -> Cleared element: name - search_query
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 ->  Scroll tests
+2026-04-05 04:19:37 -> ==============================
+2026-04-05 04:19:37 -> [Selenium] Scrolling down 3 time(s)...
+2026-04-05 04:19:46 -> Scrolled down 3 time(s)
+2026-04-05 04:19:46 -> Scroll down 3       :
+2026-04-05 04:19:46 -> True
+2026-04-05 04:19:46 -> [Selenium] Scrolling up 2 time(s)...
+2026-04-05 04:19:52 -> Scrolled up 2 time(s)
+2026-04-05 04:19:52 -> Scroll up 2         :
+2026-04-05 04:19:52 -> True
+2026-04-05 04:19:52 -> [Selenium] Scrolling to top...
+2026-04-05 04:19:55 -> Scrolled to top
+2026-04-05 04:19:55 -> Scroll top       :
+2026-04-05 04:19:55 -> True
+2026-04-05 04:19:55 -> [Selenium] Scrolling to bottom (timeout=40s)...
+2026-04-05 04:20:01 -> Reached bottom after 1 scrolls (6.0s)
+2026-04-05 04:20:01 -> Scroll bottom          :
+2026-04-05 04:20:01 -> True
+2026-04-05 04:20:01 -> [Selenium] Scrolling down 3 time(s)...
+2026-04-05 04:20:10 -> Scrolled down 3 time(s)
+2026-04-05 04:20:10 -> Scroll down 3       :
+2026-04-05 04:20:10 -> True
+2026-04-05 04:20:10 -> [Selenium] Scrolling up 2 time(s)...
+2026-04-05 04:20:25 -> Scrolled up 2 time(s)
+2026-04-05 04:20:33 -> Scroll up 2         :
+2026-04-05 04:20:33 -> True
+2026-04-05 04:20:33 -> [Selenium] Scrolling to top...
+2026-04-05 04:20:36 -> Scrolled to top
+2026-04-05 04:20:36 -> Scroll top       :
+2026-04-05 04:20:36 -> True
+2026-04-05 04:20:36 -> [Selenium] Scrolling to bottom (timeout=40s)...
+2026-04-05 04:20:42 -> Reached bottom after 1 scrolls (6.0s)
+2026-04-05 04:20:42 -> Scroll bottom          :
+2026-04-05 04:20:42 -> True
+2026-04-05 04:20:42 -> ==============================
+2026-04-05 04:20:42 -> Zoom test
+2026-04-05 04:20:42 -> ==============================
+2026-04-05 04:20:43 -> Zoomed in 3 step(s)
+2026-04-05 04:20:43 -> Zoom in 3           :
+2026-04-05 04:20:43 -> True
+2026-04-05 04:20:44 -> Zoomed out 3 step(s)
+2026-04-05 04:20:44 -> Zoom out 3          :
+2026-04-05 04:20:44 -> True
+2026-04-05 04:20:44 -> Zoom reset to 100%
+2026-04-05 04:20:44 -> Zoom reset          :
+2026-04-05 04:20:44 -> True
+2026-04-05 04:20:45 -> Zoomed in 3 step(s)
+2026-04-05 04:20:45 -> Zoom in 3           :
+2026-04-05 04:20:45 -> True
+2026-04-05 04:20:46 -> Zoomed out 3 step(s)
+2026-04-05 04:20:46 -> Zoom out 3          :
+2026-04-05 04:20:46 -> True
+2026-04-05 04:20:46 -> Zoom reset to 100%
+2026-04-05 04:20:46 -> Zoom reset          :
+2026-04-05 04:20:46 -> True
+2026-04-05 04:20:46 -> ==============================
+2026-04-05 04:20:46 ->  Wait download test
+2026-04-05 04:20:46 -> ==============================
+2026-04-05 04:20:50 -> Monitoring downloads in: C:\Users\user\Downloads
+2026-04-05 04:20:50 -> Checking for active downloads...
+2026-04-05 04:21:00 -> New download started: 'Unconfirmed 169457.crdownload'
+2026-04-05 04:21:00 -> Waiting for 'Unconfirmed 169457.crdownload' to finish downloading... (elapsed: 0:00:10)
+2026-04-05 04:21:10 -> Waiting for 'Unconfirmed 169457.crdownload' to finish downloading... (elapsed: 0:00:20)
+2026-04-05 04:21:14 -> Download completed: 'python-manager-26.0 (3).msix' (took 0:00:24)
+2026-04-05 04:21:14 -> Wait download       :
+2026-04-05 04:21:14 -> True
+2026-04-05 04:21:14 -> ==============================
+2026-04-05 04:21:14 ->  Find browser test
+2026-04-05 04:21:14 -> ==============================
+2026-04-05 04:21:14 -> [Selenium] Text 'contribute' found and highlighted
+2026-04-05 04:21:14 -> Find browser selenium :
+2026-04-05 04:21:14 -> True
+2026-04-05 04:21:19 -> [PyAutoGUI] Searched for 'prize'
+2026-04-05 04:21:19 -> Find browser pyautogui:
+2026-04-05 04:21:19 -> True
+2026-04-05 04:21:19 -> ==============================
+2026-04-05 04:21:19 ->  Dropdown test
+2026-04-05 04:21:19 -> ==============================
+2026-04-05 04:21:22 -> Selected dropdown option by text: 'United States'
+2026-04-05 04:21:22 -> Dropdown result     :
+2026-04-05 04:21:22 -> True
+2026-04-05 04:21:22 -> Waiting:
+2026-04-05 04:21:22 -> ..3
+2026-04-05 04:21:23 -> ..2
+2026-04-05 04:21:24 -> ..1
+2026-04-05 04:21:25 -> Done
+2026-04-05 04:21:25 -> ==============================
+2026-04-05 04:21:25 ->  Window tests
+2026-04-05 04:21:25 -> ==============================
+2026-04-05 04:21:25 -> Window list         :
+2026-04-05 04:21:25 -> ['DropDown Menu - GlobalSQA - Google Chrome', 'AutoCore – integration_test.py', 'Bewafaa 2005 - File Explorer', 'Realtek Audio Console', 'Windows Input Experience', 'Command Palette', 'I regained my privacy by moving these 5 services to Docker - Google Chrome', 'MINGW64:/c/Users/user/Documents/git_work/AutoCore', 'def window(action=None, target=None, *args): • - Sublime Text (UNREGISTERED)', '(29) Aa Ab Laut Chalen (1999) - Superhit Hindi Movie | Akshaye Khanna, Aishwarya Rai, Rajesh Khanna - YouTube - Google Chrome', 'Realtek Audio Console', 'New Tab - Brave', 'Stop over-complicating your interview prep. Here is the 2026 "No-BS" Senior DevOps Checklist. : r/devopsjobs - Google Chrome', 'Program Manager']
+2026-04-05 04:21:25 -> Window title        :
+2026-04-05 04:21:25 -> DropDown Menu - GlobalSQA - Google Chrome
+2026-04-05 04:21:26 -> Window focus        :
+2026-04-05 04:21:26 -> True
+2026-04-05 04:21:26 -> Window resize       :
+2026-04-05 04:21:26 -> True
+2026-04-05 04:21:27 -> Window move         :
+2026-04-05 04:21:27 -> True
+2026-04-05 04:21:27 -> Window minimize     :
+2026-04-05 04:21:27 -> True
+2026-04-05 04:21:27 -> Window maximize     :
+2026-04-05 04:21:27 -> True
+2026-04-05 04:21:27 -> ==============================
+2026-04-05 04:21:27 ->  File read tests
+2026-04-05 04:21:27 -> ==============================
+2026-04-05 04:21:27 -> Read txt            :
+2026-04-05 04:21:27 -> Hello AutoCore
+2026-04-05 04:21:27 -> Read json           :
+2026-04-05 04:21:27 -> {
+  "name": "Ash",
+  "tool": "AutoCore"
+}
+2026-04-05 04:21:27 -> Read csv            :
+2026-04-05 04:21:27 -> name	age
+------------------------------------------------------------
+>>>Row_1:	Chris	25
+>>>Row_2:	Bob	30
+2026-04-05 04:21:27 -> Error: Multiple files found with name 'test':
+2026-04-05 04:21:27 ->   - test.csv
+2026-04-05 04:21:27 ->   - test.json
+2026-04-05 04:21:27 ->   - test.txt
+2026-04-05 04:21:27 -> Please specify file extension.
+2026-04-05 04:21:27 -> Read auto detect    :
+2026-04-05 04:21:27 -> None
+2026-04-05 04:21:27 -> ==============================
+2026-04-05 04:21:27 ->  CSV to XLSX test
+2026-04-05 04:21:27 -> ==============================
+2026-04-05 04:21:27 -> Converted: convert_test.csv → convert_test.xlsx
+2026-04-05 04:21:27 -> CSV to XLSX         :
+2026-04-05 04:21:27 -> convert_test.xlsx
+2026-04-05 04:21:27 -> ==============================
+2026-04-05 04:21:27 ->  Wait tests
+2026-04-05 04:21:27 -> ==============================
+2026-04-05 04:21:27 -> Waiting:
+2026-04-05 04:21:27 -> ..3
+2026-04-05 04:21:28 -> ..2
+2026-04-05 04:21:29 -> ..1
+2026-04-05 04:21:30 -> Done
+2026-04-05 04:21:30 -> Wait countdown      :
+2026-04-05 04:21:30 -> True
+2026-04-05 04:21:33 -> Wait silent         :
+2026-04-05 04:21:33 -> True
+2026-04-05 04:21:33 -> ==============================
+2026-04-05 04:21:33 ->  Drag test
+2026-04-05 04:21:33 -> ==============================
+2026-04-05 04:21:36 -> Dragged from (200, 200) to (400, 400)
+2026-04-05 04:21:36 -> Drag result         :
+2026-04-05 04:21:36 -> True
+2026-04-05 04:21:36 -> ==============================
+2026-04-05 04:21:36 ->  Say test
+2026-04-05 04:21:36 -> ==============================
+2026-04-05 04:21:42 -> Spoken: AutoCore integration test under progress
+2026-04-05 04:21:44 -> Spoken: Testing volume
+2026-04-05 04:21:44 -> ==============================
+2026-04-05 04:21:44 ->  Press combinations test
+2026-04-05 04:21:44 -> ==============================
+2026-04-05 04:21:44 -> Press ctrl+a        :
+2026-04-05 04:21:44 -> True
+2026-04-05 04:21:44 -> Press ctrl+c        :
+2026-04-05 04:21:44 -> True
+2026-04-05 04:21:47 -> Press tab 3         :
+2026-04-05 04:21:47 -> True
+2026-04-05 04:21:51 -> Press shift+tab 3   :
+2026-04-05 04:21:51 -> True
+2026-04-05 04:21:51 -> ==============================
+2026-04-05 04:21:51 -> ==============================
+2026-04-05 04:21:51 -> All integration tests completed
+2026-04-05 04:21:51 -> ==============================
+2026-04-05 04:21:51 -> Script execution completed successfully

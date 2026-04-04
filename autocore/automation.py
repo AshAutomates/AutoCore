@@ -340,6 +340,7 @@ class _LogCapture:
         self.original_stream = original_stream
         self.logger = logger
         self.level = level
+        self._logging = False  # guard flag to prevent infinite recursion
 
     def write(self, message):
         # Write to original stream (terminal)
@@ -347,8 +348,13 @@ class _LogCapture:
         self.original_stream.flush()
 
         # Write to log file (strip to avoid double newlines)
-        if message.strip():
-            self.logger.log(self.level, message.rstrip())
+        # guard flag prevents recursive calls when logger itself triggers write()
+        if message.strip() and not self._logging:
+            self._logging = True  # block any further recursive calls
+            try:
+                self.logger.log(self.level, message.rstrip())
+            finally:
+                self._logging = False  # always release guard even if exception occurs
 
     def flush(self):
         self.original_stream.flush()
@@ -424,14 +430,25 @@ def browser(url, headless=False, implicit_wait=30, cookie_path=None):
     # Additional options to enhance realism and disable Selenium detection
     options.add_argument('start-maximized')  # Start browser maximized
     options.add_argument('--disable-blink-features=AutomationControlled')  # Disable automation flags
+    options.add_argument("--safebrowsing-disable-download-protection")  # allow unverified downloads
     options.add_experimental_option("excludeSwitches", ["enable-automation"])  # Exclude automation switches
     options.add_experimental_option('useAutomationExtension', False)  # Disable automation extension
+    options.add_argument("--disable-features=InsecureDownloadWarnings")  # disable insecure download warnings
+    options.add_argument("--disable-features=DownloadBubble")  # disable download bubble UI
+    options.add_argument("--no-sandbox")  # disable sandbox restrictions
+
 
     # Set preferences to avoid unnecessary pop-ups and block notifications
     prefs = {
-        "profile.default_content_setting_values.notifications": 2,
-        'credentials_enable_service': False,
-        'profile': {'password_manager_enabled': False}
+        "profile.default_content_setting_values.notifications": 2,  # block browser notification popups
+        'credentials_enable_service': False,  # disable save password popup
+        'profile': {'password_manager_enabled': False},  # disable password manager completely
+        "safebrowsing.enabled": False,  # disable safe browsing to allow downloads
+        "download.prompt_for_download": False,  # no download confirmation prompt
+        "download.directory_upgrade": True,  # allow download directory changes
+        "plugins.always_open_pdf_externally": True,  # download PDFs instead of opening in browser
+        "safebrowsing_for_trusted_sources_enabled": False,  # disable safe browsing for trusted sources
+        "safebrowsing.disable_download_protection": True,  # disable download protection completely
     }
     options.add_experimental_option("prefs", prefs)
 
@@ -1711,7 +1728,8 @@ def log_setup(title):
     _log_file_handler = _CustomRotatingFileNameHandler(
         log_filepath,
         maxBytes=10 * 1024 * 1024,  # 10MB
-        backupCount=9  # 10 files total (1 active + 9 backups) = 100MB
+        backupCount=9,  # 10 files total (1 active + 9 backups) = 100MB
+        encoding='utf-8'  # fixes UnicodeEncodeError for special characters
     )
 
     # Create formatter with timestamp
@@ -2945,13 +2963,13 @@ def screenshot(*args):
         return False
 
 
-def scroll(*args, duration=40):
+def scroll(*args, duration=30):
     """
     Universal scroll function for both PyAutoGUI and Selenium.
 
     Args:
         *args: Variable arguments (see examples below)
-        duration: Max seconds when scrolling to 'bottom'/'top' (default: 40)
+        duration: Max seconds when scrolling to 'bottom'/'top' (default: 30)
 
     PyAutoGUI Examples (scroll any window):
         scroll()                # Scroll down 1 time (default)
@@ -2959,9 +2977,9 @@ def scroll(*args, duration=40):
         scroll('down')          # Scroll down 1 time
         scroll('down', 10)      # Scroll down 10 times
         scroll('up', 5)         # Scroll up 5 times
-        scroll('bottom')        # Scroll down continuously for 40 seconds
+        scroll('bottom')        # Scroll down continuously for 30 seconds
         scroll('bottom', timeout=60)  # Scroll down continuously for 60 seconds
-        scroll('top')           # Scroll up continuously for 40 seconds
+        scroll('top')           # Scroll up continuously for 30 seconds
 
     Selenium Examples (pass driver object):
         scroll(driver)              # Scroll down 1 time in browser
@@ -3040,29 +3058,19 @@ def scroll(*args, duration=40):
                 print(f"[Selenium] Scrolling to bottom (timeout={duration}s)...")
                 start_time = time.time()
                 scrolls = 0
-                last_height = driver_obj.execute_script("return document.body.scrollHeight")
 
                 while time.time() - start_time < duration:
-                    # Scroll to bottom
-                    driver_obj.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                    driver_obj.execute_script("window.scrollBy(0, 1000);")
                     scrolls += 1
+                    time.sleep(1)
 
-                    # Wait for content to load (3 seconds)
-                    time.sleep(wait)
+                    new_height = driver_obj.execute_script("return document.documentElement.scrollHeight")
+                    scroll_position = driver_obj.execute_script("return window.pageYOffset + window.innerHeight")
 
-                    # Check new height
-                    new_height = driver_obj.execute_script("return document.body.scrollHeight")
-
-                    # If height unchanged, wait once more to confirm
-                    if new_height == last_height:
-                        time.sleep(wait)
-                        final_height = driver_obj.execute_script("return document.body.scrollHeight")
-
-                        if final_height == last_height:
-                            print(f"Reached bottom after {scrolls} scrolls ({time.time() - start_time:.1f}s)")
-                            return True
-
-                    last_height = new_height
+                    # Check if scroll position reached the bottom
+                    if scroll_position >= new_height:
+                        print(f"Reached bottom after {scrolls} scrolls ({time.time() - start_time:.1f}s)")
+                        return True
 
                     if scrolls % 10 == 0:
                         print(f"Scrolled {scrolls} times ({time.time() - start_time:.1f}s)")
