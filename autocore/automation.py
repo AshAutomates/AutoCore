@@ -4207,27 +4207,36 @@ def zoom(*args):
 
     Value Logic:
         - -9 to +9: Zoom steps (Ctrl+/Ctrl-)
-        - 100: Reset to default/100%
+        - 100 or 0: Reset to default/100%
         - Outside range (except 100): Percentage (Selenium only)
 
     Examples:
         # PyAutoGUI (desktop apps)
         zoom(3)              # Zoom in 3 steps
         zoom(-5)             # Zoom out 5 steps
-        zoom(100)            # Reset to default (Ctrl+0)
+        zoom(100) or zoom(0) # Reset to default (Ctrl+0)
+        When zoom in/out is performed using UI (Ctrl and +/-) in Chrome,
+        The min %, zoom states % and max % follow this order:
+            (25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500)
 
         # Selenium (browser) - Steps
-        zoom(driver, 3)      # Zoom in 3 steps
-        zoom(driver, -5)     # Zoom out 5 steps
+        zoom(driver, 3)      # Zoom in current  + 3 * 10%
+        zoom(driver, -5)     # Zoom out current - 5 * 10%
 
         # Selenium (browser) - Reset
         zoom(driver, 100)    # Reset to 100%
+        zoom(driver, 0)      # Reset to 100%
 
         # Selenium (browser) - Percentage
         zoom(driver, 150)    # Set zoom to 150%
         zoom(driver, 75)     # Set zoom to 75%
         zoom(driver, 50)     # Set zoom to 50%
         zoom(driver, 200)    # Set zoom to 200%
+
+    Note: If zoom is performed using selenium mode,
+         then the current zoom percent state is not shown in
+         url bar as search glass icon or
+         in chrome kebab menu as Zoom info.
 
     Returns:
         True if successful, False otherwise
@@ -4253,7 +4262,7 @@ def zoom(*args):
 
     # PyAutoGUI restrictions
     if not use_driver and value != 100 and abs(value) > 9:
-        raise ValueError("PyAutoGUI mode supports steps (-9 to +9) or reset (100)")
+        raise ValueError("PyAutoGUI mode supports steps (-9 to +9) or reset (100) or (0)")
 
     try:
         if use_driver:
@@ -4261,27 +4270,28 @@ def zoom(*args):
             # SELENIUM MODE
             # ============================================================
 
-            # Special case: 100 = Reset
-            if value == 100:
+            # Special case: 100 or 0 = Reset
+            if value == 100 or value == 0:
                 driver_obj.execute_script("document.body.style.zoom='100%'")
                 print("Zoom reset to 100%")
                 return True
 
             # Steps: -9 to +9
             elif -9 <= value <= 9:
+                # Get current zoom level
+                current_zoom = driver_obj.execute_script("return document.body.style.zoom || '100%'")
+                current_zoom = int(current_zoom.replace('%', '')) if current_zoom else 100
+
                 if value > 0:
-                    # Zoom in
-                    for _ in range(value):
-                        driver_obj.find_element(By.TAG_NAME, 'body').send_keys(Keys.CONTROL, Keys.ADD)
-                        time.sleep(0.3)
-                    print(f"Zoomed in {value} step(s)")
+                    new_zoom = current_zoom + (value * 10)  # each step = 10%
+                    driver_obj.execute_script(f"document.body.style.zoom='{new_zoom}%'")
+                    print(f"Zoomed in {value} step(s) - zoom: {new_zoom}%")
                 elif value < 0:
-                    # Zoom out
                     steps = abs(value)
-                    for _ in range(steps):
-                        driver_obj.find_element(By.TAG_NAME, 'body').send_keys(Keys.CONTROL, Keys.SUBTRACT)
-                        time.sleep(0.3)
-                    print(f"Zoomed out {steps} step(s)")
+                    new_zoom = current_zoom - (steps * 10)  # each step = 10%
+                    new_zoom = max(10, new_zoom)  # minimum 10% zoom
+                    driver_obj.execute_script(f"document.body.style.zoom='{new_zoom}%'")
+                    print(f"Zoomed out {steps} step(s) - zoom: {new_zoom}%")
                 return True
 
             # Percentage: Outside -9 to +9 (excluding 100)
@@ -4298,8 +4308,8 @@ def zoom(*args):
             # PYAUTOGUI MODE (desktop apps)
             # ============================================================
 
-            # Special case: 100 = Reset
-            if value == 100:
+            # Special case: 100 or 0 = Reset
+            if value == 100 or value == 0:
                 pyautogui.hotkey('ctrl', '0')
                 print("Zoom reset to default")
                 return True

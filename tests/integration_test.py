@@ -163,8 +163,8 @@ print(30 * '=')
 # ============================================================
 print(" Wait download test ")
 print(30 * '=')
-dr = browser('https://www.python.org/downloads/')
-click(dr, 'partial', 'Download Python install manager')
+dr.get('https://docs.python.org/3/download.html')
+click(dr, 'xpath', "(//a[contains(text(),'Download')])[4]")
 print("Wait download       :", wait_download(5))
 print(30 * '=')
 
@@ -173,8 +173,9 @@ print(30 * '=')
 # ============================================================
 print(" Find browser test ")
 print(30 * '=')
-print("Find browser selenium :", find_browser(dr, 'contribute'))
-print("Find browser pyautogui:", find_browser('prize'))
+click(dr, 'text', "modules")
+print("Find browser selenium :", find_browser(dr, 'marshal'))
+print("Find browser pyautogui:", find_browser('argparse'))
 print(30 * '=')
 
 # ============================================================
@@ -253,8 +254,8 @@ print(30 * '=')
 # ============================================================
 print(" Say test ")
 print(30 * '=')
-say("AutoCore integration test under progress")
-say("Testing volume", volume=0.5)
+say("Testing volume 50%", volume=0.5)
+say("AutoCore voice test done")
 print(30 * '=')
 
 # ============================================================
