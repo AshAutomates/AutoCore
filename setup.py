@@ -46,6 +46,7 @@ setup(
         "odfpy",
         "extract-msg",
         "striprtf",
+        "requests",
         "pyttsx3",
         "pyyaml",
     ],

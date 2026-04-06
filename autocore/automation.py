@@ -18,6 +18,7 @@ import logging
 import os
 import platform
 import re
+import requests
 import sqlite3
 import subprocess
 import sys
@@ -3177,7 +3178,7 @@ def wait(*args, countdown=True):
         wait(driver, 'class', 'content', 30, countdown=False)  # Wait silently for 30s
 
         # Wait for color at pixel
-        wait(100, 200, 255, 0, 0)            # Wait for red at (100,200) with countdown
+        wait(100, 200, 255, 0, 0)            # Wait for red (255,0,0) at (100,200) with countdown
         wait(100, 200, 255, 0, 0, 30)        # Wait for red, max 30s with countdown
         wait(500, 300, 0, 255, 0, 60, countdown=False)  # Wait silently
 
@@ -3309,37 +3310,113 @@ def wait(*args, countdown=True):
         raise ValueError("Invalid arguments for wait()")
 
 
-def wait_download(timeout_in_min=20, download_dir=None):
+def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None):
     """
-    Waits for a download to complete by monitoring the downloads folder.
+    This function operates in two modes:
 
+        1. URL mode (url provided): Downloads file directly using requests. Useful for
+          file types blocked by browsers (.exe, .msix, .msi, etc.). File is saved to
+          Python's current working directory.
+
+        2. Monitor mode (url not provided): Monitors the downloads folder for a
+          browser-initiated download to complete.
     Args:
         timeout_in_min: Maximum minutes to wait for download completion
-        download_dir: Custom download directory (optional)
+
+        url: Direct download URL (optional)
+            - If provided: Downloads file directly via requests
+            - If None: Monitors downloads folder for browser-initiated download
+
+        filename: Custom filename to save/rename the downloaded file (optional)
+            - With extension (e.g. "myapp.exe")  → used as-is
+            - Without extension (e.g. "myapp")   → extension borrowed from original file
+            - If None: Original filename is kept
+            - If multiple files are downloaded, only the first completed file is renamed
+
+        download_dir: Custom download directory to monitor (monitor mode only, optional)
             - If provided: Uses specified path
-            - If None: Auto-detects (checks env var, Docker, then default)
+            - If None: Auto-detects (checks env var, Docker, then ~/Downloads)
 
     Environment Variables:
-        DOWNLOAD_DIR: Custom download directory path
+        DOWNLOAD_DIR: Custom download directory path (monitor mode only)
 
     Returns:
-        True if download completed, False if timeout
+        str: Final filename of the downloaded file (always includes extension) on success
+        False: On failure (download error, timeout, directory access issue, etc.)
 
     Examples:
-        wait_download(5)                           # Auto-detect download folder
-        wait_download(10, '/downloads')            # Docker with custom path
-        wait_download(5, 'D:/MyDownloads')         # Windows custom path
-        wait_download(3, '/home/user/Downloads')   # Linux custom path
+        wait_download(5)                                                 # Monitor downloads folder
+        wait_download(url='https://abc.com/file.msix')                   # Direct download via URL
+        wait_download(url='https://abc.com/file.msix', filename='myapp') # Custom name, borrows extension
+        wait_download(5, filename='our_log.txt')                         # Monitor and rename on completion
+        wait_download(10, download_dir='/downloads')                     # Docker with custom path
+        wait_download(5, download_dir='D:/MyDownloads')                  # Windows custom path
 
     Note: If a file was modified within the last 20 seconds before calling this function,
-    it will be detected as a recently completed download and the function will return True
+    it will be detected as a recently completed download and the function will return
     immediately. This handles cases where downloads complete very quickly (before monitoring starts).
-
     """
 
+    def _resolve_final_filename(custom_name, original_name):
+        """Resolve the final filename, borrowing extension from original if custom name has none."""
+        if custom_name is None:
+            return original_name
+        original_ext = os.path.splitext(original_name)[1]
+        custom_base, custom_ext = os.path.splitext(custom_name)
+        return custom_name if custom_ext else custom_base + original_ext
+
+    def _rename_if_needed(directory, original_name, final_name):
+        """Rename the downloaded file if a custom filename was provided."""
+        if final_name != original_name:
+            os.rename(
+                os.path.join(directory, original_name),
+                os.path.join(directory, final_name)
+            )
+            print(f'"{original_name}" renamed to "{final_name}"')
+
+    def _format_size(bytes_count):
+        """Convert bytes to a human-readable MB string."""
+        return f"{bytes_count / (1024 * 1024):.1f} MB"
+
+    # ============================================================
+    # MODE 1 — Direct download via requests
+    # ============================================================
+    if url is not None:
+        try:
+            original_filename = url.split('/')[-1].split('?')[0]
+            final_filename = _resolve_final_filename(filename, original_filename)
+            print(f"Downloading: {final_filename}")
+            response = requests.get(url, stream=True, timeout=30)  # 30s for connection/chunk timeout
+            response.raise_for_status()
+            deadline = time.time() + (timeout_in_min * 60)  # enforce total download time limit
+            download_start = time.time()
+            last_print_time = 0
+            total_bytes = 0
+            with open(final_filename, 'wb') as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if time.time() > deadline:
+                        print(f"Timeout after {timeout_in_min} minutes while downloading '{final_filename}'")
+                        return False
+                    f.write(chunk)
+                    total_bytes += len(chunk)
+                    elapsed_sec = int(time.time() - download_start)
+                    # Print progress every 10 seconds
+                    if elapsed_sec - last_print_time >= 10:
+                        elapsed = str(datetime.timedelta(seconds=elapsed_sec))
+                        print(f"Downloading... {elapsed} elapsed ({_format_size(total_bytes)})")
+                        last_print_time = elapsed_sec
+            print(f"Downloaded file saved at: {os.path.abspath(final_filename)}")
+            return final_filename
+        except Exception as e:
+            print(f"Could not download file: {e}")
+            return False
+
+    # ============================================================
+    # MODE 2 — Monitor browser downloads folder
+    # ============================================================
     timeout_in_sec = timeout_in_min * 60
 
-    # Determine download directory with smart detection
+    # Resolve download directory — argument > env var > Docker > ~/Downloads
     if download_dir is not None:
         download_dir = str(download_dir)
     elif os.getenv('DOWNLOAD_DIR'):
@@ -3351,7 +3428,7 @@ def wait_download(timeout_in_min=20, download_dir=None):
     else:
         download_dir = str(Path.home() / "Downloads")
 
-    # Validate directory exists
+    # Ensure the download directory exists
     if not os.path.exists(download_dir):
         print(f"Warning: Download directory does not exist: {download_dir}")
         print(f"Attempting to create it...")
@@ -3364,21 +3441,19 @@ def wait_download(timeout_in_min=20, download_dir=None):
 
     print(f'Monitoring downloads in: {download_dir}')
 
-    # Temporary file extensions for different browsers
+    # Temporary file extensions used by different browsers while downloading
     temp_extensions = ('.crdownload', '.part', '.download', '.tmp', '.temp')
 
-    # Get initial state and timestamp
+    # Snapshot the initial state of the downloads folder before monitoring begins
     try:
         initial_files = set(os.listdir(download_dir))
         initial_temp_files = set([f for f in initial_files if f.endswith(temp_extensions)])
-        function_start_time = time.time()
 
-        # Get initial sizes of existing temp files
+        # Record sizes of any temp files that already exist, to detect if they are actively downloading
         initial_temp_sizes = {}
         for f in initial_temp_files:
             try:
-                file_path = os.path.join(download_dir, f)
-                initial_temp_sizes[f] = os.path.getsize(file_path)
+                initial_temp_sizes[f] = os.path.getsize(os.path.join(download_dir, f))
             except Exception as e:
                 print(f"Could not get file size of {f}: {e}")
 
@@ -3386,157 +3461,178 @@ def wait_download(timeout_in_min=20, download_dir=None):
         print(f"Error accessing download directory: {e}")
         return False
 
-    # Wait 10 seconds before checking
+    # Wait 10 seconds before first check to allow download to start
     print("Checking for active downloads...")
     time.sleep(10)
 
-    # Check for recently downloaded files (within last 20 seconds)
+    # Check if a file was already downloaded quickly (modified within last 20 seconds)
     try:
         current_files_after_wait = set(os.listdir(download_dir))
         current_time = time.time()
 
-        # Look for files modified in last 20 seconds
         recent_files = []
         for f in current_files_after_wait:
             if not f.endswith(temp_extensions):
                 try:
-                    file_path = os.path.join(download_dir, f)
-                    mtime = os.path.getmtime(file_path)
+                    mtime = os.path.getmtime(os.path.join(download_dir, f))
                     age = current_time - mtime
-
-                    # File modified in last 20 seconds
                     if age <= 20:
                         recent_files.append((f, age))
                 except Exception as e:
                     print(f"Could not get modification time of {f}: {e}")
 
         if recent_files:
-            # Sort by age (most recent first)
-            recent_files.sort(key=lambda x: x[1])
+            recent_files.sort(key=lambda x: x[1])  # sort by age, most recent first
             most_recent_file, age = recent_files[0]
-
-            print(f"Quick download detected: '{most_recent_file}' (modified {int(age)} seconds ago)")
-            print("Download already completed")
-            return True
+            final_filename = _resolve_final_filename(filename, most_recent_file)
+            _rename_if_needed(download_dir, most_recent_file, final_filename)
+            print(f"Quick download detected: '{final_filename}' (modified {int(age)} seconds ago)")
+            print(f"Downloaded file saved at: {os.path.join(download_dir, final_filename)}")
+            return final_filename
 
     except Exception as e:
         print(f"Error checking for recent files: {e}")
 
-    download_time = 10  # Already waited 10 seconds
+    download_time = 10  # already waited 10 seconds above
     last_print_time = 0
     download_started = False
     monitoring_files = set()
+    completed_files_so_far = []      # tracks files already reported as completed mid-session
+    filename_used = False            # ensures filename rename only applies to first completed file
 
     while download_time < timeout_in_sec:
         try:
             current_files = set(os.listdir(download_dir))
             current_temp_files = set([f for f in current_files if f.endswith(temp_extensions)])
 
-            # Get current sizes of temp files
+            # Get current sizes of all active temp files
             current_temp_sizes = {}
             for f in current_temp_files:
                 try:
-                    file_path = os.path.join(download_dir, f)
-                    current_temp_sizes[f] = os.path.getsize(file_path)
+                    current_temp_sizes[f] = os.path.getsize(os.path.join(download_dir, f))
                 except Exception as e:
                     print(f"Could not get file size of {f}: {e}")
 
-            # Find NEW temp files (appeared after function started)
             new_temp_files = current_temp_files - initial_temp_files
 
-            # Check if OLD temp files are still active (size changed)
-            active_old_temp_files = set()
+            # On the first pass (10s mark), check if any pre-existing temp files are actively growing
             if download_time == 10:
+                active_old_temp_files = set()
                 for f in initial_temp_files:
                     if f in current_temp_sizes and f in initial_temp_sizes:
                         if current_temp_sizes[f] != initial_temp_sizes[f]:
-                            # File size changed - it's actively downloading
                             active_old_temp_files.add(f)
                             monitoring_files.add(f)
 
                 if active_old_temp_files:
                     download_started = True
-                    # Show full filenames (including extension)
                     if len(active_old_temp_files) == 1:
                         print(f"Active download detected: '{list(active_old_temp_files)[0]}'")
                     else:
-                        print(
-                            f"{len(active_old_temp_files)} active downloads detected: {', '.join(active_old_temp_files)}")
+                        print(f"{len(active_old_temp_files)} active downloads detected: {', '.join(active_old_temp_files)}")
 
-            # Track new temp files
+            # Track any brand new temp files that appeared after monitoring started
             if new_temp_files:
-                # Check if these are truly new (not already in monitoring_files)
                 truly_new = new_temp_files - monitoring_files
-
                 if truly_new:
                     if not download_started:
                         download_started = True
-
                     monitoring_files.update(truly_new)
-
-                    # Show full filenames (including extension)
                     if len(truly_new) == 1:
                         print(f"New download started: '{list(truly_new)[0]}'")
                     else:
                         print(f"{len(truly_new)} new downloads started: {', '.join(truly_new)}")
 
-            # Get all files we're monitoring (old active + new)
+            # Check for any newly completed files — catches mid-session completions including
+            # small files that complete too quickly for temp file tracking to catch
+            newly_completed = [
+                f for f in (current_files - initial_files)
+                if not f.endswith(temp_extensions)
+                and f not in completed_files_so_far
+            ]
+            for f in newly_completed:
+                elapsed = str(datetime.timedelta(seconds=download_time))
+                if not filename_used:
+                    final_name = _resolve_final_filename(filename, f)
+                    _rename_if_needed(download_dir, f, final_name)
+                    filename_used = True
+                else:
+                    final_name = f
+                    if filename is not None:
+                        print(f'"{f}" kept original name (filename only applies to first file)')
+                print(f"Download completed: '{final_name}' (took {elapsed})")
+                completed_files_so_far.append(final_name)
+
             all_monitoring = (current_temp_files & monitoring_files) | new_temp_files
 
             if all_monitoring:
-                # Print progress every 10 seconds
+                # Still downloading — print progress every 10 seconds with size of each file
                 if download_time - last_print_time >= 10:
                     elapsed = str(datetime.timedelta(seconds=download_time))
-                    # Show full filenames
                     if len(all_monitoring) == 1:
-                        print(f"Waiting for '{list(all_monitoring)[0]}' to finish downloading... (elapsed: {elapsed})")
+                        f = list(all_monitoring)[0]
+                        size_str = _format_size(current_temp_sizes.get(f, 0))
+                        print(f"Downloading... {elapsed} elapsed ({size_str})")
                     else:
-                        print(
-                            f"Waiting for {len(all_monitoring)} files to finish downloading: {', '.join(all_monitoring)} (elapsed: {elapsed})")
+                        size_parts = ', '.join(
+                            f"{f}: {_format_size(current_temp_sizes.get(f, 0))}"
+                            for f in all_monitoring
+                        )
+                        print(f"Downloading... {elapsed} elapsed ({size_parts})")
                     last_print_time = download_time
 
             elif download_started:
-                # Temp files disappeared - download completed
-                # Find new complete files
+                # All temp files are gone — find any remaining unreported completed files
                 new_files = current_files - initial_files
-                completed_files = [f for f in new_files if not f.endswith(temp_extensions)]
+                remaining_completed = [
+                    f for f in new_files
+                    if not f.endswith(temp_extensions)
+                    and f not in completed_files_so_far
+                ]
 
-                if completed_files:
+                if remaining_completed:
                     elapsed = str(datetime.timedelta(seconds=download_time))
-                    if len(completed_files) == 1:
-                        print(f"Download completed: '{completed_files[0]}' (took {elapsed})")
-                    else:
-                        print(f"{len(completed_files)} downloads completed in {elapsed}:")
-                        for f in completed_files:
-                            print(f"  - {f}")
-                    return True
+                    for f in remaining_completed:
+                        if not filename_used:
+                            final_name = _resolve_final_filename(filename, f)
+                            _rename_if_needed(download_dir, f, final_name)
+                            filename_used = True
+                        else:
+                            final_name = f
+                            if filename is not None:
+                                print(f'"{f}" kept original name (filename only applies to first file)')
+                        print(f"Download completed: '{final_name}' (took {elapsed})")
+                        completed_files_so_far.append(final_name)
+
+                    # Return the first completed file as the primary result
+                    primary = completed_files_so_far[0]
+                    print(f"Downloaded file saved at: {os.path.join(download_dir, primary)}")
+                    return primary
                 else:
-                    # No new files found, keep waiting
+                    # Temp files gone but no completed file found yet — keep waiting briefly
                     if download_time - last_print_time >= 10:
                         elapsed = str(datetime.timedelta(seconds=download_time))
                         print(f"Verifying download... (elapsed: {elapsed})")
                         last_print_time = download_time
 
             else:
-                # No downloads detected yet - check for recently downloaded files every 10 seconds
+                # No download detected yet — no size to report, just print elapsed time
                 if download_time - last_print_time >= 10:
-                    # Check if any file was recently downloaded
-                    recent_complete_files = []
-
-                    for f in current_files:
-                        if not f.endswith(temp_extensions) and f not in initial_files:
-                            recent_complete_files.append(f)
+                    recent_complete_files = [
+                        f for f in current_files
+                        if not f.endswith(temp_extensions) and f not in initial_files
+                    ]
 
                     if recent_complete_files:
-                        # Found recently downloaded file
-                        most_recent_file = recent_complete_files[0]
-
-                        print(f"Quick download detected: '{most_recent_file}'")
-                        print("Download already completed")
-                        return True
+                        original_name = recent_complete_files[0]
+                        final_filename = _resolve_final_filename(filename, original_name)
+                        _rename_if_needed(download_dir, original_name, final_filename)
+                        print(f"Quick download detected: '{final_filename}'")
+                        print(f"Downloaded file saved at: {os.path.join(download_dir, final_filename)}")
+                        return final_filename
 
                     elapsed = str(datetime.timedelta(seconds=download_time))
-                    print(f"Waiting for download to start... (elapsed: {elapsed})")
+                    print(f"Waiting for download to start... {elapsed} elapsed")
                     last_print_time = download_time
 
         except Exception as e:
@@ -3546,20 +3642,26 @@ def wait_download(timeout_in_min=20, download_dir=None):
         time.sleep(1)
         download_time += 1
 
-    # Timeout reached
+    # Report any files that completed mid-session before the timeout
+    if completed_files_so_far:
+        if len(completed_files_so_far) == 1:
+            print(f"Note: 1 file completed during session: '{list(completed_files_so_far)[0]}'")
+        else:
+            print(f"Note: {len(completed_files_so_far)} files completed during session:")
+            for f in completed_files_so_far:
+                print(f"  - {f}")
+
+    # Timeout reached — report what was still in progress if anything
     if monitoring_files or download_started:
-        # Check what's still downloading
         current_files = set(os.listdir(download_dir))
         current_temp_files = set([f for f in current_files if f.endswith(temp_extensions)])
         still_downloading = current_temp_files & monitoring_files
 
         if still_downloading:
             if len(still_downloading) == 1:
-                print(
-                    f"Timeout after {timeout_in_min} minutes while waiting for '{list(still_downloading)[0]}' to complete")
+                print(f"Timeout after {timeout_in_min} minutes while waiting for '{list(still_downloading)[0]}' to complete.")
             else:
-                print(
-                    f"Timeout after {timeout_in_min} minutes while waiting for {len(still_downloading)} files: {', '.join(still_downloading)}")
+                print(f"Timeout after {timeout_in_min} minutes while waiting for {len(still_downloading)} files: {', '.join(still_downloading)}")
         else:
             print(f'Timeout after {timeout_in_min} minutes. Download status unclear.')
     else:
@@ -3571,8 +3673,6 @@ def wait_download(timeout_in_min=20, download_dir=None):
 def wait_retry(x_wait, y_wait, target, timeout=90, x_retry_click=None, y_retry_click=None, tolerance=0,
                wait_interval=3):
     """
-    This fucntion was earlier named as wait, but as we have created a new wait by replacing delay,
-    we are renaming this one to wait_retry()
 
     Waits for a specific color or a phrase at a screen location. Optionally clicks another location if not found.
 

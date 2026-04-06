@@ -101,7 +101,7 @@ All functions are available directly without any prefix.
 | `scroll(...)` | Scroll up, down, to top, or to bottom |
 | `second()` | Current second (0-59) |
 | `wait(...)` | Wait with countdown, wait for element, or wait for color |
-| `wait_download(...)` | Wait for a file download to complete |
+| `wait_download(...)` | Wait for download to complete or download directly via URL |
 | `window(...)` | List, focus, close, minimize, maximize, resize, or move windows |
 | `write(...)` | Type text in active window or web element |
 | `year()` | Current year |
