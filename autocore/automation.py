@@ -29,10 +29,8 @@ import xml.etree.ElementTree as et
 from difflib import get_close_matches
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
-from typing import cast, Tuple, Optional
 
 # Third-party imports - Image processing
-import cv2  # pip install opencv-python
 import numpy as np
 from PIL import Image, ImageTk
 
@@ -41,9 +39,6 @@ import pyautogui
 import pyperclip
 import keyboard
 
-# Third-party imports - OCR
-import easyocr  # pip install "numpy<2" easyocr
-
 # Third-party imports - Web scraping & parsing
 from bs4 import BeautifulSoup
 
@@ -51,12 +46,10 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import *
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from webdriver_manager.chrome import ChromeDriverManager
 
 # Third-party imports - Windows automation
 if platform.system() == "Windows":
@@ -87,7 +80,7 @@ sys.setrecursionlimit(1500)
 pyautogui.FAILSAFE = True
 
 # Global variables to track logging state
-_log_file_handler: Optional[RotatingFileHandler] = None
+_log_file_handler: RotatingFileHandler | None = None
 _original_stdout = None
 _original_stderr = None
 _log_folder: Path = Path("logs")
@@ -99,6 +92,8 @@ def _preprocess_for_ocr(image):
     Preprocess image for better OCR accuracy.
     Accepts numpy array, returns cleaned binary image ready for EasyOCR.
     """
+    import cv2  # pip install opencv-python
+
     gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     gray_image = cv2.resize(gray_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
     denoised = cv2.fastNlMeansDenoising(gray_image, h=10)
@@ -131,6 +126,8 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
         # RHEL/CentOS/Fedora
         sudo yum install scrot
     """
+    import cv2  # pip install opencv-python
+
     click_count = 0
 
     try:
@@ -219,6 +216,9 @@ def _get_ocr_reader():
     On first run, downloads OCR models (~100MB) and prints status messages.
     Subsequent runs load instantly from cache.
     """
+    # Third-party imports - OCR
+    import easyocr  # pip install "numpy<2" easyocr
+
     if not hasattr(_get_ocr_reader, 'reader'):
         try:
             print("Initializing OCR engine (first run downloads models, please wait)...")
@@ -559,6 +559,7 @@ def click(*where):
     Returns:
         True if successful, False otherwise
     """
+    import cv2  # pip install opencv-python
 
     # Check if first argument is a WebDriver object
     if len(where) > 0 and hasattr(where[0], 'find_element'):
@@ -696,6 +697,8 @@ def click_right(*where):
     Returns:
         True if successful, False otherwise
     """
+
+    import cv2  # pip install opencv-python
 
     # Check if first argument is a WebDriver object
     if len(where) > 0 and hasattr(where[0], 'find_element'):
@@ -3320,6 +3323,7 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
 
         2. Monitor mode (url not provided): Monitors the downloads folder for a
           browser-initiated download to complete.
+
     Args:
         timeout_in_min: Maximum minutes to wait for download completion
 
