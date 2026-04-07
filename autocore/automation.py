@@ -3670,60 +3670,6 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
     return False
 
 
-def wait_retry(x_wait, y_wait, target, timeout=90, x_retry_click=None, y_retry_click=None, tolerance=0,
-               wait_interval=3):
-    """
-
-    Waits for a specific color or a phrase at a screen location. Optionally clicks another location if not found.
-
-    Args:
-        x_wait, y_wait: Coordinates to check for the color/phrase.
-        target: RGB color (tuple) or phrase (string) to match.
-        timeout: Time in seconds to wait before giving up (default 90 seconds).
-        x_retry_click, y_retry_click: Optional coordinates to click if the color/phrase is not found.
-        tolerance: The tolerance for color matching (default is 0).
-        wait_interval: Time in seconds to wait between checks (default 3 seconds).
-
-    Returns:
-        True if the color/phrase is found, False if not found within the timeout.
-
-    Example:
-        wait(300, 300, (255, 0, 0)) # wait for a color at a coordinate
-        wait(300, 300, "test") # wait for a string at a coordinate
-        wait(300, 300, "test", 30) # wait for a string at a coordinate with timeout 30 sec
-        wait(300, 300, "test", 30, 1500, 1500) # timeout 30 sec,click at another coordinate if not found as a retry
-        wait(300, 300, "test", x_retry_click=1500, y_retry_click=1500) # default timeout, retry coordinate present
-        wait(300, 300, "test", 60, wait_interval=10) # wait for string with timeout 60 sec and check every 10 sec
-        wait(300, 300, (255, 0, 0), tolerance=20) # wait for colour with tolerance of 20
-    """
-    end_time = time.time() + timeout
-    while True:
-        current_time = time.time()
-        if current_time > end_time:
-            break
-
-        if isinstance(target, tuple):
-            rgb_color = cast(Tuple[int, int, int], target)
-            if pyautogui.pixelMatchesColor(x_wait, y_wait, rgb_color, tolerance=tolerance):
-                print(f"Color {rgb_color} found at ({x_wait}, {y_wait}).")
-                return True
-
-        elif isinstance(target, str):
-            page_content = copy(x_wait, y_wait)  # Ensure 'copy' function is defined
-            if target in page_content:
-                print(f"Phrase '{target}' found.")
-                return True
-
-        if x_retry_click is not None and y_retry_click is not None:
-            pyautogui.click(x_retry_click, y_retry_click)
-
-        remaining_time = int(end_time - current_time)
-        print(f"Waiting. Time remaining: {remaining_time} seconds", end='\r')
-        time.sleep(wait_interval)
-
-    print(f"\nTimeout reached. Target not found.")
-    return False
-
 def window(action=None, target=None, *args):
     """
     Unified window management function for Windows and Linux.
