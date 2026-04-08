@@ -41,6 +41,56 @@ print("find_key name  :", find_key(data, 'name'))  # expected: ['Ash', 'Bob']
 print(30 * '=')
 
 # ============================================================
+#  FILE READ TESTS
+# ============================================================
+print(" File read tests")
+print(30 * '=')
+with open('test.txt', 'w') as f:
+    f.write('Hello AutoCore')
+print("Read txt            :", read('test.txt'))
+
+with open('test.json', 'w') as f:
+    json.dump({'name': 'Ash', 'tool': 'AutoCore'}, f)
+print("Read json           :", read('test.json'))
+
+with open('test.csv', 'w') as f:
+    f.write('name,age\nChris,25\nBob,30')
+print("Read csv            :", read('test.csv'))
+
+print("Read auto detect    :", read('test'))
+print(30 * '=')
+
+# ============================================================
+#  CSV TO XLSX TEST
+# ============================================================
+print(" CSV to XLSX test ")
+print(30 * '=')
+with open('convert_test.csv', 'w') as f:
+    f.write('name,age\nChris,25\nBob,30')
+print("CSV to XLSX         :", csv_to_xlsx('convert_test.csv', delete_csv=False))
+print(30 * '=')
+
+# ============================================================
+#  WAIT TESTS
+# ============================================================
+print(" Wait tests ")
+print(30 * '=')
+print("Wait countdown      :", wait(3))
+print("Wait silent         :", wait(3, countdown=False))
+print(30 * '=')
+
+
+
+# ============================================================
+#  SAY TEST (requires speakers)
+# ============================================================
+print(" Say test ")
+print(30 * '=')
+say("Testing volume 50%", volume=0.5)
+say("AutoCore voice test done")
+print(30 * '=')
+
+# ============================================================
 #  OCR TEST
 # ============================================================
 print(" OCR test ")
@@ -57,8 +107,8 @@ print("Screenshot tests ")
 print(30 * '=')
 screenshot()
 screenshot('test_full.png')
-screenshot(0, 0, 500, 300)
-screenshot(0, 0, 500, 300, 'test_region.png')
+screenshot(0, 0, 500, 500)
+screenshot(0, 0, 500, 300, 'test_region_with_custom_name.png')
 print(30 * '=')
 
 # ============================================================
@@ -106,6 +156,8 @@ print(" Selenium click tests ")
 print(30 * '=')
 print("Click selenium      :", click(dr, 'text', 'Music'))
 print("Click selenium      :", click(dr2, 'text', 'Music'))
+time.sleep(3)
+screenshot(dr2, "headless browser after click test")
 print(30 * '=')
 
 # ============================================================
@@ -117,6 +169,8 @@ print("Write result        :", write(dr, 'name', "search_query", "New song"))
 print("Write result        :", write(dr2, 'name', "search_query", "New song"))
 print("Press result        :", press(dr, 'enter'))
 print("Press result        :", press(dr2, 'enter'))
+time.sleep(3)
+screenshot(dr2, "headless browser after Write & Press test")
 print(30 * '=')
 
 # ============================================================
@@ -126,6 +180,8 @@ print(" Erase test ")
 print(30 * '=')
 erase(dr, 'name', "search_query")
 erase(dr2, 'name', "search_query")
+time.sleep(3)
+screenshot(dr2, "headless browser after erase test")
 print(30 * '=')
 
 # ============================================================
@@ -138,10 +194,12 @@ print("Scroll up 2         :", scroll(dr, 'up', 2))
 print("Scroll top       :", scroll(dr, 'top'))
 print("Scroll bottom          :", scroll(dr, 'bottom'))
 
-print("Scroll down 3       :", scroll(dr2, 'down', 3))
-print("Scroll up 2         :", scroll(dr2, 'up', 2))
-print("Scroll top       :", scroll(dr2, 'top'))
-print("Scroll bottom          :", scroll(dr2, 'bottom'))
+print("Scroll headless down 3       :", scroll(dr2, 'down', 3))
+print("Scroll headless up 2         :", scroll(dr2, 'up', 2))
+print("Scroll headless to top       :", scroll(dr2, 'top'))
+print("Scroll headless to bottom          :", scroll(dr2, 'bottom'))
+time.sleep(3)
+screenshot(dr2, "headless browser after scroll test")
 print(30 * '=')
 
 # ============================================================
@@ -153,40 +211,13 @@ print("Zoom in 3           :", zoom(dr, 3))
 print("Zoom out 3          :", zoom(dr, -3))
 print("Zoom reset          :", zoom(dr, 100))
 
-print("Zoom in 3           :", zoom(dr2, 3))
-print("Zoom out 3          :", zoom(dr2, -3))
-print("Zoom reset          :", zoom(dr2, 100))
+print("Zoom in headless 3     :", zoom(dr2, 3))
+print("Zoom out headless 3    :", zoom(dr2, -3))
+print("Zoom reset headless    :", zoom(dr2, 100))
+time.sleep(3)
+screenshot(dr2, "headless browser after zoom test")
 print(30 * '=')
 
-# ============================================================
-#  WAIT DOWNLOAD TEST
-# ============================================================
-print(" Wait download test ")
-print(30 * '=')
-dr.get('https://docs.python.org/3/download.html')
-click(dr, 'xpath', "(//a[contains(text(),'Download')])[4]")
-print("Wait download       :", wait_download(5))
-print(30 * '=')
-
-# ============================================================
-# FIND BROWSER TEST
-# ============================================================
-print(" Find browser test ")
-print(30 * '=')
-click(dr, 'text', "modules")
-print("Find browser selenium :", find_browser(dr, 'marshal'))
-print("Find browser pyautogui:", find_browser('argparse'))
-print(30 * '=')
-
-# ============================================================
-#  DROPDOWN TEST
-# ============================================================
-print(" Dropdown test ")
-print(30*'=')
-dr.get("https://www.globalsqa.com/demo-site/select-dropdown-menu/")
-print("Dropdown result     :", dropdown_select(dr, 'xpath', "(//select)[1]" , 'United States'))
-wait(3)
-print(30*'=')
 
 # ============================================================
 #  WINDOW TESTS
@@ -203,43 +234,56 @@ print("Window maximize     :", window('maximize', 'Google Chrome'))
 print(30 * '=')
 
 # ============================================================
-#  FILE READ TESTS
+#  WAIT DOWNLOAD TEST
 # ============================================================
-print(" File read tests")
+print(" Wait download test ")
 print(30 * '=')
-with open('test.txt', 'w') as f:
-    f.write('Hello AutoCore')
-print("Read txt            :", read('test.txt'))
+dr.get('https://docs.python.org/3/download.html')
+click(dr, 'xpath', "(//a[contains(text(),'Download')])[4]")
+print("Wait download       :", wait_download(5))
 
-with open('test.json', 'w') as f:
-    json.dump({'name': 'Ash', 'tool': 'AutoCore'}, f)
-print("Read json           :", read('test.json'))
-
-with open('test.csv', 'w') as f:
-    f.write('name,age\nChris,25\nBob,30')
-print("Read csv            :", read('test.csv'))
-
-print("Read auto detect    :", read('test'))
+dr2.get('https://docs.python.org/3/download.html')
+click(dr2, 'xpath', "(//a[contains(text(),'Download')])[4]")
+print("Wait download for headless      :", wait_download(5))
 print(30 * '=')
 
 # ============================================================
-#  CSV TO XLSX TEST
+# FIND BROWSER SELENIUM TEST
 # ============================================================
-print(" CSV to XLSX test ")
+print(" Find browser test ")
 print(30 * '=')
-with open('convert_test.csv', 'w') as f:
-    f.write('name,age\nChris,25\nBob,30')
-print("CSV to XLSX         :", csv_to_xlsx('convert_test.csv', delete_csv=False))
+click(dr, 'text', "modules")
+print("Find browser selenium :", find_browser(dr, 'marshal'))
+wait(2)
+
+click(dr2, 'text', "modules")
+print("Find headless browser selenium :", find_browser(dr2, 'marshal'))
+screenshot(dr2, "headless browser after find browser test")
 print(30 * '=')
 
 # ============================================================
-#  WAIT TESTS
+# FIND BROWSER UI TEST
 # ============================================================
-print(" Wait tests ")
+print(" Find browser ui test ")
 print(30 * '=')
-print("Wait countdown      :", wait(3))
-print("Wait silent         :", wait(3, countdown=False))
+window('focus', 'Python Module Index')
+print("Find browser using ui :", find_browser('argparse'))
+wait(2)
 print(30 * '=')
+
+# ============================================================
+#  DROPDOWN TEST
+# ============================================================
+print(" Dropdown test ")
+print(30*'=')
+dr.get("https://www.globalsqa.com/demo-site/select-dropdown-menu/")
+print("Dropdown result     :", dropdown_select(dr, 'xpath', "(//select)[1]" , 'United States'))
+wait(2)
+
+dr2.get("https://www.globalsqa.com/demo-site/select-dropdown-menu/")
+print("Dropdown result     :", dropdown_select(dr2, 'xpath', "(//select)[1]" , 'United States'))
+screenshot(dr2, "headless browser after dropdown test")
+print(30*'=')
 
 # ============================================================
 #  DRAG TEST
@@ -250,21 +294,14 @@ print("Drag result         :", drag(200, 200, 400, 400))
 print(30 * '=')
 
 # ============================================================
-#  SAY TEST (requires speakers)
-# ============================================================
-print(" Say test ")
-print(30 * '=')
-say("Testing volume 50%", volume=0.5)
-say("AutoCore voice test done")
-print(30 * '=')
-
-# ============================================================
 # PRESS COMBINATIONS TEST
 # ============================================================
 print(" Press combinations test ")
 print(30 * '=')
 print("Press ctrl+a        :", press('ctrl', 'a'))
 print("Press ctrl+c        :", press('ctrl', 'c'))
+print("Result after ctrl+a and ctrl+c :", copy('clipboard'))
+
 print("Press tab 3         :", press('tab', 3))
 print("Press shift+tab 3   :", press('tab', -3))
 print(30 * '=')
@@ -277,6 +314,8 @@ print(30 * '=')
 #         os.remove(f)
 #         print(f"Deleted             : {f}")
 # print("25. Cleanup done")
+dr.quit()
+dr2.quit()
 print(30 * '=')
 print("All integration tests completed")
 print(30 * '=')

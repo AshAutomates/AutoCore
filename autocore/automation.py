@@ -844,8 +844,12 @@ def copy(*where):
     # in this variable the copied content will be stored and returned at end
     result = None
 
-    # clear clipboard before we copy anything
-    pyperclip.copy('')
+    # Clear clipboard before copying fresh content.
+    # Exception: skip clearing when mode is copy('clipboard'),
+    # because in that mode we are reading existing clipboard content,
+    # not copying anything new — clearing it first would wipe what we want to read.
+    if not (len(where) == 1 and where[0] == 'clipboard'):
+        pyperclip.copy('')
 
     # NO ARGUMENTS - Copy everything from active window
     if len(where) == 0:
