@@ -1744,6 +1744,15 @@ def log_setup(title):
     _log_file_handler.setFormatter(formatter)
     logger.addHandler(_log_file_handler)
 
+    # Silence the root logger for the entire session so third-party libraries (e.g. pyttsx3)
+    # that add StreamHandlers to it cannot produce duplicate "INFO:..." lines in our logs.
+    # Setting level above CRITICAL blocks all messages at the source,
+    # regardless of how many handlers any library adds to the root logger.
+    # Our named logger is unaffected as it has its own independent level.
+    logging.getLogger().handlers.clear()
+    logging.getLogger().addHandler(logging.NullHandler())
+    logging.getLogger().setLevel(logging.CRITICAL + 1)
+
     # Redirect stdout and stderr
     _original_stdout = sys.stdout
     _original_stderr = sys.stderr
