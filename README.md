@@ -31,10 +31,10 @@ After installing, run the following based on your distro:
 
 ```bash
 # Ubuntu/Debian
-sudo apt-get install wmctrl xdotool python3-tk
+sudo apt-get install wmctrl xdotool python3-tk xclip
 
 # RHEL/CentOS/Fedora
-sudo yum install wmctrl xdotool python3-tkinter
+sudo yum install wmctrl xdotool python3-tkinter xclip
 ```
 
 ### Chrome Installation

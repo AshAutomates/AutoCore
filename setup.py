@@ -14,8 +14,8 @@ class PostInstall(install):
             print("!! IMPORTANT: Linux dependencies required !!")
             print("!! Run the following commands to ensure full functionality !!")
             print("!!")
-            print("!!  Ubuntu/Debian:      sudo apt-get install wmctrl xdotool python3-tk")
-            print("!!  RHEL/CentOS/Fedora: sudo yum install wmctrl xdotool python3-tkinter")
+            print("!!  Ubuntu/Debian:      sudo apt-get install wmctrl xdotool python3-tk xclip")
+            print("!!  RHEL/CentOS/Fedora: sudo yum install wmctrl xdotool python3-tkinter xclip")
             print("!"*60)
         print("="*60 + "\n")
 

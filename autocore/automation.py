@@ -838,7 +838,7 @@ def copy(*where):
         copy(driver, 'xpath', '//a[@id="link"]', 'title')   # Get title attribute
 
     Returns:
-        str: Copied text, or None if error/not found
+        str: Copied text, or '' if nothing was copied
     """
 
     # in this variable the copied content will be stored and returned at end
@@ -943,6 +943,11 @@ def copy(*where):
     # Final check before returning
     if result == '' or result is None:
         print("No content returned from copy()")
+        # Returning '' (empty string) instead of None to prevent TypeError in common usage.
+        # If we returned None, code like this would crash:
+        #     if 'welcome' in copy():   →   TypeError: argument of type 'NoneType' is not iterable
+        # With '' it works safely:
+        #     if 'welcome' in copy():   →   False (no crash)
         return ''
     else:
         # Returning the non-blank result
@@ -4336,6 +4341,9 @@ def zoom(*args):
             # Special case: 100 or 0 = Reset
             if value == 100 or value == 0:
                 driver_obj.execute_script("document.body.style.zoom='100%'")
+                # "reset to 100%" here because Selenium explicitly sets zoom to 100%
+                # unlike PyAutoGUI's Ctrl+0 which resets to the default zoom level
+                # of whatever application is currently active
                 print("Zoom reset to 100%")
                 return True
 
@@ -4374,7 +4382,10 @@ def zoom(*args):
             # Special case: 100 or 0 = Reset
             if value == 100 or value == 0:
                 pyautogui.hotkey('ctrl', '0')
-                print("Zoom reset to default")
+                # "reset to default" not "reset to 100%" because Ctrl+0 resets to
+                # the application's default zoom, which may not always be 100%
+                # e.g. a PDF viewer may default to "fit to page" instead of 100%
+                print("Zoom reset to default.")
                 return True
 
             # Steps: -9 to +9
