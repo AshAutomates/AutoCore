@@ -119,12 +119,6 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
         This function is used internally by click() and click_right() functions.
         Cross-platform compatible (Windows, Linux).
 
-        For this function to work on Linux, ensure scrot is installed:
-        # Ubuntu/Debian
-        sudo apt-get install scrot
-
-        # RHEL/CentOS/Fedora
-        sudo yum install scrot
     """
     import cv2  # pip install opencv-python
 
