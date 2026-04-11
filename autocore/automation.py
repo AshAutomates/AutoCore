@@ -2180,7 +2180,7 @@ def read(*args):
         *args: Variable arguments depending on mode
 
     Returns:
-        str: Extracted text (lowercase for OCR), or None if error
+        str: Extracted text, or None if error
 
     Examples:
         # OCR - Read entire screen
@@ -2289,8 +2289,8 @@ def read(*args):
                 print(f"OCR: No text found.")
                 return ""  # Return blank string (not None) to avoid errors in blank text case
 
-            # Join all detected text with spaces and convert to lowercase
-            text = ' '.join(results).lower()
+            # Join all detected text with spaces
+            text = ' '.join(results)
 
             return text.strip()
 
@@ -2323,7 +2323,7 @@ def read(*args):
                 print("OCR: No text found in browser window.")
                 return ""
 
-            text = ' '.join(results).lower()
+            text = ' '.join(results)
             return text.strip()
 
         except Exception as e:
