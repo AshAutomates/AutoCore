@@ -424,9 +424,25 @@ def browser(url, headless=False, implicit_wait=30, cookie_path=None):
         options.add_argument("--headless=new")
         options.add_argument("--window-size=1920,1080")
 
+    # Fetch installed Chrome version dynamically to keep user-agent current.
+    # A matching Chrome version in user-agent makes the browser look more like a real user.
+    try:
+        system = platform.system()
+        if system == "Windows":
+            result = subprocess.run(
+                ['reg', 'query', 'HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon', '/v', 'version'],
+                capture_output=True, text=True)
+            chrome_version = result.stdout.strip().split()[-1]
+        elif system == "Linux":
+            result = subprocess.run(['google-chrome', '--version'], capture_output=True, text=True)
+            chrome_version = result.stdout.strip().split()[-1]
+        user_agent = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{chrome_version} Safari/537.36"
+    except Exception:
+        # If Chrome version detection fails, use a generic user-agent without version number
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome Safari/537.36"
+
     # Set a user-agent string to make the automated browser look like a regular Chrome browser
-    options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.7499.193 Safari/537.36")
+    options.add_argument(f"user-agent={user_agent}")
 
     # Additional options to enhance realism and disable Selenium detection
     options.add_argument('start-maximized')  # Start browser maximized
