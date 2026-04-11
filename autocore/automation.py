@@ -1,5 +1,6 @@
 # automation.py header
 # AutoCore - Automate Core Actions
+# Version: 1.0
 # Author: Ash
 # GitHub: https://github.com/AshAutomates/AutoCore
 # Supports: Windows, Linux
@@ -355,14 +356,14 @@ class _LogCapture:
         self.original_stream.flush()
 
 
-def browser(url, headless=False, implicit_wait=30, cookie_path=None):
+def browser(url, headless=False, timeout=30, cookie_path=None):
     """
     Initialize and return a browser instance for web automation.
 
     Args:
         url: Target URL to navigate to
         headless: Run browser in headless mode (default: False)
-        implicit_wait: Maximum seconds to wait for elements to appear (default: 30)
+        timeout: Maximum seconds to wait for elements to appear (default: 30)
         cookie_path: Path to cookies JSON file (optional)
                     - Cookies MUST be in JSON format
                     - Export from Chrome using "Cookie-Editor" extension
@@ -377,11 +378,11 @@ def browser(url, headless=False, implicit_wait=30, cookie_path=None):
         click(driver, 'id', 'search-button')
 
         # Slow-loading site
-        driver = browser('https://slow-site.gov', implicit_wait=90)
+        driver = browser('https://slow-site.gov', timeout=90)
         click(driver, 'id', 'submit-btn')  # Waits up to 90s
 
         # Fast site testing
-        driver = browser('https://fast-site.com', implicit_wait=5)
+        driver = browser('https://fast-site.com', timeout=5)
         click(driver, 'id', 'login-btn')  # Fails fast in 5s
 
         # With cookies
@@ -471,7 +472,7 @@ def browser(url, headless=False, implicit_wait=30, cookie_path=None):
         return None
 
     # Set an implicit wait for elements to be found
-    driver_instance.implicitly_wait(implicit_wait)
+    driver_instance.implicitly_wait(timeout)
 
     # Fallback URLs to ensure the driver is initialized properly
     fallback_urls = [
@@ -2995,13 +2996,13 @@ def screenshot(*args):
         return False
 
 
-def scroll(*args, duration=30):
+def scroll(*args, timeout=30):
     """
     Universal scroll function for both PyAutoGUI and Selenium.
 
     Args:
         *args: Variable arguments (see examples below)
-        duration: Max seconds when scrolling to 'bottom'/'top' (default: 30)
+        timeout: Max seconds when scrolling to 'bottom'/'top' (default: 30)
 
     PyAutoGUI Examples (scroll any window):
         scroll()                # Scroll down 1 time (default)
@@ -3021,7 +3022,7 @@ def scroll(*args, duration=30):
         scroll(driver, 'up', 5)     # Scroll up 5 times in browser
         scroll(driver, 'bottom')    # Scroll to bottom (auto-detect end)
         scroll(driver, 'top')       # Scroll to top (auto-detect end)
-        scroll(driver, 'bottom', duration=120)  # Scroll to bottom, max 2 minutes
+        scroll(driver, 'bottom', timeout=120)  # Scroll to bottom, max 2 minutes
 
     Returns:
         True if successful, False otherwise
@@ -3087,11 +3088,11 @@ def scroll(*args, duration=30):
         if use_selenium:
             # Scroll to bottom (with auto-detection)
             if direction == 'bottom':
-                print(f"[Selenium] Scrolling to bottom (timeout={duration}s)...")
+                print(f"[Selenium] Scrolling to bottom (timeout={timeout}s)...")
                 start_time = time.time()
                 scrolls = 0
 
-                while time.time() - start_time < duration:
+                while time.time() - start_time < timeout:
                     driver_obj.execute_script("window.scrollBy(0, 1000);")
                     scrolls += 1
                     time.sleep(1)
@@ -3140,12 +3141,12 @@ def scroll(*args, duration=30):
             # Scroll to bottom/top (time-based, no detection)
             if direction in ['bottom', 'top']:
                 scroll_amount = -500 if direction == 'bottom' else 500
-                print(f"[PyAutoGUI] Scrolling {direction} continuously for {duration}s...")
+                print(f"[PyAutoGUI] Scrolling {direction} continuously for {timeout}s...")
 
                 start_time = time.time()
                 scrolls = 0
 
-                while time.time() - start_time < duration:
+                while time.time() - start_time < timeout:
                     pyautogui.scroll(scroll_amount)
                     scrolls += 1
                     time.sleep(wait)
@@ -3153,7 +3154,7 @@ def scroll(*args, duration=30):
                     if scrolls % 10 == 0:
                         print(f"Scrolled {scrolls} times ({time.time() - start_time:.1f}s)")
 
-                print(f"Scrolled {direction} for {duration}s ({scrolls} total scrolls)")
+                print(f"Scrolled {direction} for {timeout}s ({scrolls} total scrolls)")
                 return True
 
             # Scroll down/up N times
@@ -3341,7 +3342,7 @@ def wait(*args, countdown=True):
         raise ValueError("Invalid arguments for wait()")
 
 
-def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None):
+def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
     """
     This function operates in two modes:
 
@@ -3353,7 +3354,7 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
           browser-initiated download to complete.
 
     Args:
-        timeout_in_min: Maximum minutes to wait for download completion
+        timeout: Maximum seconds to wait for download completion
 
         url: Direct download URL (optional)
             - If provided: Downloads file directly via requests
@@ -3377,12 +3378,12 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
         False: On failure (download error, timeout, directory access issue, etc.)
 
     Examples:
-        wait_download(5)                                                 # Monitor downloads folder
+        wait_download()                                                  # Monitor downloads folder
         wait_download(url='https://abc.com/file.msix')                   # Direct download via URL
         wait_download(url='https://abc.com/file.msix', filename='myapp') # Custom name, borrows extension
-        wait_download(5, filename='our_log.txt')                         # Monitor and rename on completion
-        wait_download(10, download_dir='/downloads')                     # Docker with custom path
-        wait_download(5, download_dir='D:/MyDownloads')                  # Windows custom path
+        wait_download(300, filename='our_log.txt')                         # Monitor and rename on completion
+        wait_download(600, download_dir='/downloads')                     # Docker with custom path
+        wait_download(300, download_dir='D:/MyDownloads')                  # Windows custom path
 
     Note: If a file was modified within the last 20 seconds before calling this function,
     it will be detected as a recently completed download and the function will return
@@ -3420,14 +3421,14 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
             print(f"Downloading: {final_filename}")
             response = requests.get(url, stream=True, timeout=30)  # 30s for connection/chunk timeout
             response.raise_for_status()
-            deadline = time.time() + (timeout_in_min * 60)  # enforce total download time limit
+            deadline = time.time() + (timeout)  # enforce total download time limit
             download_start = time.time()
             last_print_time = 0
             total_bytes = 0
             with open(final_filename, 'wb') as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     if time.time() > deadline:
-                        print(f"Timeout after {timeout_in_min} minutes while downloading '{final_filename}'")
+                        print(f"Timeout after {timeout} seconds while downloading '{final_filename}'")
                         return False
                     f.write(chunk)
                     total_bytes += len(chunk)
@@ -3446,9 +3447,12 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
     # ============================================================
     # MODE 2 — Monitor browser downloads folder
     # ============================================================
-    timeout_in_sec = timeout_in_min * 60
 
-    # Resolve download directory — argument > env var > Docker > ~/Downloads
+    # Determine download directory using the following priority order:
+    # 1. User provided path via download_dir argument
+    # 2. DOWNLOAD_DIR environment variable (if set)
+    # 3. /downloads folder (if running inside Docker)
+    # 4. ~/Downloads folder (default, if none of the above apply)
     if download_dir is not None:
         download_dir = str(download_dir)
     elif os.getenv('DOWNLOAD_DIR'):
@@ -3532,7 +3536,7 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
     completed_files_so_far = []      # tracks files already reported as completed mid-session
     filename_used = False            # ensures filename rename only applies to first completed file
 
-    while download_time < timeout_in_sec:
+    while download_time < timeout:
         try:
             current_files = set(os.listdir(download_dir))
             current_temp_files = set([f for f in current_files if f.endswith(temp_extensions)])
@@ -3691,13 +3695,13 @@ def wait_download(timeout_in_min=20, url=None, filename=None, download_dir=None)
 
         if still_downloading:
             if len(still_downloading) == 1:
-                print(f"Timeout after {timeout_in_min} minutes while waiting for '{list(still_downloading)[0]}' to complete.")
+                print(f"Timeout after {timeout} seconds while waiting for '{list(still_downloading)[0]}' to complete.")
             else:
-                print(f"Timeout after {timeout_in_min} minutes while waiting for {len(still_downloading)} files: {', '.join(still_downloading)}")
+                print(f"Timeout after {timeout} seconds while waiting for {len(still_downloading)} files: {', '.join(still_downloading)}")
         else:
-            print(f'Timeout after {timeout_in_min} minutes. Download status unclear.')
+            print(f'Timeout after {timeout} seconds. Download status unclear.')
     else:
-        print(f'Timeout after {timeout_in_min} minutes. No download detected.')
+        print(f'Timeout after {timeout} seconds. No download detected.')
 
     return False
 
