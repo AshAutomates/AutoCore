@@ -1,0 +1,13 @@
+/* Separator between function entries */
+dl.py.function {
+    border-top: 1px solid var(--color-foreground-border);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Reduce heading sizes */
+:root {
+    --font-size--heading-1: 1.5rem;
+    --font-size--heading-2: 1.2rem;
+    --font-size--heading-3: 1rem;
+}

@@ -1,0 +1,1557 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="Changelog" href="changelog.html"><link rel="prev" title="Quick Start" href="quickstart.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>Function Reference - AutoCore 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=acfd86a5" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=cf1e0257" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">AutoCore 1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><div class="sidebar-scroll"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">AutoCore 1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Function Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/function.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-autocore._lib">
+<span id="function-reference"></span><h1>Function Reference<a class="headerlink" href="#module-autocore._lib" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.browser">
+<span class="sig-name descname"><span class="pre">browser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headless</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cookie_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#browser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.browser" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize and return a browser instance for web automation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – Target URL to navigate to</p></li>
+<li><p><strong>headless</strong> – Run browser in headless mode (default: False)</p></li>
+<li><p><strong>timeout</strong> – Maximum seconds to wait for elements to appear (default: 30)</p></li>
+<li><p><strong>cookie_path</strong> – Path to cookies JSON file (optional)
+- Cookies MUST be in JSON format
+- Export from Chrome using “Cookie-Editor” extension
+- Cookie domain must match the target URL</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Browser instance, or None if initialization fails</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>WebDriver</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Basic usage
+driver = browser(’<a class="reference external" href="https://google.com">https://google.com</a>’)
+click(driver, ‘id’, ‘search-button’)</p>
+<p># Slow-loading site
+driver = browser(’<a class="reference external" href="https://slow-site.gov">https://slow-site.gov</a>’, timeout=90)
+click(driver, ‘id’, ‘submit-btn’)  # Waits up to 90s</p>
+<p># Fast site testing
+driver = browser(’<a class="reference external" href="https://fast-site.com">https://fast-site.com</a>’, timeout=5)
+click(driver, ‘id’, ‘login-btn’)  # Fails fast in 5s</p>
+<p># With cookies
+driver = browser(’<a class="reference external" href="https://site.com">https://site.com</a>’, cookie_path=’cookies.json’)</p>
+<p># Headless mode
+driver = browser(’<a class="reference external" href="https://google.com">https://google.com</a>’, headless=True)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Requires Google Chrome to be installed.</p>
+<dl class="simple">
+<dt>Windows:</dt><dd><p>winget install Google.Chrome</p>
+</dd>
+<dt>Linux (Ubuntu/Debian/Mint):</dt><dd><p>wget <a class="reference external" href="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb">https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb</a>
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt-get install -f -y</p>
+</dd>
+<dt>Linux (RHEL/CentOS/Fedora):</dt><dd><p>wget <a class="reference external" href="https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm">https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm</a>
+sudo rpm -i google-chrome-stable_current_x86_64.rpm</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.click">
+<span class="sig-name descname"><span class="pre">click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">where</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.click" title="Link to this definition">¶</a></dt>
+<dd><p>Performs left-click based on different input types.</p>
+<dl class="simple">
+<dt>Modes:</dt><dd><ol class="arabic simple">
+<li><p>Image matching: Click on visual element</p></li>
+<li><p>OCR text matching: Click on text found on screen (with nth occurrence support)</p></li>
+<li><p>Coordinates: Click at specific x, y position</p></li>
+<li><p>Color matching: Click on specific color in region</p></li>
+<li><p>Selenium web element: Click on element in browser</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*where</strong> – Variable arguments depending on click mode</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Image matching
+click(‘button.png’)</p>
+<p># OCR text matching
+click(‘Submit’)                    # Click first occurrence
+click(‘Submit’, 2)                 # Click 2nd occurrence
+click(‘Login’, 0)                  # Click all occurrences</p>
+<p># Coordinates
+click(100, 200)</p>
+<p># Color matching in region
+click(x1, y1, x2, y2, r, g, b)              # Find and click color
+click(x1, y1, x2, y2, r, g, b, tolerance)   # With tolerance</p>
+<p># Selenium (pass driver object first)
+click(driver, ‘id’, ‘submit-button’)
+click(driver, ‘xpath’, ‘//button[&#64;id=”submit”]’)
+click(driver, ‘class’, ‘btn-primary’)
+click(driver, ‘name’, ‘username’)
+click(driver, ‘css’, ‘button.submit’)
+click(driver, ‘tag’, ‘button’)
+click(driver, ‘text’, ‘Click Here’)
+click(driver, ‘partial’, ‘Click’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.click_right">
+<span class="sig-name descname"><span class="pre">click_right</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">where</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#click_right"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.click_right" title="Link to this definition">¶</a></dt>
+<dd><p>Performs right-click (context menu) based on different input types.</p>
+<dl class="simple">
+<dt>Modes:</dt><dd><ol class="arabic simple">
+<li><p>Image matching: Right-click on visual element</p></li>
+<li><p>OCR text matching: Right-click on text found on screen (with nth occurrence support)</p></li>
+<li><p>Coordinates: Right-click at specific x, y position</p></li>
+<li><p>Color matching: Right-click on specific color in region</p></li>
+<li><p>Selenium web element: Right-click on element in browser</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*where</strong> – Variable arguments depending on click mode</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Image matching
+click_right(‘button.png’)</p>
+<p># OCR text matching
+click_right(‘Submit’)              # Right-click first occurrence
+click_right(‘Submit’, 2)           # Right-click 2nd occurrence
+click_right(‘Login’, 0)            # Right-click all occurrences</p>
+<p># Coordinates
+click_right(100, 200)</p>
+<p># Color matching in region
+click_right(x1, y1, x2, y2, r, g, b)              # Find and right-click color
+click_right(x1, y1, x2, y2, r, g, b, tolerance)   # With tolerance</p>
+<p># Selenium (pass driver object first)
+click_right(driver, ‘id’, ‘submit-button’)
+click_right(driver, ‘xpath’, ‘//button[&#64;id=”submit”]’)
+click_right(driver, ‘class’, ‘btn-primary’)
+click_right(driver, ‘name’, ‘username’)
+click_right(driver, ‘css’, ‘button.submit’)
+click_right(driver, ‘tag’, ‘button’)
+click_right(driver, ‘text’, ‘Click Here’)
+click_right(driver, ‘partial’, ‘Click’)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">where</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.copy" title="Link to this definition">¶</a></dt>
+<dd><p>Copies text from various sources: screen, clipboard, Selenium elements, or web pages.</p>
+<dl class="simple">
+<dt>Modes:</dt><dd><ol class="arabic simple">
+<li><p>Active window: Copy all content from current window</p></li>
+<li><p>Clipboard: Get current clipboard content</p></li>
+<li><p>Screen coordinates: Click at position and copy</p></li>
+<li><p>Selenium webpage: Copy entire page content</p></li>
+<li><p>Selenium element: Copy element text or attribute value</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*where</strong> – Variable arguments depending on copy mode</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Active window - Copy everything from current window
+copy()                                      # Ctrl+A, Ctrl+C from active window</p>
+<p># Clipboard
+copy(‘clipboard’)                           # Get current clipboard content</p>
+<p># Screen coordinates
+copy(500, 300)                              # Click at (500, 300) and copy</p>
+<p># Selenium webpage - Copy entire page
+copy(driver)                                # Copy all webpage content</p>
+<p># Selenium element - Copy text
+copy(driver, ‘id’, ‘username-display’)
+copy(driver, ‘xpath’, ‘//div[&#64;class=”name”]’)
+copy(driver, ‘class’, ‘user-info’)
+copy(driver, ‘name’, ‘description’)
+copy(driver, ‘css’, ‘p.content’)
+copy(driver, ‘tag’, ‘h1’)
+copy(driver, ‘text’, ‘Welcome’)
+copy(driver, ‘partial’, ‘Hello’)</p>
+<p># Selenium element - Copy attribute
+copy(driver, ‘id’, ‘download-link’, ‘href’)         # Get link URL
+copy(driver, ‘class’, ‘product-img’, ‘src’)         # Get image source
+copy(driver, ‘id’, ‘email-field’, ‘value’)          # Get input value
+copy(driver, ‘xpath’, ‘//a[&#64;id=”link”]’, ‘title’)   # Get title attribute</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Copied text, or ‘’ if nothing was copied</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.csv_to_xlsx">
+<span class="sig-name descname"><span class="pre">csv_to_xlsx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#csv_to_xlsx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.csv_to_xlsx" title="Link to this definition">¶</a></dt>
+<dd><p>Converts CSV file(s) to XLSX format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>csv_file</strong> – Path to CSV file, or None to auto-detect single CSV in current directory</p></li>
+<li><p><strong>delete_csv</strong> – If True, deletes original CSV after conversion (default: True)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to created XLSX file, or None if error</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Auto-detect single CSV in current directory (deletes CSV by default)
+csv_to_xlsx()                               # Finds, converts, and deletes CSV</p>
+<p># Specific file (deletes CSV by default)
+csv_to_xlsx(‘data.csv’)                     # Converts and deletes data.csv</p>
+<p># Keep original CSV
+csv_to_xlsx(‘report.csv’, delete_csv=False) # Keeps report.csv</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints the detected CSV filename when auto-detected.</p></li>
+<li><p>Prints conversion result showing source and destination filenames.</p></li>
+<li><p>Prints confirmation when original CSV is deleted.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.date">
+<span class="sig-name descname"><span class="pre">date</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.date" title="Link to this definition">¶</a></dt>
+<dd><p>Get current day of month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current day (1-31)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>date()  # 24</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.day">
+<span class="sig-name descname"><span class="pre">day</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#day"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.day" title="Link to this definition">¶</a></dt>
+<dd><p>Get current day of week.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Day name in lowercase (monday, tuesday, wednesday, thursday, friday, saturday, sunday)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Weekday check
+if day() == ‘monday’:</p>
+<blockquote>
+<div><p>print(“It is Monday today.”)</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.drag">
+<span class="sig-name descname"><span class="pre">drag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#drag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.drag" title="Link to this definition">¶</a></dt>
+<dd><p>Drag from source to target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>PyAutoGUI</strong> – (x1, y1, x2, y2)</p></li>
+<li><p><strong>Selenium</strong> – (driver, src_type, src_selector, tgt_type, tgt_selector)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Screen drag (PyAutoGUI) - 2 second duration
+drag(100, 200, 500, 600)</p>
+<p># Web element drag (Selenium)
+drag(driver, ‘id’, ‘card-1’, ‘class’, ‘done-column’)
+drag(driver, ‘xpath’, ‘//li[1]’, ‘xpath’, ‘//li[5]’)</p>
+<p># Multiple drivers
+driver1 = browser(’<a class="reference external" href="https://trello.com">https://trello.com</a>’)
+driver2 = browser(’<a class="reference external" href="https://jira.com">https://jira.com</a>’)
+drag(driver1, ‘id’, ‘task-1’, ‘id’, ‘done-column’)
+drag(driver2, ‘class’, ‘issue’, ‘class’, ‘backlog’)</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints drag confirmation showing source and target coordinates (PyAutoGUI).</p></li>
+<li><p>Prints drag confirmation showing source and target selectors (Selenium).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.dropdown_select">
+<span class="sig-name descname"><span class="pre">dropdown_select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">driver_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selector_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection_criteria</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#dropdown_select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.dropdown_select" title="Link to this definition">¶</a></dt>
+<dd><p>Selects an item from a dropdown menu based on the provided criteria.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>driver_obj</strong> – Selenium WebDriver instance</p></li>
+<li><p><strong>selector_type</strong> – Type of selector (‘id’, ‘name’, ‘xpath’, ‘class’, ‘css’, ‘tag’, ‘text’, ‘partial’)</p></li>
+<li><p><strong>selector</strong> – The value of the selector</p></li>
+<li><p><strong>selection_criteria</strong> – Index (int) or visible text (str) for selection</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Select by index
+dropdown_select(driver, ‘id’, ‘country-dropdown’, 0)        # Select first option
+dropdown_select(driver, ‘id’, ‘country-dropdown’, 2)        # Select third option</p>
+<p># Select by visible text
+dropdown_select(driver, ‘id’, ‘country-dropdown’, ‘United States’)
+dropdown_select(driver, ‘name’, ‘language’, ‘English’)
+dropdown_select(driver, ‘xpath’, ‘//select[&#64;name=”city”]’, ‘New York’)</p>
+<p># Different selector types
+dropdown_select(driver, ‘class’, ‘form-select’, ‘Option 1’)
+dropdown_select(driver, ‘css’, ‘select.dropdown’, ‘Value’)</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints confirmation showing the selected option index or text.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.erase">
+<span class="sig-name descname"><span class="pre">erase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#erase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.erase" title="Link to this definition">¶</a></dt>
+<dd><p>Erase/clear text from input fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments depending on mode</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># PyAutoGUI mode (erase active window)
+erase()                                  # Select all and delete (Ctrl+A, Delete)</p>
+<p># Selenium mode (erase specific element)
+erase(driver, ‘id’, ‘username’)          # Clear username field
+erase(driver, ‘xpath’, ‘//input[&#64;name=”email”]’)  # Clear email field
+erase(driver, ‘class’, ‘search-box’)     # Clear search box</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.find_browser">
+<span class="sig-name descname"><span class="pre">find_browser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#find_browser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.find_browser" title="Link to this definition">¶</a></dt>
+<dd><p>Find text in browser using Ctrl+F (find function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments depending on mode</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># PyAutoGUI mode (any window)
+find_browser(‘Python’)              # Find in active window
+find_browser(‘error message’)       # Find phrase</p>
+<p># Selenium mode (browser)
+find_browser(driver, ‘Python’)      # Find in Selenium browser
+find_browser(driver, ‘contact us’)  # Find phrase in browser</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints confirmation with the searched text (PyAutoGUI).</p></li>
+<li><p>Prints confirmation if text was found and highlighted (Selenium).</p></li>
+<li><p>Prints a message if text was not found on the page (Selenium).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>PyAutoGUI: Opens find dialog (Ctrl+F), types search term, presses Enter, then Esc.</p></li>
+<li><p>Selenium: Uses JavaScript to highlight matching text on the page in yellow
+and scrolls to the first match. Removes any previous highlights before applying new ones.</p></li>
+<li><p>Default wait time between actions is 1 second (PyAutoGUI only).</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.find_key">
+<span class="sig-name descname"><span class="pre">find_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#find_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.find_key" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively finds all values of a specified key in nested data structures
+(dictionaries, lists, and tuples). Particularly useful for searching
+deeply nested JSON data from API responses or parsed files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Data structure to search (dict, list, or tuple)</p></li>
+<li><p><strong>key</strong> – Key name to find</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Single occurrence
+data = {‘name’: ‘John’, ‘age’: 30}
+name = find_key(data, ‘name’)[0]          # ‘John’</p>
+<p># Multiple occurrences
+data = {</p>
+<blockquote>
+<div><p>‘user’: {‘id’: 1, ‘name’: ‘Alice’},
+‘admin’: {‘id’: 2, ‘name’: ‘Bob’}</p>
+</div></blockquote>
+<p>}
+ids = find_key(data, ‘id’)                # [1, 2]</p>
+<p># Nested lists/tuples
+data = {‘users’: [{‘age’: 25}, {‘age’: 30}]}
+ages = find_key(data, ‘age’)              # [25, 30]</p>
+<p># API response workflow
+response = requests.get(’<a class="reference external" href="https://api.example.com/users">https://api.example.com/users</a>’).json()
+ids = find_key(response, ‘id’)            # finds all ‘id’ values</p>
+<p># Parsed file workflow
+data = json.loads(read(‘data.json’))
+hosts = find_key(data, ‘host’)            # finds all ‘host’ values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>All values found for the key (empty list if not found)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.find_str">
+<span class="sig-name descname"><span class="pre">find_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starts_after</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ends_before</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#find_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.find_str" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Extracts substring between two markers.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>string: Text to search in
+starts_after: Start extraction after this
+ends_before: End extraction before this
+index: Which match (0=first, -1=last, 1=second, etc.)</p>
+</dd>
+<dt>Returns:</dt><dd><p>str: Extracted string, or None if not found</p>
+</dd>
+<dt>Examples:</dt><dd><p># Get last error message
+error = find_str(logs, ‘ERROR: ‘, ‘</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>‘, -1)</dt><dd><dl class="simple">
+<dt>if error:</dt><dd><p>print(f”Error: {error}”)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.hour">
+<span class="sig-name descname"><span class="pre">hour</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#hour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.hour" title="Link to this definition">¶</a></dt>
+<dd><p>Get current hour.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current hour (0-23) in 24-hour format</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>hour()  # 14 (2 PM)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.inspect">
+<span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#inspect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.inspect" title="Link to this definition">¶</a></dt>
+<dd><p>Opens GUI to inspect pixel position and color with zoomed preview.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><ol class="arabic simple">
+<li><p>Click on the Pixel Inspector window to bring it into focus.</p></li>
+<li><p>Move the mouse to the desired pixel.</p></li>
+<li><p>Press ‘ESC’ to capture.</p></li>
+</ol>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints position and RGB/HEX values to console.</p></li>
+<li><p>Copies ‘x, y, r, g, b’ to clipboard.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Platform: Windows, Linux</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.log_setup">
+<span class="sig-name descname"><span class="pre">log_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#log_setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.log_setup" title="Link to this definition">¶</a></dt>
+<dd><p>Sets up logging and terminal styling for the script.</p>
+<p>Combines terminal setup with comprehensive logging and automatic color-coded status indication.
+Creates a logs folder and saves all output with timestamps.
+Shows output in terminal while also saving to file.</p>
+<p>Terminal colors change automatically based on script outcome:
+- Blue background: Script is running
+- Green background: Script completed successfully
+- Red background: Script crashed (unhandled exception)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>title</strong> – Name for both terminal title and log file</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>log_setup(“MyScript”)
+print(“This gets logged”)
+# … script runs …
+# Terminal turns GREEN on success or RED on crash</p>
+<dl>
+<dt>Log file format:</dt><dd><p>logs/log_MyScript_2026-03-26_14-30-45_IST_session-1.txt          (active - newest logs)
+logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_1.txt   (2nd newest - rotated)
+logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_2.txt   (3rd newest)
+…
+logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_9.txt   (oldest backup)</p>
+<p>Session numbering:
+- session-1: First run of this script
+- session-2: Second run of this script
+- session-3: Third run, etc.
+- Automatically increments based on existing log files</p>
+</dd>
+<dt>Features:</dt><dd><ul class="simple">
+<li><p>Sets terminal title and colors (blue bg, white text)</p></li>
+<li><p>Automatic color changes: Blue→Green (success) or Blue→Red (crash)</p></li>
+<li><p>Automatic session numbering (increments from previous runs)</p></li>
+<li><p>Captures all print() statements</p></li>
+<li><p>Captures all errors and exceptions</p></li>
+<li><p>Adds timestamp to each entry</p></li>
+<li><p>Shows output in terminal AND saves to file</p></li>
+<li><p>Automatic file rotation (10MB per file, max 10 files = 100MB per session)</p></li>
+<li><p>Automatic cleanup (keeps max 100MB total logs across all sessions)</p></li>
+</ul>
+</dd>
+<dt>Platform Support:</dt><dd><p>Windows (Command Prompt): Full support
+Windows (PowerShell): Full support
+Linux: Full support
+macOS: Logging works, terminal colors not supported</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.minute">
+<span class="sig-name descname"><span class="pre">minute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#minute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.minute" title="Link to this definition">¶</a></dt>
+<dd><p>Get current minute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current minute (0-59)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>minute()  # 23</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.month">
+<span class="sig-name descname"><span class="pre">month</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#month"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.month" title="Link to this definition">¶</a></dt>
+<dd><p>Get current month.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current month (1-12)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>month()  # 2 (February)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.press">
+<span class="sig-name descname"><span class="pre">press</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#press"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.press" title="Link to this definition">¶</a></dt>
+<dd><p>Press keyboard keys with support for Selenium, PyAutoGUI, and key combinations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*keys</strong> – Variable arguments for key presses</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Selenium element + key (requires driver object now)
+press(driver, “xpath”, “//input”, “enter”)
+press(driver, “id”, “username”, “tab”)</p>
+<p># Selenium driver keys (pass driver object)
+press(driver, “tab”)
+press(driver, “tab”, 5)           # Press tab 5 times
+press(driver, “tab”, -5)          # Press shift+tab 5 times
+press(driver, “ctrl”, “c”)
+press(driver, “ctrl”, “shift”, “s”)</p>
+<p># PyAutoGUI keys (no driver needed)
+press(“tab”)                    # Single key
+press(“tab”, 5)                 # Press 5 times
+press(“tab”, -5)                # Press 5 times with shift held
+press(“ctrl”, “a”)              # Two-key combo
+press(“alt”, “ctrl”, “z”)       # Three-key combo
+press(“num5”)                   # Numpad 5
+press(“volumeup”)               # Volume up
+press(“mute”)                   # Volume mute (short form)
+press(“back”)                   # Browser back (short form)
+press(“forward”)                # Browser forward (short form)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.read" title="Link to this definition">¶</a></dt>
+<dd><p>Extract text from screen (using OCR), files (by parsing file format), or a Selenium browser window.</p>
+<dl class="simple">
+<dt>Modes:</dt><dd><p>No arguments: OCR full screen
+2 integers: OCR from (x, y) to bottom-right corner
+4 integers: OCR specific region (x, y, width, height)
+1 string: Read file by parsing its format
+1 driver object: Take screenshot of Selenium browser and read using OCR</p>
+</dd>
+<dt>Supported file formats:</dt><dd><p>Documents: PDF, DOCX, PPTX, ODT, RTF
+Tabular: CSV, TSV, XLSX, SQLite
+Structured: JSON, YAML, XML, INI/CFG
+Text: TXT, LOG, MD
+Web: HTML
+Email: EML, MSG
+eBooks: EPUB
+Scripts: SH, BAT, PY</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments depending on mode</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extracted text, or None if error</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># OCR - Read entire screen
+text = read()</p>
+<p># OCR - Read from (100, 200) to bottom-right corner
+text = read(100, 200)</p>
+<p># OCR - Read specific region: x=100, y=200, width=400, height=300
+text = read(100, 200, 400, 300)</p>
+<p># Selenium - Read text from browser window using OCR
+d1 = browser(’<a class="reference external" href="https://example.com">https://example.com</a>’)
+text = read(d1)</p>
+<p># File - Read with extension
+text = read(‘report.pdf’)
+text = read(‘data.csv’)
+text = read(‘script.py’)</p>
+<p># File - Read without extension (auto-detects)
+text = read(‘report’)      # Finds report.pdf automatically
+text = read(‘config’)      # Finds config.yaml automatically</p>
+<p># Check if text on screen
+if ‘login’ in read():</p>
+<blockquote>
+<div><p>print(“Login visible!”)</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>OCR first run downloads models (~100MB), subsequent runs are fast.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs a file or application on Windows and Linux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> – Path to a file or name of an application to run
+- If item is a file path: Opens with default application
+- If item is an application name: Launches the application
+- For applications, the command must be available in system PATH</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Open files with default application
+run(“sample.txt”)           # Opens in default text editor
+run(“document.pdf”)         # Opens in default PDF viewer
+run(“C:Usersfile.xlsx”) # Opens Excel file</p>
+<p># Launch applications (Windows)
+run(“calc”)                 # Calculator
+run(“notepad”)              # Notepad
+run(“mspaint”)              # Paint</p>
+<p># Launch applications (Linux)
+run(“gedit”)                # Text editor
+run(“firefox”)              # Browser
+run(“gnome-calculator”)     # Calculator</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints error message if file or application was not found.</p></li>
+<li><p>Prints error message if permission was denied.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Windows: Uses os.startfile for files, subprocess for applications.</p></li>
+<li><p>Linux: Uses xdg-open for files, direct execution for applications.
+xdg-utils is required (included in Linux dependencies).</p></li>
+</ul>
+</div>
+<p>Platform: Windows, Linux</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – If called on macOS</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.say">
+<span class="sig-name descname"><span class="pre">say</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#say"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.say" title="Link to this definition">¶</a></dt>
+<dd><p>Speak text using offline Text-to-Speech.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – Text to speak</p></li>
+<li><p><strong>volume</strong> – Volume level 0.0 to 1.0 (default: 1.0)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>say(“Download complete”, volume=0.7)
+say(“Error occurred”)</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints spoken text to console.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Speech rate is fixed at 130 words/minute for optimal clarity.</p></li>
+<li><p>Automatically logs spoken text when log_setup() is active.</p></li>
+</ul>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.screenshot">
+<span class="sig-name descname"><span class="pre">screenshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#screenshot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.screenshot" title="Link to this definition">¶</a></dt>
+<dd><p>Takes a screenshot and saves it to the current working directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable arguments depending on usage:
+- ()                            → Full screen, auto-named
+- (filename)                    → Full screen, custom filename
+- (x, y)                        → From (x,y) to screen edge, auto-named
+- (x, y, filename)              → From (x,y) to screen edge, custom filename
+- (x, y, width, height)         → Specific region, auto-named
+- (x, y, width, height, filename) → Specific region, custom filename
+- (driver, …)                 → Same as above but captures from Selenium browser</p></li>
+<li><p><strong>Where</strong> – <ul>
+<li><p>driver: Selenium WebDriver instance</p></li>
+<li><p>x, y: Top-left corner coordinates of the screenshot region</p></li>
+<li><p>width, height: Dimensions of the screenshot region</p></li>
+<li><dl class="simple">
+<dt>filename: Custom name to save the screenshot</dt><dd><ul>
+<li><p>.png extension is added automatically if not provided</p></li>
+<li><p>If not provided, auto-generates: screenshot_YYYY-MM-DD_HH-MM-SS_&lt;unix&gt;.png
+Example: screenshot_2025-02-18_14-30-45_1708268445.png</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Full screen (PyAutoGUI)
+screenshot()                                    # Full screen, auto-named
+screenshot(‘desktop.png’)                       # Full screen, custom name</p>
+<p># Selenium full page
+screenshot(driver)                              # Selenium full page, auto-named
+screenshot(driver, ‘webpage.png’)               # Selenium full page, custom name</p>
+<p># From top-left point to edge (PyAutoGUI)
+screenshot(100, 200)                            # From (100,200) to edge, auto-named
+screenshot(100, 200, ‘crop.png’)                # From (100,200) to edge, custom name</p>
+<p># From top-left point to edge (Selenium)
+screenshot(driver, 100, 200)                    # Selenium from (100,200) to edge
+screenshot(driver, 100, 200, ‘page.png’)        # Selenium, custom name</p>
+<p># Specific region (PyAutoGUI)
+screenshot(0, 0, 500, 300)                      # Region: top-left (0,0), 500x300, auto-named
+screenshot(0, 0, 500, 300, ‘region.png’)        # Region: top-left (0,0), 500x300, custom name</p>
+<p># Specific region (Selenium)
+screenshot(driver, 0, 0, 800, 600)              # Selenium region, auto-named
+screenshot(driver, 0, 0, 800, 600, ‘sel.png’)   # Selenium region, custom name</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints the full path of the saved screenshot on success.</p></li>
+<li><p>Prints error message if invalid arguments or coordinates are provided.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.scroll">
+<span class="sig-name descname"><span class="pre">scroll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#scroll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.scroll" title="Link to this definition">¶</a></dt>
+<dd><p>Universal scroll function for both PyAutoGUI and Selenium.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable arguments (see examples below)</p></li>
+<li><p><strong>timeout</strong> – Max seconds when scrolling to ‘bottom’/’top’ (default: 30)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>PyAutoGUI Examples (scroll any window):</dt><dd><p>scroll()                      # Scroll down 1 time (default)
+scroll(5)                     # Scroll down 5 times
+scroll(‘down’)                # Scroll down 1 time
+scroll(‘down’, 10)            # Scroll down 10 times
+scroll(‘up’, 5)               # Scroll up 5 times
+scroll(‘bottom’)              # Scroll down continuously for 30 seconds
+scroll(‘bottom’, timeout=60)  # Scroll down continuously for 60 seconds
+scroll(‘top’)                 # Scroll up continuously for 30 seconds</p>
+</dd>
+<dt>Selenium Examples (pass driver object):</dt><dd><p>scroll(driver)                        # Scroll down 1 time in browser
+scroll(driver, 5)                     # Scroll down 5 times in browser
+scroll(driver, ‘down’)                # Scroll down 1 time in browser
+scroll(driver, ‘down’, 10)            # Scroll down 10 times in browser
+scroll(driver, ‘up’, 5)               # Scroll up 5 times in browser
+scroll(driver, ‘bottom’)              # Scroll to bottom (auto-detect end)
+scroll(driver, ‘top’)                 # Scroll to top (auto-detect end)
+scroll(driver, ‘bottom’, timeout=120) # Scroll to bottom, max 2 minutes</p>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints scroll direction and count on completion.</p></li>
+<li><p>Prints progress every 10 scrolls for large scroll counts.</p></li>
+<li><p>Prints confirmation when bottom or top is reached (Selenium).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.second">
+<span class="sig-name descname"><span class="pre">second</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#second"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.second" title="Link to this definition">¶</a></dt>
+<dd><p>Get current second.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current second (0-59)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>second()  # 45</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">countdown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.wait" title="Link to this definition">¶</a></dt>
+<dd><p>Wait with countdown, wait for element, or wait for color at pixel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Variable arguments (see examples)</p></li>
+<li><p><strong>countdown</strong> – If True, shows countdown display (default: True)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Countdown wait
+wait(5)                              # Wait 5 seconds with countdown
+wait(10, countdown=False)            # Wait 10 seconds silently
+wait()                               # Wait 3 seconds (default)</p>
+<p># Wait for element (Selenium) - pass driver object
+wait(driver, ‘xpath’, ‘//button’)            # Wait max 180s with countdown
+wait(driver, ‘id’, ‘submit-btn’, 10)         # Wait max 10s with countdown
+wait(driver, ‘class’, ‘content’, 30, countdown=False)  # Wait silently for 30s</p>
+<p># Wait for color at pixel
+wait(100, 200, 255, 0, 0)            # Wait for red (255,0,0) at (100,200) with countdown
+wait(100, 200, 255, 0, 0, 30)        # Wait for red, max 30s with countdown
+wait(500, 300, 0, 255, 0, 60, countdown=False)  # Wait silently</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False if error or timeout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.wait_download">
+<span class="sig-name descname"><span class="pre">wait_download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#wait_download"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.wait_download" title="Link to this definition">¶</a></dt>
+<dd><p>Wait for a browser-initiated download to complete, or download a file directly via URL.</p>
+<dl class="simple">
+<dt>Modes:</dt><dd><ol class="arabic simple">
+<li><p>URL mode (url provided): Downloads file directly using requests. Useful for
+file types blocked by browsers (.exe, .msix, .msi, etc.). File is saved to
+Python’s current working directory.</p></li>
+<li><p>Monitor mode (url not provided): Monitors the downloads folder for a
+browser-initiated download to complete.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timeout</strong> – Maximum seconds to wait for download completion (default: 1200)</p></li>
+<li><p><strong>url</strong> – Direct download URL (optional)
+- If provided: Downloads file directly via requests
+- If None: Monitors downloads folder for browser-initiated download</p></li>
+<li><p><strong>filename</strong> – Custom filename to save/rename the downloaded file (optional)
+- With extension (e.g. “myapp.exe”)  → used as-is
+- Without extension (e.g. “myapp”)   → extension borrowed from original file
+- If None: Original filename is kept
+- If multiple files are downloaded, only the first completed file is renamed</p></li>
+<li><p><strong>download_dir</strong> – Custom download directory to monitor (monitor mode only, optional)
+- If provided: Uses specified path and skips all auto-detection
+- If None: Auto-detects using the priority order described in Note below</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>wait_download()                                                   # Monitor downloads folder
+wait_download(url=’<a class="reference external" href="https://abc.com/file.msix">https://abc.com/file.msix</a>’)                    # Direct download via URL
+wait_download(url=’<a class="reference external" href="https://abc.com/file.msix">https://abc.com/file.msix</a>’, filename=’myapp’)  # Custom name, borrows extension
+wait_download(300, filename=’our_log.txt’)                        # Monitor and rename on completion
+wait_download(600, download_dir=’/downloads’)                     # Docker with custom path
+wait_download(300, download_dir=’D:/MyDownloads’)                 # Windows custom path</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints download progress every 10 seconds showing elapsed time and file size.</p></li>
+<li><p>Prints confirmation with final filename and saved path on completion.</p></li>
+<li><p>Prints timeout message if download does not complete in time.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>When download_dir is not provided, the folder is auto-detected in this order:</dt><dd><ol class="arabic simple">
+<li><p>DOWNLOAD_DIR environment variable (if set at OS level)</p></li>
+<li><p>/downloads folder (if running inside Docker)</p></li>
+<li><p>~/Downloads (default fallback)</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p>If a file was modified within the last 20 seconds before calling this function,
+it will be detected as a recently completed download and returned immediately.
+This handles cases where downloads complete very quickly before monitoring starts.</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Final filename of the downloaded file (always includes extension) on success
+False: On failure (download error, timeout, directory access issue, etc.)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.window">
+<span class="sig-name descname"><span class="pre">window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.window" title="Link to this definition">¶</a></dt>
+<dd><p>Unified window management function for Windows and Linux.</p>
+<dl class="simple">
+<dt>Platform Support:</dt><dd><p>Windows 10/11
+Linux (requires wmctrl and xdotool)
+macOS (not supported)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action</strong> – Window operation to perform (default: ‘list’)
+- None or ‘list’: Get all window titles
+- ‘title’: Get active window title (or find full title if target provided)
+- ‘focus’: Bring window to foreground
+- ‘close’: Close window
+- ‘minimize’: Minimize window
+- ‘maximize’: Maximize window
+- ‘resize’: Resize window (requires width, height)
+- ‘move’: Move window (requires x, y)</p></li>
+<li><p><strong>target</strong> – Window title or pattern (required for most actions)</p></li>
+<li><p><strong>*args</strong> – Additional parameters (width, height for resize; x, y for move)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># Get all windows (default)
+window()                                    # [‘Chrome’, ‘Notepad’, ‘Excel’]
+window(‘list’)                              # [‘Chrome’, ‘Notepad’, ‘Excel’]</p>
+<p># Check if window exists
+if ‘Chrome’ in window():</p>
+<blockquote>
+<div><p>print(“Chrome is open!”)</p>
+</div></blockquote>
+<p># Get active window title
+window(‘title’)                             # ‘Google Chrome - New Tab’</p>
+<p># Find full title containing text
+window(‘title’, ‘Chrome’)                   # ‘Google Chrome - New Tab’
+window(‘title’, ‘Note’)                     # ‘Untitled - Notepad’</p>
+<p># Window operations
+window(‘focus’, ‘Chrome’)                   # Focus window
+window(‘close’, ‘Notepad’)                  # Close window
+window(‘minimize’, ‘Excel’)                 # Minimize window
+window(‘maximize’, ‘Word’)                  # Maximize window</p>
+<p># Position and size
+window(‘resize’, ‘Chrome’, 800, 600)        # Resize to 800x600
+window(‘move’, ‘Chrome’, 100, 200)          # Move to (100, 200)</p>
+<p># Side-by-side setup (1920x1080 display)
+window(‘move’, ‘Chrome’, 0, 0)              # Left side
+window(‘resize’, ‘Chrome’, 960, 1080)       # Half screen width
+window(‘move’, ‘Code’, 960, 0)              # Right side
+window(‘resize’, ‘Code’, 960, 1080)         # Half screen width</p>
+<p># Recording setup
+window(‘resize’, ‘Demo’, 1280, 720)         # 720p size
+window(‘move’, ‘Demo’, 320, 180)            # Centered on 1920x1080</p>
+<dl class="simple">
+<dt>Linux Dependencies:</dt><dd><p>sudo apt-get install wmctrl xdotool        # Ubuntu/Debian
+sudo yum install wmctrl xdotool            # RHEL/CentOS/Fedora</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On Linux, resize and move automatically remove maximized/minimized
+state before applying changes, ensuring consistent behavior.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>When action is None or ‘list’
+- String or None: When action is ‘title’
+- True/False: When action is focus/close/minimize/maximize/resize/move</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>List of strings</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ValueError</strong> – If invalid action or missing required parameters</p></li>
+<li><p><strong>NotImplementedError</strong> – If called on macOS</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.write" title="Link to this definition">¶</a></dt>
+<dd><p>Write or type text using keyboard (PyAutoGUI or Selenium).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*keys</strong> – Variable arguments depending on mode</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># PyAutoGUI mode (types in any active window)
+write(“Hello World”)                                        # Types in active window
+write(”<a class="reference external" href="mailto:user&#37;&#52;&#48;example&#46;com">user<span>&#64;</span>example<span>&#46;</span>com</a>”)                                   # Types email
+write(“12345”)                                              # Types numbers as string</p>
+<p># Selenium mode - type on active element in browser
+write(driver, “Hello World”)                                # Types on active element
+write(driver, “Search query”)                               # Types in focused input</p>
+<p># Selenium mode - type in specific element
+write(driver, “id”, “username”, “john_doe”)
+write(driver, “xpath”, “//input[&#64;name=’email’]”, “<a class="reference external" href="mailto:user&#37;&#52;&#48;example&#46;com">user<span>&#64;</span>example<span>&#46;</span>com</a>”)
+write(driver, “class”, “search-box”, “Python tutorial”)</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints error message if element was not found (Selenium).</p></li>
+<li><p>Prints error message if invalid arguments are provided.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>PyAutoGUI uses typewrite() which types one character at a time.</p></li>
+<li><p>Selenium uses send_keys() which types the entire string at once.</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.year">
+<span class="sig-name descname"><span class="pre">year</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.year" title="Link to this definition">¶</a></dt>
+<dd><p>Get current year.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current year (e.g., 2026)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>year()  # 2026</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autocore._lib.zoom">
+<span class="sig-name descname"><span class="pre">zoom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autocore/_lib.html#zoom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#autocore._lib.zoom" title="Link to this definition">¶</a></dt>
+<dd><p>Zoom in/out using steps or set zoom percentage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>*args</strong> – Variable arguments
+- (value): PyAutoGUI zoom steps/reset
+- (driver, value): Selenium zoom steps/percentage/reset</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Value Logic:</dt><dd><ul class="simple">
+<li><p>-9 to +9: Zoom steps (Ctrl+/Ctrl-)</p></li>
+<li><p>100 or 0: Reset to default/100%</p></li>
+<li><p>Outside range (except 100): Percentage (Selenium only)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p># PyAutoGUI (desktop apps)
+zoom(3)              # Zoom in 3 steps
+zoom(-5)             # Zoom out 5 steps
+zoom(100) or zoom(0) # Reset to default (Ctrl+0)
+When zoom in/out is performed using UI (Ctrl and +/-) in Chrome,
+the min %, zoom states % and max % follow this order:</p>
+<blockquote>
+<div><p>(25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500)</p>
+</div></blockquote>
+<p># Selenium (browser) - Steps
+zoom(driver, 3)      # Zoom in current + 3 * 10%
+zoom(driver, -5)     # Zoom out current - 5 * 10%</p>
+<p># Selenium (browser) - Reset
+zoom(driver, 100)    # Reset to 100%
+zoom(driver, 0)      # Reset to 100%</p>
+<p># Selenium (browser) - Percentage
+zoom(driver, 150)    # Set zoom to 150%
+zoom(driver, 75)     # Set zoom to 75%
+zoom(driver, 50)     # Set zoom to 50%
+zoom(driver, 200)    # Set zoom to 200%</p>
+<dl class="simple">
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>Prints zoom direction and step count (PyAutoGUI).</p></li>
+<li><p>Prints new zoom percentage after change (Selenium).</p></li>
+<li><p>Prints confirmation when zoom is reset.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Selenium zoom is applied via JavaScript and is not reflected in
+the Chrome URL bar or the kebab menu zoom indicator.</p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if successful, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="changelog.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Changelog</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="quickstart.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Quick Start</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Ash
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Function Reference</a><ul>
+<li><a class="reference internal" href="#autocore._lib.browser"><code class="docutils literal notranslate"><span class="pre">browser()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.click"><code class="docutils literal notranslate"><span class="pre">click()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.click_right"><code class="docutils literal notranslate"><span class="pre">click_right()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.csv_to_xlsx"><code class="docutils literal notranslate"><span class="pre">csv_to_xlsx()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.date"><code class="docutils literal notranslate"><span class="pre">date()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.day"><code class="docutils literal notranslate"><span class="pre">day()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.drag"><code class="docutils literal notranslate"><span class="pre">drag()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.dropdown_select"><code class="docutils literal notranslate"><span class="pre">dropdown_select()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.erase"><code class="docutils literal notranslate"><span class="pre">erase()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.find_browser"><code class="docutils literal notranslate"><span class="pre">find_browser()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.find_key"><code class="docutils literal notranslate"><span class="pre">find_key()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.find_str"><code class="docutils literal notranslate"><span class="pre">find_str()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.hour"><code class="docutils literal notranslate"><span class="pre">hour()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.inspect"><code class="docutils literal notranslate"><span class="pre">inspect()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.log_setup"><code class="docutils literal notranslate"><span class="pre">log_setup()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.minute"><code class="docutils literal notranslate"><span class="pre">minute()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.month"><code class="docutils literal notranslate"><span class="pre">month()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.press"><code class="docutils literal notranslate"><span class="pre">press()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.say"><code class="docutils literal notranslate"><span class="pre">say()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.screenshot"><code class="docutils literal notranslate"><span class="pre">screenshot()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.scroll"><code class="docutils literal notranslate"><span class="pre">scroll()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.second"><code class="docutils literal notranslate"><span class="pre">second()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.wait"><code class="docutils literal notranslate"><span class="pre">wait()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.wait_download"><code class="docutils literal notranslate"><span class="pre">wait_download()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.window"><code class="docutils literal notranslate"><span class="pre">window()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.write"><code class="docutils literal notranslate"><span class="pre">write()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.year"><code class="docutils literal notranslate"><span class="pre">year()</span></code></a></li>
+<li><a class="reference internal" href="#autocore._lib.zoom"><code class="docutils literal notranslate"><span class="pre">zoom()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d6b6a36a"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
