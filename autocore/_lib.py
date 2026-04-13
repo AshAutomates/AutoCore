@@ -90,8 +90,21 @@ _script_had_error = False  # Track if unhandled exception occurred
 
 def _preprocess_for_ocr(image):
     """
-    Preprocess image for better OCR accuracy.
-    Accepts numpy array, returns cleaned binary image ready for EasyOCR.
+    Preprocesses an image to improve OCR accuracy before passing to EasyOCR.
+
+    Args:
+        image: numpy array of the image in RGB format
+
+    Returns:
+        numpy array: Cleaned binary image ready for EasyOCR
+
+    Note:
+        - Converts to grayscale to remove color noise.
+        - Upscales 2x using cubic interpolation for better character recognition.
+        - Applies denoising to remove background noise.
+        - Applies Otsu thresholding to produce a clean black and white image.
+        - Applies morphological closing to fill small gaps in characters.
+        - Lazily imports cv2 to avoid slow startup when running 'from autocore import *'.
     """
     import cv2  # pip install opencv-python
 
@@ -113,14 +126,19 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
         occurrences_to_click: 0 = click all occurrences, N = click Nth occurrence only
         button: 'left' for left-click (default), 'right' for right-click
 
-    Returns:
-        True if any click happened, False otherwise
+    Output:
+        - Prints how many occurrences were found and which one(s) were clicked.
+        - Prints a message if the requested occurrence number does not exist.
+        - Prints a message if the text was not found on screen.
 
     Note:
-        This function is used internally by click() and click_right() functions.
-        Cross-platform compatible (Windows, Linux).
+        - Used internally by click() and click_right().
+        - Cross-platform compatible (Windows, Linux).
 
+    Returns:
+        True if any click happened, False otherwise
     """
+
     import cv2  # pip install opencv-python
 
     click_count = 0
@@ -205,12 +223,26 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
 
 def _get_ocr_reader():
     """
-    Lazy initialize OCR reader - only creates when first needed.
-    Tries GPU first, falls back to CPU if GPU unavailable.
-    Shared across all OCR functions.
-    On first run, downloads OCR models (~100MB) and prints status messages.
-    Subsequent runs load instantly from cache.
+    Returns a single shared OCR reader instance, creating it only once on first call
+    and reusing it across all subsequent calls.
+
+    Output:
+        - Prints initialization message on first run.
+        - Prints confirmation when OCR engine is ready.
+
+    Note:
+        - Lazily imports easyocr inside the function to avoid slow startup time
+          when running 'from autocore import *' — easyocr is only loaded when
+          OCR is actually needed.
+        - Tries GPU first, falls back to CPU if GPU is unavailable.
+        - Shared across all OCR functions (click, read, etc.).
+        - First run downloads OCR models (~100MB).
+        - Subsequent runs load instantly from cache.
+
+    Returns:
+        easyocr.Reader: Shared OCR reader instance
     """
+
     # Third-party imports - OCR
     import easyocr  # pip install "numpy<2" easyocr
 
@@ -228,24 +260,25 @@ def _get_ocr_reader():
 
 def _get_web_element(driver_obj, selector_type, selector):
     """
-    Internal helper function to locate a web element using Selenium.
+    Locates and returns a single web element using Selenium.
 
     Args:
         driver_obj: Selenium WebDriver instance
         selector_type: Type of selector ('id', 'xpath', 'class', 'name', 'css', 'tag', 'text', 'partial')
         selector: Selector value/string
 
-    Returns:
-        WebElement if found, None if not found
-
     Examples:
-        element = get_web_element(driver, 'id', 'submit-button')
-        element = get_web_element(driver, 'xpath', '//button[@type="submit"]')
-        element = get_web_element(driver, 'class', 'btn-primary')
+        element = _get_web_element(driver, 'id', 'submit-button')
+        element = _get_web_element(driver, 'xpath', '//button[@type="submit"]')
+        element = _get_web_element(driver, 'class', 'btn-primary')
 
     Note:
-        This is an internal helper function used by other functions like click(), write(), etc.
-        Users typically don't call this directly.
+        - Used internally by click(), click_right(), write(), copy(), wait(), and other functions.
+        - 'text' and 'partial' selector types are case-sensitive.
+        - Returns None if element is not found instead of raising an exception.
+
+    Returns:
+        WebElement if found, None if not found
     """
     try:
         if selector_type == "id":
@@ -271,10 +304,24 @@ def _get_web_element(driver_obj, selector_type, selector):
 
 
 class _CustomRotatingFileNameHandler(RotatingFileHandler):
-    """Custom rotating handler that keeps .txt extension with part numbers and cleans up old logs"""
+    """
+    Custom log rotation handler that extends RotatingFileHandler with two behaviours:
+
+    1. Renames rotated files from log.txt.1 format to log_part_1.txt format
+       to keep the .txt extension visible and readable in file explorers.
+    2. Automatically deletes the oldest log files when the total logs folder
+       size exceeds 100MB, keeping disk usage under control.
+
+    Used internally by log_setup().
+    """
 
     def rotation_filename(self, default_name):
-        # Convert log.txt.1 → log_part_1.txt format
+        """
+        Converts default rotation filename format to a cleaner format.
+
+        Example:
+            log_script.txt.1  →  log_script_part_1.txt
+        """
         match = re.search(r'\.txt\.(\d+)$', default_name)
         if match:
             part_num = match.group(1)
@@ -282,7 +329,9 @@ class _CustomRotatingFileNameHandler(RotatingFileHandler):
         return default_name
 
     def doRollover(self):
-        """Override rollover to cleanup old logs after each rotation"""
+        """
+        Performs log rotation and triggers cleanup of old logs if folder exceeds 100MB.
+        """
         # Do the normal rotation first
         super().doRollover()
 
@@ -290,7 +339,15 @@ class _CustomRotatingFileNameHandler(RotatingFileHandler):
         self._cleanup_old_logs()
 
     def _cleanup_old_logs(self):
-        """Delete oldest log files if total folder size exceeds 100MB"""
+        """
+        Deletes the oldest log files in the logs folder when total size exceeds 100MB,
+        removing files one by one until the folder is back under 100MB.
+
+        Output:
+            - Prints name and remaining folder size after each deleted file.
+            - Prints warning if a file could not be deleted.
+            - Prints warning if cleanup itself fails.
+        """
         try:
             log_folder = Path("logs")
             if not log_folder.exists():
@@ -330,16 +387,38 @@ class _CustomRotatingFileNameHandler(RotatingFileHandler):
 
 
 class _LogCapture:
-    """Captures print statements and writes to both terminal and log file"""
+    """
+    Intercepts stdout and stderr to mirror all print statements to both
+    the terminal and the log file simultaneously.
+
+    Used internally by log_setup() to redirect sys.stdout and sys.stderr.
+
+    Note:
+        - Uses a guard flag (_logging) to prevent infinite recursion that would
+          occur if the logger itself triggers a write() call.
+        - flush() is implemented to satisfy the stream interface expected by
+          sys.stdout and sys.stderr.
+    """
 
     def __init__(self, original_stream, logger, level):
+        """
+        Args:
+            original_stream: The original sys.stdout or sys.stderr stream
+            logger: The logging.Logger instance to write to
+            level: Logging level (logging.INFO for stdout, logging.ERROR for stderr)
+        """
+
         self.original_stream = original_stream
         self.logger = logger
         self.level = level
         self._logging = False  # guard flag to prevent infinite recursion
 
     def write(self, message):
-        # Write to original stream (terminal)
+        """
+        Writes message to both terminal and log file.
+        Skips empty messages and guards against recursive calls.
+        """
+
         self.original_stream.write(message)
         self.original_stream.flush()
 
@@ -353,6 +432,9 @@ class _LogCapture:
                 self._logging = False  # always release guard even if exception occurs
 
     def flush(self):
+        """
+        Flushes the original stream to satisfy the stream interface.
+        """
         self.original_stream.flush()
 
 
@@ -365,9 +447,9 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         headless: Run browser in headless mode (default: False)
         timeout: Maximum seconds to wait for elements to appear (default: 30)
         cookie_path: Path to cookies JSON file (optional)
-                    - Cookies MUST be in JSON format
-                    - Export from Chrome using "Cookie-Editor" extension
-                    - Cookie domain must match the target URL
+            - Cookies MUST be in JSON format
+            - Export from Chrome using "Cookie-Editor" extension
+            - Cookie domain must match the target URL
 
     Returns:
         WebDriver: Browser instance, or None if initialization fails
@@ -392,20 +474,21 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         driver = browser('https://google.com', headless=True)
 
     Note:
-    Requires Google Chrome to be installed.
+        Requires Google Chrome to be installed.
 
-    Windows:
-        winget install Google.Chrome
+        Windows:
+            winget install Google.Chrome
 
-    Linux (Ubuntu/Debian/Mint):
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo dpkg -i google-chrome-stable_current_amd64.deb
-        sudo apt-get install -f -y
+        Linux (Ubuntu/Debian/Mint):
+            wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo dpkg -i google-chrome-stable_current_amd64.deb
+            sudo apt-get install -f -y
 
-    Linux (RHEL/CentOS/Fedora):
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-        sudo rpm -i google-chrome-stable_current_x86_64.rpm
+        Linux (RHEL/CentOS/Fedora):
+            wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+            sudo rpm -i google-chrome-stable_current_x86_64.rpm
     """
+
     # Auto-add https:// if protocol is missing
     if not url.startswith(('http://', 'https://')):
         url = 'https://' + url
@@ -978,14 +1061,20 @@ def csv_to_xlsx(csv_file=None, delete_csv=True):
 
     Examples:
         # Auto-detect single CSV in current directory (deletes CSV by default)
-        csv_to_xlsx()                              # Finds, converts, and deletes CSV
+        csv_to_xlsx()                               # Finds, converts, and deletes CSV
 
         # Specific file (deletes CSV by default)
-        csv_to_xlsx('data.csv')                    # Converts and deletes data.csv
+        csv_to_xlsx('data.csv')                     # Converts and deletes data.csv
 
         # Keep original CSV
         csv_to_xlsx('report.csv', delete_csv=False) # Keeps report.csv
+
+    Output:
+        - Prints the detected CSV filename when auto-detected.
+        - Prints conversion result showing source and destination filenames.
+        - Prints confirmation when original CSV is deleted.
     """
+
     # Auto-detect CSV if not provided
     if csv_file is None:
         csv_files = list(Path('.').glob('*.csv'))
@@ -1072,10 +1161,14 @@ def drag(*args):
         drag(driver, 'xpath', '//li[1]', 'xpath', '//li[5]')
 
         # Multiple drivers
-        driver1 = selenium('https://trello.com')
-        driver2 = selenium('https://jira.com')
+        driver1 = browser('https://trello.com')
+        driver2 = browser('https://jira.com')
         drag(driver1, 'id', 'task-1', 'id', 'done-column')
         drag(driver2, 'class', 'issue', 'class', 'backlog')
+
+    Output:
+        - Prints drag confirmation showing source and target coordinates (PyAutoGUI).
+        - Prints drag confirmation showing source and target selectors (Selenium).
 
     Returns:
         True if successful, False otherwise
@@ -1141,9 +1234,9 @@ def dropdown_select(driver_obj, selector_type, selector, selection_criteria):
 
     Args:
         driver_obj: Selenium WebDriver instance
-        selector_type (str): The type of selector ('id', 'name', 'xpath', 'class', 'css', 'tag', 'text', 'partial')
-        selector (str): The value of the selector
-        selection_criteria (int or str): The index (int) or visible text (str) for selection
+        selector_type: Type of selector ('id', 'name', 'xpath', 'class', 'css', 'tag', 'text', 'partial')
+        selector: The value of the selector
+        selection_criteria: Index (int) or visible text (str) for selection
 
     Examples:
         # Select by index
@@ -1159,9 +1252,13 @@ def dropdown_select(driver_obj, selector_type, selector, selection_criteria):
         dropdown_select(driver, 'class', 'form-select', 'Option 1')
         dropdown_select(driver, 'css', 'select.dropdown', 'Value')
 
+    Output:
+        - Prints confirmation showing the selected option index or text.
+
     Returns:
         True if successful, False otherwise
     """
+
     try:
         # Using the get_web_element function to locate the dropdown element
         dropdown_element = _get_web_element(driver_obj, selector_type, selector)
@@ -1270,13 +1367,19 @@ def find_browser(*args):
         find_browser(driver, 'Python')      # Find in Selenium browser
         find_browser(driver, 'contact us')  # Find phrase in browser
 
-    Returns:
-        True if successful, False otherwise
+    Output:
+        - Prints confirmation with the searched text (PyAutoGUI).
+        - Prints confirmation if text was found and highlighted (Selenium).
+        - Prints a message if text was not found on the page (Selenium).
 
     Note:
-        - PyAutoGUI: Opens browser find dialog (Ctrl+F), types search term, presses Enter, then Esc
-        - Selenium: Uses JavaScript to find and highlight text on page
-        - Default wait time: 1 second between actions
+        - PyAutoGUI: Opens find dialog (Ctrl+F), types search term, presses Enter, then Esc.
+        - Selenium: Uses JavaScript to highlight matching text on the page in yellow
+          and scrolls to the first match. Removes any previous highlights before applying new ones.
+        - Default wait time between actions is 1 second (PyAutoGUI only).
+
+    Returns:
+        True if successful, False otherwise
     """
 
     wait_time = 1  # Default wait time (1 second)
@@ -1361,16 +1464,13 @@ def find_browser(*args):
 
 def find_key(data, key):
     """
-    Recursively finds all values of a specified key in nested data structures.
-
-    Supports dictionaries, lists, and tuples.
+    Recursively finds all values of a specified key in nested data structures
+    (dictionaries, lists, and tuples). Particularly useful for searching
+    deeply nested JSON data from API responses or parsed files.
 
     Args:
         data: Data structure to search (dict, list, or tuple)
         key: Key name to find
-
-    Returns:
-        list: All values found for the key (empty list if not found)
 
     Examples:
         # Single occurrence
@@ -1387,8 +1487,18 @@ def find_key(data, key):
         # Nested lists/tuples
         data = {'users': [{'age': 25}, {'age': 30}]}
         ages = find_key(data, 'age')              # [25, 30]
+
+        # API response workflow
+        response = requests.get('https://api.example.com/users').json()
+        ids = find_key(response, 'id')            # finds all 'id' values
+
+        # Parsed file workflow
+        data = json.loads(read('data.json'))
+        hosts = find_key(data, 'host')            # finds all 'host' values
+
+    Returns:
+        list: All values found for the key (empty list if not found)
     """
-    results = []
 
     def extract(obj):
         """Recursively search for key in nested structure"""
@@ -1466,148 +1576,175 @@ def hour():
 def inspect():
     """
     Opens GUI to inspect pixel position and color with zoomed preview.
-    Move mouse, press 'ESC' to capture. Copies 'x, y, r, g, b' to clipboard.
 
-    Platform: Windows only
-    Note: This function uses global keyboard detection which requires
-          administrator privileges on Linux/macOS, so it's Windows-only.
+    Usage:
+        1. Click on the Pixel Inspector window to bring it into focus.
+        2. Move the mouse to the desired pixel.
+        3. Press 'ESC' to capture.
+
+    Output:
+        - Prints position and RGB/HEX values to console.
+        - Copies 'x, y, r, g, b' to clipboard.
+
+    Platform: Windows, Linux
     """
 
-    # Check if running on Windows
-    if platform.system() != "Windows":
-        print(f"inspect() is only supported on Windows.")
-        print(f"Current OS: {platform.system()}")
-        return
-
-    # Flag to keep track of the window state
+    # Track whether the inspector window is still open
     window_open = True
+
+    def capture_pixel(event=None):
+        """Called when ESC is pressed. Captures current mouse position and color."""
+        nonlocal window_open
+        try:
+            # Get current mouse position
+            x, y = pyautogui.position()
+
+            # Get the RGB color of the pixel at current mouse position
+            color = pyautogui.pixel(x, y)
+
+            # Convert RGB to HEX format
+            hex_color = f"#{color[0]:02x}{color[1]:02x}{color[2]:02x}".upper()
+
+            # Format the full output string for console
+            formatted_output = f"Pixel at ({x}, {y}): RGB {color} | HEX {hex_color}"
+
+            # Format the clipboard string as 'x, y, r, g, b'
+            clipboard_text = f"{x}, {y}, {color[0]}, {color[1]}, {color[2]}"
+
+            # Print to console
+            print(formatted_output)
+            print(f"Copied to clipboard: {clipboard_text}")
+
+            # Copy to clipboard
+            pyperclip.copy(clipboard_text)
+
+            # Mark window as closed and destroy the tkinter window
+            window_open = False
+            root.destroy()
+
+        except Exception as e:
+            print(f"Error capturing pixel: {e}")
 
     # noinspection PyTypeChecker
     def update_color_and_position():
-        nonlocal window_open
+        """Called repeatedly every 100ms to update the live preview."""
+
+        # Stop updating if the window has been closed
         if not window_open:
             return
 
-        # Check if 'ESC' key is pressed to capture
-        if keyboard.is_pressed('esc'):
-            try:
-                x, y = pyautogui.position()
-                color = pyautogui.pixel(x, y)
-                hex_color = f"#{color[0]:02x}{color[1]:02x}{color[2]:02x}".upper()
-
-                # Format output and copy to clipboard
-                formatted_output = f"Pixel at ({x}, {y}): RGB {color} | HEX {hex_color}"
-                clipboard_text = f"{x}, {y}, {color[0]}, {color[1]}, {color[2]}"
-                print(formatted_output)
-                print(f"Copied to clipboard: {clipboard_text}")
-                pyperclip.copy(clipboard_text)
-
-                # Close window
-                window_open = False
-                root.destroy()
-                return
-            except Exception as e:
-                print(f"Error capturing pixel: {e}")
-                # Don't close window if capture failed
-                root.after(100, update_color_and_position)
-                return
-
-        # Update display with current mouse position and color
         try:
+            # Get current mouse position
             x, y = pyautogui.position()
 
-            # Get screen size to validate position
+            # Get screen dimensions to validate mouse position
             screen_width, screen_height = pyautogui.size()
 
-            # Check if position is valid
+            # Skip update if mouse is outside screen bounds
             if x < 0 or y < 0 or x >= screen_width or y >= screen_height:
                 root.after(100, update_color_and_position)
                 return
 
+            # Get RGB color of the pixel at current mouse position
             color = pyautogui.pixel(x, y)
+
+            # Convert RGB to HEX format
             hex_color = f"#{color[0]:02x}{color[1]:02x}{color[2]:02x}".upper()
 
-            # Update labels
+            # Update the position, RGB and HEX labels in the GUI
             position_label.config(text=f"Position: ({x}, {y})")
             color_label.config(text=f"RGB: {color}")
             hex_label.config(text=f"HEX: {hex_color}")
+
+            # Update the color swatch to show the current pixel color
             color_display.config(bg=hex_color.lower())
 
-            # Update zoomed preview
-            # Capture area around cursor (30x30 pixels for 8x zoom)
+            # --- Zoomed Preview ---
+
+            # Define the capture area size around the cursor (30x30 pixels)
             zoom_size = 30
+
+            # Calculate top-left corner of the capture region centered on cursor
             left = max(0, x - zoom_size // 2)
             top = max(0, y - zoom_size // 2)
 
-            # Ensure we don't go beyond screen boundaries
+            # Clamp the region so it does not go beyond screen edges
             left = min(left, screen_width - zoom_size)
             top = min(top, screen_height - zoom_size)
 
-            # Take screenshot of area around cursor
+            # Take a screenshot of the small region around the cursor
             screenshot = pyautogui.screenshot(region=(left, top, zoom_size, zoom_size))
 
-            # Resize to make it bigger (8x magnification)
+            # Resize the region to 240x240 for 8x magnification using nearest
+            # neighbor to keep pixels sharp and not blurred
             zoomed = screenshot.resize((240, 240), Image.Resampling.NEAREST)
 
-            # Convert to PhotoImage for tkinter
+            # Convert the zoomed image to a format tkinter can display
             photo = ImageTk.PhotoImage(zoomed)
 
-            # Update canvas
+            # Clear the canvas and draw the new zoomed image
             zoom_canvas.delete("all")
             zoom_canvas.create_image(120, 120, image=photo)
+
+            # Keep a reference to prevent garbage collection
             zoom_canvas.image = photo
 
-            # Draw crosshair at center
-            zoom_canvas.create_line(120, 110, 120, 130, fill='red', width=2)
-            zoom_canvas.create_line(110, 120, 130, 120, fill='red', width=2)
+            # Draw a red crosshair at the center of the zoomed preview
+            zoom_canvas.create_line(120, 110, 120, 130, fill='red', width=2)  # vertical
+            zoom_canvas.create_line(110, 120, 130, 120, fill='red', width=2)  # horizontal
 
         except Exception as e:
             print(f"Pixel preview update failed: {e}")
             return
 
-        # Schedule next update
+        # Schedule the next update after 100ms
         root.after(100, update_color_and_position)
 
-    # Create main window
+    # --- Build the tkinter GUI ---
+
+    # Create the main window
     root = tk.Tk()
     root.title("Pixel Inspector")
     root.geometry("400x560")
     root.configure(bg='#4D4D4D')
 
-    # Position label
+    # Bind ESC key to capture_pixel so pressing ESC triggers the capture
+    root.bind('<Escape>', capture_pixel)
+
+    # Label to show current mouse position
     position_label = tk.Label(root, text="Position:", font=("Helvetica", 12), bg='#4D4D4D', fg='white')
     position_label.pack()
 
-    # Color label (RGB)
+    # Label to show current RGB values
     color_label = tk.Label(root, text="RGB:", font=("Helvetica", 12), bg='#4D4D4D', fg='white')
     color_label.pack()
 
-    # HEX label
+    # Label to show current HEX value
     hex_label = tk.Label(root, text="HEX:", font=("Helvetica", 12), bg='#4D4D4D', fg='white')
     hex_label.pack()
 
-    # Color display frame (wider)
+    # Color swatch frame that fills with the current pixel color
     color_display = tk.Frame(root, height=60, width=200)
     color_display.pack(pady=10)
 
-    # Zoom preview label
+    # Label above the zoomed preview canvas
     zoom_label = tk.Label(root, text="Zoomed Preview (8x):", font=("Helvetica", 10), bg='#4D4D4D', fg='white')
     zoom_label.pack()
 
-    # Canvas for zoomed preview (bigger)
+    # Canvas where the zoomed pixel preview is drawn
     zoom_canvas = tk.Canvas(root, width=240, height=240, bg='#2D2D2D', highlightthickness=2,
                             highlightbackground='white')
     zoom_canvas.pack(pady=5)
 
-    # Instruction label
+    # Instruction label at the bottom
     instruction_label = tk.Label(root, text="Press 'ESC' to capture and exit", font=("Helvetica", 10),
                                  bg='#4D4D4D', fg='white')
     instruction_label.pack(pady=10)
 
-    # Start the update loop
+    # Start the live update loop
     update_color_and_position()
 
-    # Run tkinter event loop
+    # Start the tkinter event loop — blocks here until window is closed
     root.mainloop()
 
 
@@ -2690,18 +2827,11 @@ def run(item):
     """
     Runs a file or application on Windows and Linux.
 
-    Platform Support:
-        Windows: Uses 'start' command
-        Linux: Uses 'xdg-open' for files, direct execution for apps
-        macOS: Not supported
-
-    Behavior:
-        - If item is a file path: Opens with default application
-        - If item is an application name: Launches the application
-        - For applications, the command must be available in system PATH
-
     Args:
-        item (str): Path to a file or name of an application to run
+        item: Path to a file or name of an application to run
+            - If item is a file path: Opens with default application
+            - If item is an application name: Launches the application
+            - For applications, the command must be available in system PATH
 
     Examples:
         # Open files with default application
@@ -2719,12 +2849,16 @@ def run(item):
         run("firefox")              # Browser
         run("gnome-calculator")     # Calculator
 
-    Linux Dependencies:
-        xdg-utils package (usually pre-installed)
-        sudo apt-get install xdg-utils    # If needed
+    Output:
+        - Prints error message if file or application was not found.
+        - Prints error message if permission was denied.
 
-    Returns:
-        None
+    Note:
+        - Windows: Uses os.startfile for files, subprocess for applications.
+        - Linux: Uses xdg-open for files, direct execution for applications.
+          xdg-utils is required (included in Linux dependencies).
+
+    Platform: Windows, Linux
 
     Raises:
         NotImplementedError: If called on macOS
@@ -2793,10 +2927,14 @@ def say(text, volume=1.0):
         say("Download complete", volume=0.7)
         say("Error occurred")
 
+    Output:
+        - Prints spoken text to console.
+
     Note:
-        Speech rate is fixed at 130 words/minute for optimal clarity.
-        Automatically logs spoken text when log_setup() is active.
+        - Speech rate is fixed at 130 words/minute for optimal clarity.
+        - Automatically logs spoken text when log_setup() is active.
     """
+
     # Validate text input
     if not isinstance(text, str):
         raise TypeError("Text to speak must be a string")
@@ -2825,27 +2963,26 @@ def say(text, volume=1.0):
 
 def screenshot(*args):
     """
-    Takes a screenshot and saves it.
+    Takes a screenshot and saves it to the current working directory.
 
-    Arguments:
+    Args:
         *args: Variable arguments depending on usage:
-            - () → Full screen, auto-named
-            - (filename) → Full screen, custom filename
-            - (x, y) → From (x,y) to screen edge, auto-named
-            - (x, y, filename) → From (x,y) to screen edge, custom filename
-            - (x, y, width, height) → Specific region, auto-named
+            - ()                            → Full screen, auto-named
+            - (filename)                    → Full screen, custom filename
+            - (x, y)                        → From (x,y) to screen edge, auto-named
+            - (x, y, filename)              → From (x,y) to screen edge, custom filename
+            - (x, y, width, height)         → Specific region, auto-named
             - (x, y, width, height, filename) → Specific region, custom filename
-            - (driver, ...) → Same as above but uses Selenium driver
+            - (driver, ...)                 → Same as above but captures from Selenium browser
 
-    Where:
-        driver: Selenium WebDriver instance (for Selenium mode)
-        x, y: Coordinates of top-left corner of the screenshot region
-        width, height: Dimensions of the screenshot region
-        filename: Name to save the screenshot (auto-generates if not provided)
-
-    Default Naming:
-        If no filename provided, auto-generates: screenshot_YYYY-MM-DD_HH-MM-SS_<unix>.png
-        Example: screenshot_2025-02-18_14-30-45_1708268445.png
+        Where:
+            - driver: Selenium WebDriver instance
+            - x, y: Top-left corner coordinates of the screenshot region
+            - width, height: Dimensions of the screenshot region
+            - filename: Custom name to save the screenshot
+                - .png extension is added automatically if not provided
+                - If not provided, auto-generates: screenshot_YYYY-MM-DD_HH-MM-SS_<unix>.png
+                  Example: screenshot_2025-02-18_14-30-45_1708268445.png
 
     Examples:
         # Full screen (PyAutoGUI)
@@ -2871,6 +3008,10 @@ def screenshot(*args):
         # Specific region (Selenium)
         screenshot(driver, 0, 0, 800, 600)              # Selenium region, auto-named
         screenshot(driver, 0, 0, 800, 600, 'sel.png')   # Selenium region, custom name
+
+    Output:
+        - Prints the full path of the saved screenshot on success.
+        - Prints error message if invalid arguments or coordinates are provided.
 
     Returns:
         True if successful, False otherwise
@@ -3005,24 +3146,29 @@ def scroll(*args, timeout=30):
         timeout: Max seconds when scrolling to 'bottom'/'top' (default: 30)
 
     PyAutoGUI Examples (scroll any window):
-        scroll()                # Scroll down 1 time (default)
-        scroll(5)               # Scroll down 5 times
-        scroll('down')          # Scroll down 1 time
-        scroll('down', 10)      # Scroll down 10 times
-        scroll('up', 5)         # Scroll up 5 times
-        scroll('bottom')        # Scroll down continuously for 30 seconds
+        scroll()                      # Scroll down 1 time (default)
+        scroll(5)                     # Scroll down 5 times
+        scroll('down')                # Scroll down 1 time
+        scroll('down', 10)            # Scroll down 10 times
+        scroll('up', 5)               # Scroll up 5 times
+        scroll('bottom')              # Scroll down continuously for 30 seconds
         scroll('bottom', timeout=60)  # Scroll down continuously for 60 seconds
-        scroll('top')           # Scroll up continuously for 30 seconds
+        scroll('top')                 # Scroll up continuously for 30 seconds
 
     Selenium Examples (pass driver object):
-        scroll(driver)              # Scroll down 1 time in browser
-        scroll(driver, 5)           # Scroll down 5 times in browser
-        scroll(driver, 'down')      # Scroll down 1 time in browser
-        scroll(driver, 'down', 10)  # Scroll down 10 times in browser
-        scroll(driver, 'up', 5)     # Scroll up 5 times in browser
-        scroll(driver, 'bottom')    # Scroll to bottom (auto-detect end)
-        scroll(driver, 'top')       # Scroll to top (auto-detect end)
-        scroll(driver, 'bottom', timeout=120)  # Scroll to bottom, max 2 minutes
+        scroll(driver)                        # Scroll down 1 time in browser
+        scroll(driver, 5)                     # Scroll down 5 times in browser
+        scroll(driver, 'down')                # Scroll down 1 time in browser
+        scroll(driver, 'down', 10)            # Scroll down 10 times in browser
+        scroll(driver, 'up', 5)               # Scroll up 5 times in browser
+        scroll(driver, 'bottom')              # Scroll to bottom (auto-detect end)
+        scroll(driver, 'top')                 # Scroll to top (auto-detect end)
+        scroll(driver, 'bottom', timeout=120) # Scroll to bottom, max 2 minutes
+
+    Output:
+        - Prints scroll direction and count on completion.
+        - Prints progress every 10 scrolls for large scroll counts.
+        - Prints confirmation when bottom or top is reached (Selenium).
 
     Returns:
         True if successful, False otherwise
@@ -3344,50 +3490,54 @@ def wait(*args, countdown=True):
 
 def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
     """
-    This function operates in two modes:
+    Wait for a browser-initiated download to complete, or download a file directly via URL.
 
+    Modes:
         1. URL mode (url provided): Downloads file directly using requests. Useful for
-          file types blocked by browsers (.exe, .msix, .msi, etc.). File is saved to
-          Python's current working directory.
-
+           file types blocked by browsers (.exe, .msix, .msi, etc.). File is saved to
+           Python's current working directory.
         2. Monitor mode (url not provided): Monitors the downloads folder for a
-          browser-initiated download to complete.
+           browser-initiated download to complete.
 
     Args:
-        timeout: Maximum seconds to wait for download completion
-
+        timeout: Maximum seconds to wait for download completion (default: 1200)
         url: Direct download URL (optional)
             - If provided: Downloads file directly via requests
             - If None: Monitors downloads folder for browser-initiated download
-
         filename: Custom filename to save/rename the downloaded file (optional)
             - With extension (e.g. "myapp.exe")  → used as-is
             - Without extension (e.g. "myapp")   → extension borrowed from original file
             - If None: Original filename is kept
             - If multiple files are downloaded, only the first completed file is renamed
-
         download_dir: Custom download directory to monitor (monitor mode only, optional)
-            - If provided: Uses specified path
-            - If None: Auto-detects (checks env var, Docker, then ~/Downloads)
+            - If provided: Uses specified path and skips all auto-detection
+            - If None: Auto-detects using the priority order described in Note below
 
-    Environment Variables:
-        DOWNLOAD_DIR: Custom download directory path (monitor mode only)
+    Examples:
+        wait_download()                                                   # Monitor downloads folder
+        wait_download(url='https://abc.com/file.msix')                    # Direct download via URL
+        wait_download(url='https://abc.com/file.msix', filename='myapp')  # Custom name, borrows extension
+        wait_download(300, filename='our_log.txt')                        # Monitor and rename on completion
+        wait_download(600, download_dir='/downloads')                     # Docker with custom path
+        wait_download(300, download_dir='D:/MyDownloads')                 # Windows custom path
+
+    Output:
+        - Prints download progress every 10 seconds showing elapsed time and file size.
+        - Prints confirmation with final filename and saved path on completion.
+        - Prints timeout message if download does not complete in time.
+
+    Note:
+        - When download_dir is not provided, the folder is auto-detected in this order:
+            1. DOWNLOAD_DIR environment variable (if set at OS level)
+            2. /downloads folder (if running inside Docker)
+            3. ~/Downloads (default fallback)
+        - If a file was modified within the last 20 seconds before calling this function,
+          it will be detected as a recently completed download and returned immediately.
+          This handles cases where downloads complete very quickly before monitoring starts.
 
     Returns:
         str: Final filename of the downloaded file (always includes extension) on success
         False: On failure (download error, timeout, directory access issue, etc.)
-
-    Examples:
-        wait_download()                                                  # Monitor downloads folder
-        wait_download(url='https://abc.com/file.msix')                   # Direct download via URL
-        wait_download(url='https://abc.com/file.msix', filename='myapp') # Custom name, borrows extension
-        wait_download(300, filename='our_log.txt')                         # Monitor and rename on completion
-        wait_download(600, download_dir='/downloads')                     # Docker with custom path
-        wait_download(300, download_dir='D:/MyDownloads')                  # Windows custom path
-
-    Note: If a file was modified within the last 20 seconds before calling this function,
-    it will be detected as a recently completed download and the function will return
-    immediately. This handles cases where downloads complete very quickly (before monitoring starts).
     """
 
     def _resolve_final_filename(custom_name, original_name):
@@ -4187,19 +4337,26 @@ def write(*keys):
 
     Examples:
         # PyAutoGUI mode (types in any active window)
-        write("Hello World")                    # Types using PyAutoGUI
-        write("user@example.com")               # Types email
-        write("12345")                          # Types numbers (as string)
-        write("12345")                          # Types numbers (as string)
+        write("Hello World")                                        # Types in active window
+        write("user@example.com")                                   # Types email
+        write("12345")                                              # Types numbers as string
 
-        # Selenium mode - type on page (driver object)
-        write(driver, "Hello World")            # Types on active element in browser
-        write(driver, "Search query")           # Types in focused input
+        # Selenium mode - type on active element in browser
+        write(driver, "Hello World")                                # Types on active element
+        write(driver, "Search query")                               # Types in focused input
 
-        # Selenium mode - type in specific element (driver object)
+        # Selenium mode - type in specific element
         write(driver, "id", "username", "john_doe")
         write(driver, "xpath", "//input[@name='email']", "user@example.com")
         write(driver, "class", "search-box", "Python tutorial")
+
+    Output:
+        - Prints error message if element was not found (Selenium).
+        - Prints error message if invalid arguments are provided.
+
+    Note:
+        - PyAutoGUI uses typewrite() which types one character at a time.
+        - Selenium uses send_keys() which types the entire string at once.
 
     Returns:
         True if successful, False otherwise
@@ -4298,11 +4455,11 @@ def zoom(*args):
         zoom(-5)             # Zoom out 5 steps
         zoom(100) or zoom(0) # Reset to default (Ctrl+0)
         When zoom in/out is performed using UI (Ctrl and +/-) in Chrome,
-        The min %, zoom states % and max % follow this order:
+        the min %, zoom states % and max % follow this order:
             (25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500)
 
         # Selenium (browser) - Steps
-        zoom(driver, 3)      # Zoom in current  + 3 * 10%
+        zoom(driver, 3)      # Zoom in current + 3 * 10%
         zoom(driver, -5)     # Zoom out current - 5 * 10%
 
         # Selenium (browser) - Reset
@@ -4315,10 +4472,14 @@ def zoom(*args):
         zoom(driver, 50)     # Set zoom to 50%
         zoom(driver, 200)    # Set zoom to 200%
 
-    Note: If zoom is performed using selenium mode,
-         then the current zoom percent state is not shown in
-         url bar as search glass icon or
-         in chrome kebab menu as Zoom info.
+    Output:
+        - Prints zoom direction and step count (PyAutoGUI).
+        - Prints new zoom percentage after change (Selenium).
+        - Prints confirmation when zoom is reset.
+
+    Note:
+        - Selenium zoom is applied via JavaScript and is not reflected in
+          the Chrome URL bar or the kebab menu zoom indicator.
 
     Returns:
         True if successful, False otherwise
