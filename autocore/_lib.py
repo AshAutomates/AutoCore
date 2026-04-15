@@ -501,6 +501,8 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     if headless:
         options.add_argument("--headless=new")
         options.add_argument("--window-size=2560,1440")
+        options.add_argument("--disable-gpu")                         # disable GPU (prevents SwiftShader WebGL signal)
+        options.add_argument("--enable-features=OverlayScrollbar")    # mimics real Chrome scrollbar behavior
 
     # Fetch installed Chrome version dynamically to keep user-agent current.
     # A matching Chrome version in user-agent makes the browser look more like a real user.
@@ -523,27 +525,27 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     options.add_argument(f"user-agent={user_agent}")
 
     # Additional options to enhance realism and disable Selenium detection
-    options.add_argument('start-maximized')  # Start browser maximized
-    options.add_argument('--disable-blink-features=AutomationControlled')  # Disable automation flags
-    options.add_argument("--safebrowsing-disable-download-protection")  # allow unverified downloads
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])  # Exclude automation switches
-    options.add_experimental_option('useAutomationExtension', False)  # Disable automation extension
-    options.add_argument("--disable-features=InsecureDownloadWarnings")  # disable insecure download warnings
-    options.add_argument("--disable-features=DownloadBubble")  # disable download bubble UI
-    options.add_argument("--no-sandbox")  # disable sandbox restrictions
-
+    options.add_argument('start-maximized')                                     # Start browser maximized
+    options.add_argument('--disable-blink-features=AutomationControlled')       # Disable automation flags
+    options.add_argument("--safebrowsing-disable-download-protection")          # allow unverified downloads
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])   # Exclude automation switches
+    options.add_experimental_option('useAutomationExtension', False)            # Disable automation extension
+    options.add_argument("--disable-features=InsecureDownloadWarnings")         # disable insecure download warnings
+    options.add_argument("--disable-features=DownloadBubble")                  # disable download bubble UI
+    options.add_argument("--no-sandbox")                                        # disable sandbox restrictions
+    options.add_argument("--lang=en-US")                                        # set language to avoid empty navigator.languages
 
     # Set preferences to avoid unnecessary pop-ups and block notifications
     prefs = {
         "profile.default_content_setting_values.notifications": 2,  # block browser notification popups
-        'credentials_enable_service': False,  # disable save password popup
-        'profile': {'password_manager_enabled': False},  # disable password manager completely
-        "safebrowsing.enabled": False,  # disable safe browsing to allow downloads
-        "download.prompt_for_download": False,  # no download confirmation prompt
-        "download.directory_upgrade": True,  # allow download directory changes
-        "plugins.always_open_pdf_externally": True,  # download PDFs instead of opening in browser
-        "safebrowsing_for_trusted_sources_enabled": False,  # disable safe browsing for trusted sources
-        "safebrowsing.disable_download_protection": True,  # disable download protection completely
+        'credentials_enable_service': False,                         # disable save password popup
+        'profile': {'password_manager_enabled': False},              # disable password manager completely
+        "safebrowsing.enabled": False,                               # disable safe browsing to allow downloads
+        "download.prompt_for_download": False,                       # no download confirmation prompt
+        "download.directory_upgrade": True,                          # allow download directory changes
+        "plugins.always_open_pdf_externally": True,                  # download PDFs instead of opening in browser
+        "safebrowsing_for_trusted_sources_enabled": False,           # disable safe browsing for trusted sources
+        "safebrowsing.disable_download_protection": True,            # disable download protection completely
     }
     options.add_experimental_option("prefs", prefs)
 
@@ -553,6 +555,94 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     except Exception as e:
         print(f"Error initializing Chrome Driver: {e}")
         return None
+
+    # Inject JS to patch remaining bot detection signals
+    driver_instance.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        "source": """
+            // Fix navigator.webdriver at prototype level
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => false,
+                configurable: true,
+                enumerable: true
+            });
+            try { delete navigator.__proto__.webdriver; } catch(e) {}
+            Object.defineProperty(Navigator.prototype, 'webdriver', {
+                get: () => false,
+                configurable: true,
+                enumerable: true
+            });
+
+            // Fix plugins to return proper PluginArray-like object
+            const mockPlugins = ['Chrome PDF Plugin', 'Chrome PDF Viewer', 'Native Client'].map(name => {
+                const plugin = Object.create(Plugin.prototype);
+                Object.defineProperty(plugin, 'name', {get: () => name});
+                Object.defineProperty(plugin, 'filename', {get: () => name.toLowerCase().replace(/ /g, '-') + '.dll'});
+                Object.defineProperty(plugin, 'description', {get: () => name});
+                Object.defineProperty(plugin, 'length', {get: () => 0});
+                return plugin;
+            });
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => {
+                    const arr = Object.create(PluginArray.prototype);
+                    mockPlugins.forEach((p, i) => arr[i] = p);
+                    Object.defineProperty(arr, 'length', {get: () => mockPlugins.length});
+                    arr.item = i => mockPlugins[i];
+                    arr.namedItem = name => mockPlugins.find(p => p.name === name) || null;
+                    arr.refresh = () => {};
+                    return arr;
+                }
+            });
+
+            // Fix permissions to return 'prompt' instead of 'denied'
+            const originalQuery = window.navigator.permissions.query.bind(window.navigator.permissions);
+            window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' || parameters.name === 'push' ?
+                    Promise.resolve({state: 'prompt', onchange: null}) :
+                    originalQuery(parameters)
+            );
+
+            // Fix navigator.languages
+            Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']});
+
+            // Fix navigator.mimeTypes
+            Object.defineProperty(navigator, 'mimeTypes', {get: () => [
+                {type: 'application/pdf'},
+                {type: 'application/x-nacl'},
+            ]});
+
+            // Fix window.chrome
+            window.chrome = {
+                webstore: {
+                    onInstallStageChanged: {},
+                    onDownloadProgress: {},
+                    install: function() {},
+                    constructor: function() {}
+                },
+                runtime: {
+                    onConnect: null,
+                    onMessage: null,
+                    connect: function() {},
+                    sendMessage: function() {},
+                    id: undefined
+                },
+                loadTimes: function() {},
+                csi: function() {},
+                app: {
+                    isInstalled: false,
+                    InstallState: {DISABLED: 'disabled', INSTALLED: 'installed', NOT_INSTALLED: 'not_installed'},
+                    RunningState: {CANNOT_RUN: 'cannot_run', READY_TO_RUN: 'ready_to_run', RUNNING: 'running'}
+                }
+            };
+
+            // Fix WebGL renderer
+            const getParameter = WebGLRenderingContext.prototype.getParameter;
+            WebGLRenderingContext.prototype.getParameter = function(parameter) {
+                if (parameter === 37445) return 'Intel Inc.';
+                if (parameter === 37446) return 'Intel Iris OpenGL Engine';
+                return getParameter.call(this, parameter);
+            };
+        """
+    })
 
     # Set an implicit wait for elements to be found
     driver_instance.implicitly_wait(timeout)
@@ -3076,7 +3166,11 @@ def screenshot(*args):
         y = int(y) if y is not None else 0
 
         # Get screen dimensions
-        screen_width, screen_height = pyautogui.size()
+        if use_driver:
+            screen_width = driver_obj.execute_script("return window.innerWidth")
+            screen_height = driver_obj.execute_script("return window.innerHeight")
+        else:
+            screen_width, screen_height = pyautogui.size()
 
         # Calculate width and height if not provided
         if width is None:
@@ -3109,15 +3203,18 @@ def screenshot(*args):
 
         # Take screenshot
         if use_driver:
-            # Selenium: capture full page, then crop
-            temp_path = 'temp_full_screenshot.png'
-            driver_obj.save_screenshot(temp_path)
-
-            image = Image.open(temp_path)
-            cropped = image.crop((x, y, x + width, y + height))
-            cropped.save(full_path)
-
-            os.remove(temp_path)
+            if x == 0 and y == 0 and width == screen_width and height == screen_height:
+                # Full browser window, no cropping needed
+                driver_obj.save_screenshot(full_path)
+            else:
+                # Region crop requested
+                png_bytes = driver_obj.get_screenshot_as_png()
+                image = Image.open(io.BytesIO(png_bytes))
+                img_width, img_height = image.size
+                crop_x2 = min(x + width, img_width)
+                crop_y2 = min(y + height, img_height)
+                cropped = image.crop((x, y, crop_x2, crop_y2))
+                cropped.save(full_path)
         else:
             # PyAutoGUI: capture region directly
             img = pyautogui.screenshot(region=(x, y, width, height))
