@@ -500,7 +500,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     # confirming headless mode
     if headless:
         options.add_argument("--headless=new")
-        options.add_argument("--window-size=1920,1080")
+        options.add_argument("--window-size=2560,1440")
 
     # Fetch installed Chrome version dynamically to keep user-agent current.
     # A matching Chrome version in user-agent makes the browser look more like a real user.
