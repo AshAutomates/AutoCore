@@ -81,6 +81,7 @@ setup(
         "odfpy",
         "extract-msg",
         "striprtf",
+        "undetected-chromedriver",
         "requests",
         "pyttsx3",
         "pyyaml",
