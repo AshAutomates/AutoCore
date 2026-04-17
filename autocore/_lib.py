@@ -44,9 +44,9 @@ import keyboard
 from bs4 import BeautifulSoup
 
 # Third-party imports - Selenium
-from selenium import webdriver
-from selenium.common.exceptions import *
+import undetected_chromedriver as uc
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import *
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -495,7 +495,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         print(f"Protocol not specified. Using: {url}")
 
     # Initialize options for Chrome
-    options = Options()
+    options = uc.ChromeOptions()
 
     # confirming headless mode
     if headless:
@@ -522,14 +522,14 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome Safari/537.36"
 
     # Set a user-agent string to make the automated browser look like a regular Chrome browser
-    options.add_argument(f"user-agent={user_agent}")
+    options.add_argument(f"--user-agent={user_agent}")
 
     # Additional options to enhance realism and disable Selenium detection
-    options.add_argument('start-maximized')                                     # Start browser maximized
-    options.add_argument('--disable-blink-features=AutomationControlled')       # Disable automation flags
+    options.add_argument('--start-maximized')                                     # Start browser maximized
+    # options.add_argument('--disable-blink-features=AutomationControlled')       # Disable automation flags
     options.add_argument("--safebrowsing-disable-download-protection")          # allow unverified downloads
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])   # Exclude automation switches
-    options.add_experimental_option('useAutomationExtension', False)            # Disable automation extension
+    # options.add_experimental_option("excludeSwitches", ["enable-automation"])   # Exclude automation switches
+    # options.add_experimental_option('useAutomationExtension', False)            # Disable automation extension
     options.add_argument("--disable-features=InsecureDownloadWarnings")         # disable insecure download warnings
     options.add_argument("--disable-features=DownloadBubble")                  # disable download bubble UI
     options.add_argument("--no-sandbox")                                        # disable sandbox restrictions
@@ -551,12 +551,13 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
 
     # Attempt to initialize the Chrome driver
     try:
-        driver_instance = webdriver.Chrome(options=options)
+        driver_instance = uc.Chrome(options=options)
     except Exception as e:
         print(f"Error initializing Chrome Driver: {e}")
         return None
 
     # Inject JS to patch remaining bot detection signals
+    # driver_instance.execute_cdp_cmd("Emulation.setAutomationOverride", {"enabled": False})
     driver_instance.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
             // Fix navigator.webdriver at prototype level
@@ -566,11 +567,6 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
                 enumerable: true
             });
             try { delete navigator.__proto__.webdriver; } catch(e) {}
-            Object.defineProperty(Navigator.prototype, 'webdriver', {
-                get: () => false,
-                configurable: true,
-                enumerable: true
-            });
 
             // Fix plugins to return proper PluginArray-like object
             const mockPlugins = ['Chrome PDF Plugin', 'Chrome PDF Viewer', 'Native Client'].map(name => {
@@ -592,14 +588,28 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
                     return arr;
                 }
             });
-
+                        
             // Fix permissions to return 'prompt' instead of 'denied'
             const originalQuery = window.navigator.permissions.query.bind(window.navigator.permissions);
-            window.navigator.permissions.query = (parameters) => (
-                parameters.name === 'notifications' || parameters.name === 'push' ?
-                    Promise.resolve({state: 'prompt', onchange: null}) :
-                    originalQuery(parameters)
-            );
+            window.navigator.permissions.query = (parameters) => {
+                const permissionsToSpoof = ['notifications', 'push', 'midi', 'camera', 'microphone', 'geolocation'];
+                if (permissionsToSpoof.includes(parameters.name)) {
+                    return Promise.resolve({
+                        state: 'prompt',
+                        permission: 'prompt',
+                        status: 'prompt',
+                        onchange: null
+                    });
+                }
+                return originalQuery(parameters);
+            };
+            
+            // Also patch inside iframes
+            if (window.top !== window.self) {
+                window.navigator.permissions.query = (parameters) => {
+                    return Promise.resolve({state: 'prompt', permission: 'prompt', onchange: null});
+                };
+            }
 
             // Fix navigator.languages
             Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']});
@@ -647,21 +657,8 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     # Set an implicit wait for elements to be found
     driver_instance.implicitly_wait(timeout)
 
-    # Fallback URLs to ensure the driver is initialized properly
-    fallback_urls = [
-        "https://www.python.org/static/img/python-logo.png",  # Python logo (fallback 1)
-        "https://upload.wikimedia.org/wikipedia/commons/f/f8/Python_logo_and_wordmark.svg",
-        # Python logo SVG (fallback 2)
-        "https://www.google.com"  # Google (fallback 3)
-    ]
-
-    # Attempt to load each fallback URL until successful
-    for fallback_url in fallback_urls:
-        try:
-            driver_instance.get(fallback_url)
-            break
-        except Exception as e:
-            print(f"Error loading URL {fallback_url}: {e}")
+    # Load a blank page to initialize the driver properly before cookie injection
+    driver_instance.get("about:blank")
 
     # Load cookies from the specified path, if available.
     if cookie_path and os.path.exists(cookie_path):
