@@ -74,6 +74,9 @@ from striprtf.striprtf import rtf_to_text
 import pyttsx3
 import yaml
 
+# print current working directory so user knows where files will be saved
+print(f"Current Working Directory: {os.getcwd()}")
+
 # to avoid 'RuntimeError: maximum recursion depth exceeded'
 sys.setrecursionlimit(1500)
 
@@ -474,6 +477,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         driver = browser('https://google.com', headless=True)
 
     Note:
+        Uses undetected-chromedriver (uc) to bypass bot detection.
         Requires Google Chrome to be installed.
 
         Windows:

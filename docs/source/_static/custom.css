@@ -11,3 +11,9 @@ dl.py.function {
     --font-size--heading-2: 1.2rem;
     --font-size--heading-3: 1rem;
 }
+
+/* All section headings color - standard and custom */
+dl.py p.rubric,
+dl.py .field-list > dt {
+    color: var(--color-brand-primary);
+}

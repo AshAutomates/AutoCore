@@ -35,3 +35,5 @@ html_theme_options = {
     "navigation_with_keys": True,
     "sidebar_hide_name": False,
 }
+# Custom sections to avoid rendering of those as plain unstyled text.
+napoleon_custom_sections = ['Modes', 'Output', 'Platform']
