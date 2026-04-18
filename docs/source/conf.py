@@ -19,6 +19,7 @@ add_module_names = False
 
 html_theme = 'furo'
 html_static_path = ['_static']
+html_logo = "_static/logo.png"
 html_css_files = ['custom.css']
 
 html_sidebars = {
@@ -33,7 +34,7 @@ html_sidebars = {
 
 html_theme_options = {
     "navigation_with_keys": True,
-    "sidebar_hide_name": False,
+    "sidebar_hide_name": True,
 }
 # Custom sections to avoid rendering of those as plain unstyled text.
 napoleon_custom_sections = ['Modes', 'Output', 'Platform', 'Usage', 'Features',]
