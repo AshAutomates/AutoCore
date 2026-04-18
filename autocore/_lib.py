@@ -277,7 +277,7 @@ def _get_web_element(driver_obj, selector_type, selector):
         element = _get_web_element(driver, 'class', 'btn-primary')
 
     Note:
-        - Used internally by click(), click_right(), write(), copy(), wait(), and other functions.
+        - Used internally by click(), click_right(), write(), copy(), wait() and other functions.
         - 'text' and 'partial' selector types are case-sensitive.
         - Returns None if element is not found instead of raising an exception.
 
@@ -456,7 +456,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
             - Cookie domain must match the target URL
 
     Returns:
-        WebDriver: Browser instance, or None if initialization fails
+        WebDriver: Browser instance or None if initialization fails
 
     Example::
 
@@ -981,7 +981,7 @@ def click_right(*where):
 
 def copy(*where):
     """
-    Copies text from various sources: screen, clipboard, Selenium elements, or web pages.
+    Copies text from various sources: screen, clipboard, Selenium elements or web pages.
 
     Modes:
         1. Active window: Copy all content from current window
@@ -994,7 +994,7 @@ def copy(*where):
         *where: Variable arguments depending on copy mode
 
     Returns:
-        str: Copied text, or '' if nothing was copied
+        str: Copied text or '' if nothing was copied
 
     Example::
 
@@ -1145,16 +1145,16 @@ def csv_to_xlsx(csv_file=None, delete_csv=True):
     Converts CSV file(s) to XLSX format.
 
     Args:
-        csv_file: Path to CSV file, or None to auto-detect single CSV in current directory
+        csv_file: Path to CSV file or None to auto-detect single CSV in current directory
         delete_csv: If True, deletes original CSV after conversion (default: True)
 
     Returns:
-        str: Path of created XLSX file, or None if error
+        str: Path of created XLSX file or None if error
 
     Example::
 
         # Auto-detect single CSV in current directory (deletes CSV by default)
-        csv_to_xlsx()                               # Finds, converts, and deletes CSV
+        csv_to_xlsx()                               # Finds, converts and deletes CSV
 
         # Specific file (deletes CSV by default)
         csv_to_xlsx('data.csv')                     # Converts and deletes data.csv
@@ -1571,11 +1571,11 @@ def find_browser(*args):
 def find_key(data, key):
     """
     Recursively finds all values of a specified key in nested data structures
-    (dictionaries, lists, and tuples). Particularly useful for searching
+    (dictionaries, lists and tuples). Particularly useful for searching
     deeply nested JSON data from API responses or parsed files.
 
     Args:
-        data: Data structure to search (dict, list, or tuple)
+        data: Data structure to search (dict, list or tuple)
         key: Key name to find
 
     Example::
@@ -1634,7 +1634,7 @@ def find_str(string, starts_after, ends_before, index=0):
         index: Which match (0=first, -1=last, 1=second, etc.)
 
     Returns:
-        str or None: Extracted string, or None if not found
+        str or None: Extracted string or None if not found
 
     Example::
 
@@ -2134,7 +2134,7 @@ def month():
 
 def press(*keys):
     """
-    Press keyboard keys with support for Selenium, PyAutoGUI, and key combinations.
+    Press keyboard keys with support for Selenium, PyAutoGUI and key combinations.
 
     Modes:
         1. PyAutoGUI single key: (key)
@@ -2434,7 +2434,7 @@ def press(*keys):
 
 def read(*args):
     """
-    Extract text from screen (using OCR), files (by parsing file format), or a Selenium browser window.
+    Extract text from screen (using OCR), files (by parsing file format) or a Selenium browser window.
 
     Modes:
         1. No arguments: OCR full screen
@@ -2457,7 +2457,7 @@ def read(*args):
         *args: Variable arguments depending on mode
 
     Returns:
-        str: Extracted text, or None if error
+        str: Extracted text or None if error
 
     Example::
 
@@ -3351,7 +3351,7 @@ def scroll(*args, timeout=30):
             direction = args[1]
             count = args[2] if len(args) > 2 else 1
         else:
-            print(f"Error: Invalid argument '{args[1]}'. Use 'down', 'up', 'bottom', 'top', or a number.")
+            print(f"Error: Invalid argument '{args[1]}'. Use 'down', 'up', 'bottom', 'top' or a number.")
             return False
 
     else:
@@ -3368,7 +3368,7 @@ def scroll(*args, timeout=30):
             direction = args[0]
             count = args[1] if len(args) > 1 else 1
         else:
-            print(f"Error: Invalid argument '{args[0]}'. Use 'down', 'up', 'bottom', 'top', or a number.")
+            print(f"Error: Invalid argument '{args[0]}'. Use 'down', 'up', 'bottom', 'top' or a number.")
             return False
 
     # Validate direction
@@ -3487,7 +3487,7 @@ def second():
 
 def wait(*args, countdown=True):
     """
-    Wait with countdown, wait for element, or wait for color at pixel.
+    Wait with countdown, wait for element or wait for color at pixel.
 
     Args:
         *args: Variable arguments (see examples)
@@ -3640,7 +3640,7 @@ def wait(*args, countdown=True):
 
 def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
     """
-    Wait for a browser-initiated download to complete, or download a file directly via URL.
+    Wait for a browser-initiated download to complete or download a file directly via URL.
 
     Modes:
         1. URL mode (url provided): Downloads file directly using requests. Useful for
@@ -4030,7 +4030,7 @@ def window(action=None, target=None, *args):
         - True/False: When action is focus/close/minimize/maximize/resize/move
 
     Raises:
-        ValueError: If invalid action, missing required parameters, or invalid
+        ValueError: If invalid action, missing required parameters or invalid
                     dimensions/coordinates
         NotImplementedError: If called on macOS
 
