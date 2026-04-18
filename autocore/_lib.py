@@ -270,7 +270,8 @@ def _get_web_element(driver_obj, selector_type, selector):
         selector_type: Type of selector ('id', 'xpath', 'class', 'name', 'css', 'tag', 'text', 'partial')
         selector: Selector value/string
 
-    Examples:
+    Examples::
+
         element = _get_web_element(driver, 'id', 'submit-button')
         element = _get_web_element(driver, 'xpath', '//button[@type="submit"]')
         element = _get_web_element(driver, 'class', 'btn-primary')
@@ -457,7 +458,8 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     Returns:
         WebDriver: Browser instance, or None if initialization fails
 
-    Examples:
+    Examples::
+
         # Basic usage
         driver = browser('https://google.com')
         click(driver, 'id', 'search-button')
@@ -715,7 +717,8 @@ def click(*where):
     Args:
         *where: Variable arguments depending on click mode
 
-    Examples:
+    Examples::
+
         # Image matching
         click('button.png')
 
@@ -853,7 +856,8 @@ def click_right(*where):
     Args:
         *where: Variable arguments depending on click mode
 
-    Examples:
+    Examples::
+
         # Image matching
         click_right('button.png')
 
@@ -993,7 +997,8 @@ def copy(*where):
     Args:
         *where: Variable arguments depending on copy mode
 
-    Examples:
+    Examples::
+
         # Active window - Copy everything from current window
         copy()                                      # Ctrl+A, Ctrl+C from active window
 
@@ -1150,7 +1155,8 @@ def csv_to_xlsx(csv_file=None, delete_csv=True):
     Returns:
         str: Path to created XLSX file, or None if error
 
-    Examples:
+    Examples::
+
         # Auto-detect single CSV in current directory (deletes CSV by default)
         csv_to_xlsx()                               # Finds, converts, and deletes CSV
 
@@ -1226,7 +1232,8 @@ def day():
     Returns:
         str: Day name in lowercase (monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-    Examples:
+    Examples::
+
         # Weekday check
         if day() == 'monday':
             print("It is Monday today.")
@@ -1243,7 +1250,8 @@ def drag(*args):
         PyAutoGUI: (x1, y1, x2, y2)
         Selenium: (driver, src_type, src_selector, tgt_type, tgt_selector)
 
-    Examples:
+    Examples::
+
         # Screen drag (PyAutoGUI) - 2 second duration
         drag(100, 200, 500, 600)
 
@@ -1329,7 +1337,8 @@ def dropdown_select(driver_obj, selector_type, selector, selection_criteria):
         selector: The value of the selector
         selection_criteria: Index (int) or visible text (str) for selection
 
-    Examples:
+    Examples::
+
         # Select by index
         dropdown_select(driver, 'id', 'country-dropdown', 0)        # Select first option
         dropdown_select(driver, 'id', 'country-dropdown', 2)        # Select third option
@@ -1388,7 +1397,8 @@ def erase(*args):
     Args:
         *args: Variable arguments depending on mode
 
-    Examples:
+    Examples::
+
         # PyAutoGUI mode (erase active window)
         erase()                                  # Select all and delete (Ctrl+A, Delete)
 
@@ -1449,7 +1459,8 @@ def find_browser(*args):
     Args:
         *args: Variable arguments depending on mode
 
-    Examples:
+    Examples::
+
         # PyAutoGUI mode (any window)
         find_browser('Python')              # Find in active window
         find_browser('error message')       # Find phrase
@@ -1563,7 +1574,8 @@ def find_key(data, key):
         data: Data structure to search (dict, list, or tuple)
         key: Key name to find
 
-    Examples:
+    Examples::
+
         # Single occurrence
         data = {'name': 'John', 'age': 30}
         name = find_key(data, 'name')[0]          # 'John'
@@ -1620,7 +1632,8 @@ def find_str(string, starts_after, ends_before, index=0):
     Returns:
         str: Extracted string, or None if not found
 
-    Examples:
+    Examples::
+
         # Get last error message
         error = find_str(logs, 'ERROR: ', '\n', -1)
         if error:
@@ -1855,7 +1868,8 @@ def log_setup(title):
     Args:
         title: Name for both terminal title and log file
 
-    Examples:
+    Examples::
+
         log_setup("MyScript")
         print("This gets logged")
         # ... script runs ...
@@ -2121,7 +2135,8 @@ def press(*keys):
     Args:
         *keys: Variable arguments for key presses
 
-    Examples:
+    Examples::
+
         # Selenium element + key (requires driver object now)
         press(driver, "xpath", "//input", "enter")
         press(driver, "id", "username", "tab")
@@ -2421,7 +2436,8 @@ def read(*args):
     Returns:
         str: Extracted text, or None if error
 
-    Examples:
+    Examples::
+
         # OCR - Read entire screen
         text = read()
 
@@ -2924,7 +2940,8 @@ def run(item):
             - If item is an application name: Launches the application
             - For applications, the command must be available in system PATH
 
-    Examples:
+    Examples::
+
         # Open files with default application
         run("sample.txt")           # Opens in default text editor
         run("document.pdf")         # Opens in default PDF viewer
@@ -3014,7 +3031,8 @@ def say(text, volume=1.0):
         text: Text to speak
         volume: Volume level 0.0 to 1.0 (default: 1.0)
 
-    Examples:
+    Examples::
+
         say("Download complete", volume=0.7)
         say("Error occurred")
 
@@ -3075,7 +3093,8 @@ def screenshot(*args):
                 - If not provided, auto-generates: screenshot_YYYY-MM-DD_HH-MM-SS_<unix>.png
                   Example: screenshot_2025-02-18_14-30-45_1708268445.png
 
-    Examples:
+    Examples::
+
         # Full screen (PyAutoGUI)
         screenshot()                                    # Full screen, auto-named
         screenshot('desktop.png')                       # Full screen, custom name
@@ -3442,7 +3461,8 @@ def wait(*args, countdown=True):
         *args: Variable arguments (see examples)
         countdown: If True, shows countdown display (default: True)
 
-    Examples:
+    Examples::
+
         # Countdown wait
         wait(5)                              # Wait 5 seconds with countdown
         wait(10, countdown=False)            # Wait 10 seconds silently
@@ -3611,7 +3631,8 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             - If provided: Uses specified path and skips all auto-detection
             - If None: Auto-detects using the priority order described in Note below
 
-    Examples:
+    Examples::
+
         wait_download()                                                   # Monitor downloads folder
         wait_download(url='https://abc.com/file.msix')                    # Direct download via URL
         wait_download(url='https://abc.com/file.msix', filename='myapp')  # Custom name, borrows extension
@@ -3976,7 +3997,8 @@ def window(action=None, target=None, *args):
         target: Window title or pattern (required for most actions)
         *args: Additional parameters (width, height for resize; x, y for move)
 
-    Examples:
+    Examples::
+
         # Get all windows (default)
         window()                                    # ['Chrome', 'Notepad', 'Excel']
         window('list')                              # ['Chrome', 'Notepad', 'Excel']
@@ -4433,7 +4455,8 @@ def write(*keys):
     Args:
         *keys: Variable arguments depending on mode
 
-    Examples:
+    Examples::
+
         # PyAutoGUI mode (types in any active window)
         write("Hello World")                                        # Types in active window
         write("user@example.com")                                   # Types email
@@ -4547,7 +4570,8 @@ def zoom(*args):
         - 100 or 0: Reset to default/100%
         - Outside range (except 100): Percentage (Selenium only)
 
-    Examples:
+    Examples::
+
         # PyAutoGUI (desktop apps)
         zoom(3)              # Zoom in 3 steps
         zoom(-5)             # Zoom out 5 steps
