@@ -1,7 +1,5 @@
 # Ignore test screenshots
 tests/
-*.png
-*.jpg
 
 # Ignore Python packaging metadata
 autocore.egg-info/
