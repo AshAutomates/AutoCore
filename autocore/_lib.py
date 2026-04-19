@@ -129,6 +129,9 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
         occurrences_to_click: 0 = click all occurrences, N = click Nth occurrence only
         button: 'left' for left-click (default), 'right' for right-click
 
+    Returns:
+        True if any click happened, False otherwise
+
     Output:
         - Prints how many occurrences were found and which one(s) were clicked.
         - Prints a message if the requested occurrence number does not exist.
@@ -138,8 +141,6 @@ def _click_word_by_ocr(word_to_search, occurrences_to_click, button='left'):
         - Used internally by click() and click_right().
         - Cross-platform compatible (Windows, Linux).
 
-    Returns:
-        True if any click happened, False otherwise
     """
 
     import cv2  # pip install opencv-python
@@ -270,11 +271,12 @@ def _get_web_element(driver_obj, selector_type, selector):
         selector_type: Type of selector ('id', 'xpath', 'class', 'name', 'css', 'tag', 'text', 'partial')
         selector: Selector value/string
 
-    Example::
+    Example:
+        ::
 
-        element = _get_web_element(driver, 'id', 'submit-button')
-        element = _get_web_element(driver, 'xpath', '//button[@type="submit"]')
-        element = _get_web_element(driver, 'class', 'btn-primary')
+            element = _get_web_element(driver, 'id', 'submit-button')
+            element = _get_web_element(driver, 'xpath', '//button[@type="submit"]')
+            element = _get_web_element(driver, 'class', 'btn-primary')
 
     Note:
         - Used internally by click(), click_right(), write(), copy(), wait() and other functions.
@@ -324,7 +326,7 @@ class _CustomRotatingFileNameHandler(RotatingFileHandler):
         Converts default rotation filename format to a cleaner format.
 
         Example:
-            log_script.txt.1  →  log_script_part_1.txt
+            log_script.txt.1  -->  log_script_part_1.txt
         """
         match = re.search(r'\.txt\.(\d+)$', default_name)
         if match:
@@ -451,32 +453,35 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         headless: Run browser in headless mode (default: False)
         timeout: Maximum seconds to wait for elements to appear (default: 30)
         cookie_path: Path to cookies JSON file (optional)
-            - Cookies MUST be in JSON format
-            - Export from Chrome using "Cookie-Editor" extension
-            - Cookie domain must match the target URL
+            ::
+
+                - Cookies MUST be in JSON format
+                - Export from Chrome using "Cookie-Editor" extension
+                - Cookie domain must match the target URL
 
     Returns:
         WebDriver: Browser instance or None if initialization fails
 
-    Example::
+    Example:
+        ::
 
-        # Basic usage
-        driver = browser('https://google.com')
-        click(driver, 'id', 'search-button')
+            # Basic usage
+            driver = browser('https://google.com')
+            click(driver, 'id', 'search-button')
 
-        # Slow-loading site
-        driver = browser('https://slow-site.gov', timeout=90)
-        click(driver, 'id', 'submit-btn')  # Waits up to 90s
+            # Slow-loading site
+            driver = browser('https://slow-site.gov', timeout=90)
+            click(driver, 'id', 'submit-btn')  # Waits up to 90s
 
-        # Fast site testing
-        driver = browser('https://fast-site.com', timeout=5)
-        click(driver, 'id', 'login-btn')  # Fails fast in 5s
+            # Fast site testing
+            driver = browser('https://fast-site.com', timeout=5)
+            click(driver, 'id', 'login-btn')  # Fails fast in 5s
 
-        # With cookies
-        driver = browser('https://site.com', cookie_path='cookies.json')
+            # With cookies
+            driver = browser('https://site.com', cookie_path='cookies.json')
 
-        # Headless mode
-        driver = browser('https://google.com', headless=True)
+            # Headless mode
+            driver = browser('https://google.com', headless=True)
 
     Note:
         Uses undetected-chromedriver (uc) to bypass bot detection.
@@ -716,32 +721,33 @@ def click(*where):
     Returns:
         True if successful, False otherwise
 
-    Example::
+    Example:
+        ::
 
-        # Image matching
-        click('button.png')
+            # Image matching
+            click('button.png')
 
-        # OCR text matching
-        click('Submit')                    # Click first occurrence
-        click('Submit', 2)                 # Click 2nd occurrence
-        click('Login', 0)                  # Click all occurrences
+            # OCR text matching
+            click('Submit')                    # Click first occurrence
+            click('Submit', 2)                 # Click 2nd occurrence
+            click('Login', 0)                  # Click all occurrences
 
-        # Coordinates
-        click(100, 200)
+            # Coordinates
+            click(100, 200)
 
-        # Color matching in region
-        click(x1, y1, x2, y2, r, g, b)              # Find and click color
-        click(x1, y1, x2, y2, r, g, b, tolerance)   # With tolerance
+            # Color matching in region
+            click(x1, y1, x2, y2, r, g, b)              # Find and click color
+            click(x1, y1, x2, y2, r, g, b, tolerance)   # With tolerance
 
-        # Selenium (pass driver object first)
-        click(driver, 'id', 'submit-button')
-        click(driver, 'xpath', '//button[@id="submit"]')
-        click(driver, 'class', 'btn-primary')
-        click(driver, 'name', 'username')
-        click(driver, 'css', 'button.submit')
-        click(driver, 'tag', 'button')
-        click(driver, 'text', 'Click Here')
-        click(driver, 'partial', 'Click')
+            # Selenium (pass driver object first)
+            click(driver, 'id', 'submit-button')
+            click(driver, 'xpath', '//button[@id="submit"]')
+            click(driver, 'class', 'btn-primary')
+            click(driver, 'name', 'username')
+            click(driver, 'css', 'button.submit')
+            click(driver, 'tag', 'button')
+            click(driver, 'text', 'Click Here')
+            click(driver, 'partial', 'Click')
     """
     import cv2  # pip install opencv-python
 
@@ -855,32 +861,33 @@ def click_right(*where):
     Returns:
         True if successful, False otherwise
 
-    Example::
+    Example:
+        ::
 
-        # Image matching
-        click_right('button.png')
+            # Image matching
+            click_right('button.png')
 
-        # OCR text matching
-        click_right('Submit')              # Right-click first occurrence
-        click_right('Submit', 2)           # Right-click 2nd occurrence
-        click_right('Login', 0)            # Right-click all occurrences
+            # OCR text matching
+            click_right('Submit')              # Right-click first occurrence
+            click_right('Submit', 2)           # Right-click 2nd occurrence
+            click_right('Login', 0)            # Right-click all occurrences
 
-        # Coordinates
-        click_right(100, 200)
+            # Coordinates
+            click_right(100, 200)
 
-        # Color matching in region
-        click_right(x1, y1, x2, y2, r, g, b)              # Find and right-click color
-        click_right(x1, y1, x2, y2, r, g, b, tolerance)   # With tolerance
+            # Color matching in region
+            click_right(x1, y1, x2, y2, r, g, b)              # Find and right-click color
+            click_right(x1, y1, x2, y2, r, g, b, tolerance)   # With tolerance
 
-        # Selenium (pass driver object first)
-        click_right(driver, 'id', 'submit-button')
-        click_right(driver, 'xpath', '//button[@id="submit"]')
-        click_right(driver, 'class', 'btn-primary')
-        click_right(driver, 'name', 'username')
-        click_right(driver, 'css', 'button.submit')
-        click_right(driver, 'tag', 'button')
-        click_right(driver, 'text', 'Click Here')
-        click_right(driver, 'partial', 'Click')
+            # Selenium (pass driver object first)
+            click_right(driver, 'id', 'submit-button')
+            click_right(driver, 'xpath', '//button[@id="submit"]')
+            click_right(driver, 'class', 'btn-primary')
+            click_right(driver, 'name', 'username')
+            click_right(driver, 'css', 'button.submit')
+            click_right(driver, 'tag', 'button')
+            click_right(driver, 'text', 'Click Here')
+            click_right(driver, 'partial', 'Click')
     """
 
     import cv2  # pip install opencv-python
@@ -996,35 +1003,36 @@ def copy(*where):
     Returns:
         str: Copied text or '' if nothing was copied
 
-    Example::
+    Example:
+        ::
 
-        # Active window - Copy everything from current window
-        copy()                                      # Ctrl+A, Ctrl+C from active window
+            # Active window - Copy everything from current window
+            copy()                                      # Ctrl+A, Ctrl+C from active window
 
-        # Clipboard
-        copy('clipboard')                           # Get current clipboard content
+            # Clipboard
+            copy('clipboard')                           # Get current clipboard content
 
-        # Screen coordinates
-        copy(500, 300)                              # Click at (500, 300) and copy
+            # Screen coordinates
+            copy(500, 300)                              # Click at (500, 300) and copy
 
-        # Selenium webpage - Copy entire page
-        copy(driver)                                # Copy all webpage content
+            # Selenium webpage - Copy entire page
+            copy(driver)                                # Copy all webpage content
 
-        # Selenium element - Copy text
-        copy(driver, 'id', 'username-display')
-        copy(driver, 'xpath', '//div[@class="name"]')
-        copy(driver, 'class', 'user-info')
-        copy(driver, 'name', 'description')
-        copy(driver, 'css', 'p.content')
-        copy(driver, 'tag', 'h1')
-        copy(driver, 'text', 'Welcome')
-        copy(driver, 'partial', 'Hello')
+            # Selenium element - Copy text
+            copy(driver, 'id', 'username-display')
+            copy(driver, 'xpath', '//div[@class="name"]')
+            copy(driver, 'class', 'user-info')
+            copy(driver, 'name', 'description')
+            copy(driver, 'css', 'p.content')
+            copy(driver, 'tag', 'h1')
+            copy(driver, 'text', 'Welcome')
+            copy(driver, 'partial', 'Hello')
 
-        # Selenium element - Copy attribute
-        copy(driver, 'id', 'download-link', 'href')         # Get link URL
-        copy(driver, 'class', 'product-img', 'src')         # Get image source
-        copy(driver, 'id', 'email-field', 'value')          # Get input value
-        copy(driver, 'xpath', '//a[@id="link"]', 'title')   # Get title attribute
+            # Selenium element - Copy attribute
+            copy(driver, 'id', 'download-link', 'href')         # Get link URL
+            copy(driver, 'class', 'product-img', 'src')         # Get image source
+            copy(driver, 'id', 'email-field', 'value')          # Get input value
+            copy(driver, 'xpath', '//a[@id="link"]', 'title')   # Get title attribute
     """
 
     # in this variable the copied content will be stored and returned at end
@@ -1131,9 +1139,9 @@ def copy(*where):
         print("No content returned from copy()")
         # Returning '' (empty string) instead of None to prevent TypeError in common usage.
         # If we returned None, code like this would crash:
-        #     if 'welcome' in copy():   →   TypeError: argument of type 'NoneType' is not iterable
+        #     if 'welcome' in copy():   will give   TypeError: argument of type 'NoneType' is not iterable
         # With '' it works safely:
-        #     if 'welcome' in copy():   →   False (no crash)
+        #     if 'welcome' in copy():   will give   False (no crash)
         return ''
     else:
         # Returning the non-blank result
@@ -1151,21 +1159,22 @@ def csv_to_xlsx(csv_file=None, delete_csv=True):
     Returns:
         str: Path of created XLSX file or None if error
 
-    Example::
-
-        # Auto-detect single CSV in current directory (deletes CSV by default)
-        csv_to_xlsx()                               # Finds, converts and deletes CSV
-
-        # Specific file (deletes CSV by default)
-        csv_to_xlsx('data.csv')                     # Converts and deletes data.csv
-
-        # Keep original CSV
-        csv_to_xlsx('report.csv', delete_csv=False) # Keeps report.csv
-
     Output:
-        - Prints the detected CSV filename when auto-detected.
-        - Prints conversion result showing source and destination filenames.
-        - Prints confirmation when original CSV is deleted.
+            - Prints the detected CSV filename when auto-detected.
+            - Prints conversion result showing source and destination filenames.
+            - Prints confirmation when original CSV is deleted.
+
+    Example:
+        ::
+
+            # Auto-detect single CSV in current directory (deletes CSV by default)
+            csv_to_xlsx()                               # Finds, converts and deletes CSV
+
+            # Specific file (deletes CSV by default)
+            csv_to_xlsx('data.csv')                     # Converts and deletes data.csv
+
+            # Keep original CSV
+            csv_to_xlsx('report.csv', delete_csv=False) # Keeps report.csv
     """
 
     # Auto-detect CSV if not provided
@@ -1195,7 +1204,7 @@ def csv_to_xlsx(csv_file=None, delete_csv=True):
 
         xlsx_file = Path(csv_file).with_suffix(".xlsx")
         new_wb.save(xlsx_file)
-        print(f"Converted: {csv_file} → {xlsx_file.name}")
+        print(f"Converted: {csv_file} to {xlsx_file.name}")
 
         if delete_csv:
             os.remove(csv_file)
@@ -1228,11 +1237,12 @@ def day():
     Returns:
         str: Day name in lowercase (monday, tuesday, wednesday, thursday, friday, saturday, sunday)
 
-    Example::
+    Example:
+        ::
 
-        # Weekday check
-        if day() == 'monday':
-            print("It is Monday today.")
+            # Weekday check
+            if day() == 'monday':
+                print("It is Monday today.")
     """
     days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
     return days[time.localtime().tm_wday]
@@ -1257,20 +1267,21 @@ def drag(*args):
         - Prints drag confirmation showing source and target coordinates (PyAutoGUI).
         - Prints drag confirmation showing source and target selectors (Selenium).
 
-    Example::
+    Example:
+        ::
 
-        # Screen drag (PyAutoGUI) - 2 second duration
-        drag(100, 200, 500, 600)
+            # Screen drag (PyAutoGUI) - 2 second duration
+            drag(100, 200, 500, 600)
 
-        # Web element drag (Selenium)
-        drag(driver, 'id', 'card-1', 'class', 'done-column')
-        drag(driver, 'xpath', '//li[1]', 'xpath', '//li[5]')
+            # Web element drag (Selenium)
+            drag(driver, 'id', 'card-1', 'class', 'done-column')
+            drag(driver, 'xpath', '//li[1]', 'xpath', '//li[5]')
 
-        # Multiple drivers
-        driver1 = browser('https://trello.com')
-        driver2 = browser('https://jira.com')
-        drag(driver1, 'id', 'task-1', 'id', 'done-column')
-        drag(driver2, 'class', 'issue', 'class', 'backlog')
+            # Multiple drivers
+            driver1 = browser('https://trello.com')
+            driver2 = browser('https://jira.com')
+            drag(driver1, 'id', 'task-1', 'id', 'done-column')
+            drag(driver2, 'class', 'issue', 'class', 'backlog')
     """
 
     # PYAUTOGUI MODE - 4 args, all integers
@@ -1343,20 +1354,21 @@ def dropdown_select(driver_obj, selector_type, selector, selection_criteria):
     Output:
         - Prints confirmation showing the selected option index or text.
 
-    Example::
+    Example:
+        ::
 
-        # Select by index
-        dropdown_select(driver, 'id', 'country-dropdown', 0)        # Select first option
-        dropdown_select(driver, 'id', 'country-dropdown', 2)        # Select third option
+            # Select by index
+            dropdown_select(driver, 'id', 'country-dropdown', 0)        # Select first option
+            dropdown_select(driver, 'id', 'country-dropdown', 2)        # Select third option
 
-        # Select by visible text
-        dropdown_select(driver, 'id', 'country-dropdown', 'United States')
-        dropdown_select(driver, 'name', 'language', 'English')
-        dropdown_select(driver, 'xpath', '//select[@name="city"]', 'New York')
+            # Select by visible text
+            dropdown_select(driver, 'id', 'country-dropdown', 'United States')
+            dropdown_select(driver, 'name', 'language', 'English')
+            dropdown_select(driver, 'xpath', '//select[@name="city"]', 'New York')
 
-        # Different selector types
-        dropdown_select(driver, 'class', 'form-select', 'Option 1')
-        dropdown_select(driver, 'css', 'select.dropdown', 'Value')
+            # Different selector types
+            dropdown_select(driver, 'class', 'form-select', 'Option 1')
+            dropdown_select(driver, 'css', 'select.dropdown', 'Value')
     """
 
     try:
@@ -1404,15 +1416,16 @@ def erase(*args):
     Returns:
         True if successful, False otherwise
 
-    Example::
+    Example:
+        ::
 
-        # PyAutoGUI mode (erase active window)
-        erase()                                  # Select all and delete (Ctrl+A, Delete)
-
-        # Selenium mode (erase specific element)
-        erase(driver, 'id', 'username')          # Clear username field
-        erase(driver, 'xpath', '//input[@name="email"]')  # Clear email field
-        erase(driver, 'class', 'search-box')     # Clear search box
+            # PyAutoGUI mode (erase active window)
+            erase()                                  # Select all and delete (Ctrl+A, Delete)
+    
+            # Selenium mode (erase specific element)
+            erase(driver, 'id', 'username')          # Clear username field
+            erase(driver, 'xpath', '//input[@name="email"]')  # Clear email field
+            erase(driver, 'class', 'search-box')     # Clear search box
     """
 
     try:
@@ -1471,15 +1484,16 @@ def find_browser(*args):
         - Prints confirmation if text was found and highlighted (Selenium).
         - Prints a message if text was not found on the page (Selenium).
 
-    Example::
+    Example:
+        ::
 
-        # PyAutoGUI mode (any window)
-        find_browser('Python')              # Find in active window
-        find_browser('error message')       # Find phrase
+            # PyAutoGUI mode (any window)
+            find_browser('Python')              # Find in active window
+            find_browser('error message')       # Find phrase
 
-        # Selenium mode (browser)
-        find_browser(driver, 'Python')      # Find in Selenium browser
-        find_browser(driver, 'contact us')  # Find phrase in browser
+            # Selenium mode (browser)
+            find_browser(driver, 'Python')      # Find in Selenium browser
+            find_browser(driver, 'contact us')  # Find phrase in browser
 
     Note:
         - PyAutoGUI: Opens find dialog (Ctrl+F), types search term, presses Enter, then Esc.
@@ -1578,33 +1592,34 @@ def find_key(data, key):
         data: Data structure to search (dict, list or tuple)
         key: Key name to find
 
-    Example::
-
-        # Single occurrence
-        data = {'name': 'John', 'age': 30}
-        name = find_key(data, 'name')[0]          # 'John'
-
-        # Multiple occurrences
-        data = {
-            'user': {'id': 1, 'name': 'Alice'},
-            'admin': {'id': 2, 'name': 'Bob'}
-        }
-        ids = find_key(data, 'id')                # [1, 2]
-
-        # Nested lists/tuples
-        data = {'users': [{'age': 25}, {'age': 30}]}
-        ages = find_key(data, 'age')              # [25, 30]
-
-        # API response workflow
-        response = requests.get('https://api.example.com/users').json()
-        ids = find_key(response, 'id')            # finds all 'id' values
-
-        # Parsed file workflow
-        data = json.loads(read('data.json'))
-        hosts = find_key(data, 'host')            # finds all 'host' values
-
     Returns:
         list: All values found for the key (empty list if not found)
+
+    Example:
+        ::
+
+            # Single occurrence
+            data = {'name': 'John', 'age': 30}
+            name = find_key(data, 'name')[0]          # 'John'
+
+            # Multiple occurrences
+            data = {
+                'user': {'id': 1, 'name': 'Alice'},
+                'admin': {'id': 2, 'name': 'Bob'}
+            }
+            ids = find_key(data, 'id')                # [1, 2]
+
+            # Nested lists/tuples
+            data = {'users': [{'age': 25}, {'age': 30}]}
+            ages = find_key(data, 'age')              # [25, 30]
+
+            # API response workflow
+            response = requests.get('https://api.example.com/users').json()
+            ids = find_key(response, 'id')            # finds all 'id' values
+
+            # Parsed file workflow
+            data = json.loads(read('data.json'))
+            hosts = find_key(data, 'host')            # finds all 'host' values
     """
 
     def extract(obj):
@@ -1636,17 +1651,18 @@ def find_str(string, starts_after, ends_before, index=0):
     Returns:
         str or None: Extracted string or None if not found
 
-    Example::
+    Example:
+        ::
 
-        # Extract version number from string
-        text = 'Version: 1.0.5 released'
-        version = find_str(text, 'Version: ', ' released')
-        # version = '1.0.5'
+            # Extract version number from string
+            text = 'Version: 1.0.5 released'
+            version = find_str(text, 'Version: ', ' released')
+            # version = '1.0.5'
 
-        # Extract last occurrence using index=-1
-        text = 'User: Alice logged in. User: Bob logged in'
-        last_user = find_str(text, 'User: ', ' logged', -1)
-        # last_user = 'Bob'
+            # Extract last occurrence using index=-1
+            text = 'User: Alice logged in. User: Bob logged in'
+            last_user = find_str(text, 'User: ', ' logged', -1)
+            # last_user = 'Bob'
     """
 
     try:
@@ -1869,37 +1885,37 @@ def log_setup(title):
     Creates a logs folder and saves all output with timestamps.
     Shows output in terminal while also saving to file.
 
-    Terminal colors change automatically based on script outcome:
-    - Blue background: Script is running
-    - Green background: Script completed successfully
-    - Red background: Script crashed (unhandled exception)
-
     Args:
         title: Name for both terminal title and log file
 
-    Example::
+    Example:
+        ::
 
-        log_setup("MyScript")
-        print("This gets logged")
-        # ... script runs ...
-        # Terminal turns GREEN on success or RED on crash
+            log_setup("MyScript")
+            print("This gets logged")
+            # ... script runs ...
+            # Terminal turns GREEN on success or RED on crash
 
     Log file format:
-        logs/log_MyScript_2026-03-26_14-30-45_IST_session-1.txt          (active - newest logs)
-        logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_1.txt   (2nd newest - rotated)
-        logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_2.txt   (3rd newest)
-        ...
-        logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_9.txt   (oldest backup)
+        ::
 
-        Session numbering:
-        - session-1: First run of this script
-        - session-2: Second run of this script
-        - session-3: Third run, etc.
-        - Automatically increments based on existing log files
+            logs/log_MyScript_2026-03-26_14-30-45_IST_session-1.txt        (active - newest logs)
+            logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_1.txt (2nd newest - rotated)
+            logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_2.txt (3rd newest)
+            ...
+            logs/log_MyScript_2026-03-26_14-30-45_IST_session-1_part_9.txt (oldest backup)
+
+    Session numbering:
+        ::
+
+            session-1 : First run of this script
+            session-2 : Second run of this script
+            session-3 : Third run, etc.
+            session-N : Automatically increments based on existing log files
 
     Features:
         - Sets terminal title and colors (blue bg, white text)
-        - Automatic color changes: Blue→Green (success) or Blue→Red (crash)
+        - Automatic color changes: Blue to Green (success) or Blue to Red (crash)
         - Automatic session numbering (increments from previous runs)
         - Captures all print() statements
         - Captures all errors and exceptions
@@ -1908,7 +1924,14 @@ def log_setup(title):
         - Automatic file rotation (10MB per file, max 10 files = 100MB per session)
         - Automatic cleanup (keeps max 100MB total logs across all sessions)
 
+    Note:
+        Terminal colors change automatically based on script outcome::
+
+            Blue background  : Script is running
+            Green background : Script completed successfully
+            Red background   : Script crashed (unhandled exception)
     """
+
     global _log_file_handler, _original_stdout, _original_stderr, _log_folder
 
     # ========== TERMINAL SETUP ==========
@@ -2151,37 +2174,38 @@ def press(*keys):
     Returns:
         True if successful, False otherwise
 
-    Example::
+    Example:
+        ::
 
-        # PyAutoGUI keys (no driver needed)
-        press("tab")                    # Single key
-        press("tab", 5)                 # Press 5 times
-        press("tab", -5)                # Press 5 times with shift held
-        press("ctrl", "a")              # Two-key combo
-        press("alt", "ctrl", "z")       # Three-key combo
-        press("num5")                   # Numpad 5
-        press("volumeup")               # Volume up
-        press("mute")                   # Volume mute (short form)
-        press("back")                   # Browser back (short form)
-        press("forward")                # Browser forward (short form)
+            # PyAutoGUI keys (no driver needed)
+            press("tab")                    # Single key
+            press("tab", 5)                 # Press 5 times
+            press("tab", -5)                # Press 5 times with shift held
+            press("ctrl", "a")              # Two-key combo
+            press("alt", "ctrl", "z")       # Three-key combo
+            press("num5")                   # Numpad 5
+            press("volumeup")               # Volume up
+            press("mute")                   # Volume mute (short form)
+            press("back")                   # Browser back (short form)
+            press("forward")                # Browser forward (short form)
 
-        # Selenium driver keys (pass driver object)
-        press(driver, "tab")
-        press(driver, "tab", 5)           # Press tab 5 times
-        press(driver, "tab", -5)          # Press shift+tab 5 times
-        press(driver, "ctrl", "c")
-        press(driver, "ctrl", "shift", "s")
+            # Selenium driver keys (pass driver object)
+            press(driver, "tab")
+            press(driver, "tab", 5)           # Press tab 5 times
+            press(driver, "tab", -5)          # Press shift+tab 5 times
+            press(driver, "ctrl", "c")
+            press(driver, "ctrl", "shift", "s")
 
-        # Selenium element + key (driver, selector_type, selector, key)
-        press(driver, "xpath", "//input", "enter")
-        press(driver, "id", "username", "tab")
+            # Selenium element + key (driver, selector_type, selector, key)
+            press(driver, "xpath", "//input", "enter")
+            press(driver, "id", "username", "tab")
 
     Note:
         - Negative count presses the key with Shift held (e.g. Shift+Tab for reverse navigation).
         - PyAutoGUI-only keys (num0-9, volumeup, volumedown, mute, back, forward, etc.)
           are not supported in Selenium mode.
-        - Short forms supported: 'back' → browserback, 'forward' → browserforward,
-          'mute' → volumemute.
+        - Short forms supported: 'back' for browserback, 'forward' for browserforward,
+          'mute' for volumemute.
     """
 
     # Key mappings for special keys
@@ -2459,33 +2483,34 @@ def read(*args):
     Returns:
         str: Extracted text or None if error
 
-    Example::
+    Example:
+        ::
 
-        # OCR - Read entire screen
-        text = read()
+            # OCR - Read entire screen
+            text = read()
 
-        # OCR - Read from (100, 200) to bottom-right corner
-        text = read(100, 200)
+            # OCR - Read from (100, 200) to bottom-right corner
+            text = read(100, 200)
 
-        # OCR - Read specific region: x=100, y=200, width=400, height=300
-        text = read(100, 200, 400, 300)
+            # OCR - Read specific region: x=100, y=200, width=400, height=300
+            text = read(100, 200, 400, 300)
 
-        # Selenium - Read text from browser window using OCR
-        d1 = browser('https://example.com')
-        text = read(d1)
+            # Selenium - Read text from browser window using OCR
+            d1 = browser('https://example.com')
+            text = read(d1)
 
-        # File - Read with extension
-        text = read('report.pdf')
-        text = read('data.csv')
-        text = read('script.py')
+            # File - Read with extension
+            text = read('report.pdf')
+            text = read('data.csv')
+            text = read('script.py')
 
-        # File - Read without extension (auto-detects)
-        text = read('report')      # Finds report.pdf automatically
-        text = read('config')      # Finds config.yaml automatically
+            # File - Read without extension (auto-detects)
+            text = read('report')      # Finds report.pdf automatically
+            text = read('config')      # Finds config.yaml automatically
 
-        # Check if text on screen
-        if 'login' in read():
-            print("Login visible!")
+            # Check if text on screen
+            if 'login' in read():
+                print("Login visible!")
 
     Note:
         OCR first run downloads models (~100MB), subsequent runs are fast.
@@ -2953,14 +2978,15 @@ def read(*args):
         return None
 
 
-def run(item):
+def run(target):
     """
     Runs a file or application on Windows and Linux.
 
     Args:
-        item: Path to a file or name of an application to run
-            - If item is a file path: Opens with default application
-            - If item is an application name: Launches the application
+        target: File path or application name to execute
+
+            - If target is a file path: Opens with default application
+            - If target is an application name: Launches the application
             - For applications, the command must be available in system PATH
 
     Raises:
@@ -2970,22 +2996,23 @@ def run(item):
         - Prints error message if file or application was not found.
         - Prints error message if permission was denied.
 
-    Example::
+    Example:
+        ::
 
-        # Open files with default application
-        run("sample.txt")           # Opens in default text editor
-        run("document.pdf")         # Opens in default PDF viewer
-        run("C:\\Users\\file.xlsx") # Opens Excel file
+            # Open files with default application
+            run("sample.txt")           # Opens in default text editor
+            run("document.pdf")         # Opens in default PDF viewer
+            run("C:\\Users\\file.xlsx") # Opens Excel file
 
-        # Launch applications (Windows)
-        run("calc")                 # Calculator
-        run("notepad")              # Notepad
-        run("mspaint")              # Paint
+            # Launch applications (Windows)
+            run("calc")                 # Calculator
+            run("notepad")              # Notepad
+            run("mspaint")              # Paint
 
-        # Launch applications (Linux)
-        run("gedit")                # Text editor
-        run("firefox")              # Browser
-        run("gnome-calculator")     # Calculator
+            # Launch applications (Linux)
+            run("gedit")                # Text editor
+            run("firefox")              # Browser
+            run("gnome-calculator")     # Calculator
 
     Note:
         - Windows: Uses os.startfile for files, subprocess for applications.
@@ -3006,26 +3033,26 @@ def run(item):
         # WINDOWS
         # ============================================================
         if sys.platform.startswith('win'):
-            if os.path.isfile(item):
+            if os.path.isfile(target):
                 # File exists - open with default application
                 # Using os.startfile is more reliable than shell=True
-                os.startfile(item)
+                os.startfile(target)
             else:
                 # Assume it's an application name
                 # Use shell=True to allow PATH resolution
-                subprocess.Popen(item, shell=True)
+                subprocess.Popen(target, shell=True)
 
         # ============================================================
         # LINUX
         # ============================================================
         elif sys.platform.startswith('linux'):
-            if os.path.isfile(item):
+            if os.path.isfile(target):
                 # File exists - open with default application using xdg-open
-                item_path = os.path.abspath(item)
+                item_path = os.path.abspath(target)
                 subprocess.Popen(['xdg-open', item_path])
             else:
                 # Assume it's an application name - try to execute directly
-                subprocess.Popen([item])
+                subprocess.Popen([target])
 
         else:
             # Unknown platform
@@ -3035,13 +3062,13 @@ def run(item):
             )
 
     except FileNotFoundError:
-        print(f"Error: Application or file not found: '{item}'")
+        print(f"Error: Application or file not found: '{target}'")
         print("For applications, ensure the command is in your system PATH.")
     except PermissionError:
-        print(f"Error: Permission denied to run: '{item}'")
+        print(f"Error: Permission denied to run: '{target}'")
         print("Check file permissions or try running with appropriate privileges.")
     except Exception as e:
-        print(f"Error running '{item}': {e}")
+        print(f"Error running '{target}': {e}")
 
 
 def say(text, volume=1.0):
@@ -3052,10 +3079,14 @@ def say(text, volume=1.0):
         text: Text to speak
         volume: Volume level 0.0 to 1.0 (default: 1.0)
 
-    Example::
+    Returns:
+        None
 
-        say("Download complete", volume=0.7)
-        say("Error occurred")
+    Example:
+        ::
+
+            say("Download complete", volume=0.7)
+            say("Error occurred")
 
     Output:
         - Prints spoken text to console.
@@ -3105,14 +3136,16 @@ def screenshot(*args):
         7. Selenium variants of all above: (driver, ...)
 
     Args:
-        *args: Variable arguments depending on usage:
-            - ()                              → Full screen, auto-named
-            - (filename)                      → Full screen, custom filename
-            - (x, y)                          → From (x,y) to screen edge, auto-named
-            - (x, y, filename)                → From (x,y) to screen edge, custom filename
-            - (x, y, width, height)           → Specific region, auto-named
-            - (x, y, width, height, filename) → Specific region, custom filename
-            - (driver, ...)                   → Same as above but captures from Selenium browser
+        *args: Variable arguments depending on usage
+            ::
+
+                - ()                              : Full screen, auto-named
+                - (filename)                      : Full screen, custom filename
+                - (x, y)                          : From (x,y) to screen edge, auto-named
+                - (x, y, filename)                : From (x,y) to screen edge, custom filename
+                - (x, y, width, height)           : Specific region, auto-named
+                - (x, y, width, height, filename) : Specific region, custom filename
+                - (driver, ...)                   : Same as above but captures from Selenium browser
 
         Where:
             - driver: Selenium WebDriver instance
@@ -3130,31 +3163,32 @@ def screenshot(*args):
         - Prints the full path of the saved screenshot on success.
         - Prints error message if invalid arguments or coordinates are provided.
 
-    Example::
+    Example:
+        ::
 
-        # Full screen (PyAutoGUI)
-        screenshot()                                    # Full screen, auto-named
-        screenshot('desktop.png')                       # Full screen, custom name
+            # Full screen (PyAutoGUI)
+            screenshot()                                    # Full screen, auto-named
+            screenshot('desktop.png')                       # Full screen, custom name
 
-        # Selenium full page
-        screenshot(driver)                              # Selenium full page, auto-named
-        screenshot(driver, 'webpage.png')               # Selenium full page, custom name
+            # Selenium full page
+            screenshot(driver)                              # Selenium full page, auto-named
+            screenshot(driver, 'webpage.png')               # Selenium full page, custom name
 
-        # From top-left point to edge (PyAutoGUI)
-        screenshot(100, 200)                            # From (100,200) to edge, auto-named
-        screenshot(100, 200, 'crop.png')                # From (100,200) to edge, custom name
+            # From top-left point to edge (PyAutoGUI)
+            screenshot(100, 200)                            # From (100,200) to edge, auto-named
+            screenshot(100, 200, 'crop.png')                # From (100,200) to edge, custom name
 
-        # From top-left point to edge (Selenium)
-        screenshot(driver, 100, 200)                    # Selenium from (100,200) to edge
-        screenshot(driver, 100, 200, 'page.png')        # Selenium, custom name
+            # From top-left point to edge (Selenium)
+            screenshot(driver, 100, 200)                    # Selenium from (100,200) to edge
+            screenshot(driver, 100, 200, 'page.png')        # Selenium, custom name
 
-        # Specific region (PyAutoGUI)
-        screenshot(0, 0, 500, 300)                      # Region: top-left (0,0), 500x300, auto-named
-        screenshot(0, 0, 500, 300, 'region.png')        # Region: top-left (0,0), 500x300, custom name
+            # Specific region (PyAutoGUI)
+            screenshot(0, 0, 500, 300)                      # Region: top-left (0,0), 500x300, auto-named
+            screenshot(0, 0, 500, 300, 'region.png')        # Region: top-left (0,0), 500x300, custom name
 
-        # Specific region (Selenium)
-        screenshot(driver, 0, 0, 800, 600)              # Selenium region, auto-named
-        screenshot(driver, 0, 0, 800, 600, 'sel.png')   # Selenium region, custom name
+            # Specific region (Selenium)
+            screenshot(driver, 0, 0, 800, 600)              # Selenium region, auto-named
+            screenshot(driver, 0, 0, 800, 600, 'sel.png')   # Selenium region, custom name
     """
 
     try:
@@ -3300,27 +3334,28 @@ def scroll(*args, timeout=30):
         - Prints progress every 10 scrolls for large scroll counts.
         - Prints confirmation when bottom or top is reached (Selenium).
 
-    Example::
+    Example:
+        ::
 
-        # PyAutoGUI Examples (scroll any window):
-        scroll()                      # Scroll down 1 time (default)
-        scroll(5)                     # Scroll down 5 times
-        scroll('down')                # Scroll down 1 time
-        scroll('down', 10)            # Scroll down 10 times
-        scroll('up', 5)               # Scroll up 5 times
-        scroll('bottom')              # Scroll down continuously for 30 seconds
-        scroll('bottom', timeout=60)  # Scroll down continuously for 60 seconds
-        scroll('top')                 # Scroll up continuously for 30 seconds
+            # PyAutoGUI Examples (scroll any window):
+            scroll()                      # Scroll down 1 time (default)
+            scroll(5)                     # Scroll down 5 times
+            scroll('down')                # Scroll down 1 time
+            scroll('down', 10)            # Scroll down 10 times
+            scroll('up', 5)               # Scroll up 5 times
+            scroll('bottom')              # Scroll down continuously for 30 seconds
+            scroll('bottom', timeout=60)  # Scroll down continuously for 60 seconds
+            scroll('top')                 # Scroll up continuously for 30 seconds
 
-        # Selenium Examples (pass driver object):
-        scroll(driver)                        # Scroll down 1 time in browser
-        scroll(driver, 5)                     # Scroll down 5 times in browser
-        scroll(driver, 'down')                # Scroll down 1 time in browser
-        scroll(driver, 'down', 10)            # Scroll down 10 times in browser
-        scroll(driver, 'up', 5)               # Scroll up 5 times in browser
-        scroll(driver, 'bottom')              # Scroll to bottom (auto-detect end)
-        scroll(driver, 'top')                 # Scroll to top (auto-detect end)
-        scroll(driver, 'bottom', timeout=120) # Scroll to bottom, max 2 minutes
+            # Selenium Examples (pass driver object):
+            scroll(driver)                        # Scroll down 1 time in browser
+            scroll(driver, 5)                     # Scroll down 5 times in browser
+            scroll(driver, 'down')                # Scroll down 1 time in browser
+            scroll(driver, 'down', 10)            # Scroll down 10 times in browser
+            scroll(driver, 'up', 5)               # Scroll up 5 times in browser
+            scroll(driver, 'bottom')              # Scroll to bottom (auto-detect end)
+            scroll(driver, 'top')                 # Scroll to top (auto-detect end)
+            scroll(driver, 'bottom', timeout=120) # Scroll to bottom, max 2 minutes
     """
 
     wait = 3  # Fixed wait time between scrolls (3 seconds)
@@ -3496,22 +3531,23 @@ def wait(*args, countdown=True):
     Returns:
         True if successful, False if error or timeout
 
-    Example::
+    Example:
+        ::
 
-        # Countdown wait
-        wait(5)                              # Wait 5 seconds with countdown
-        wait(10, countdown=False)            # Wait 10 seconds silently
-        wait()                               # Wait 3 seconds (default)
+            # Countdown wait
+            wait(5)                              # Wait 5 seconds with countdown
+            wait(10, countdown=False)            # Wait 10 seconds silently
+            wait()                               # Wait 3 seconds (default)
 
-        # Wait for element (Selenium) - pass driver object
-        wait(driver, 'xpath', '//button')            # Wait max 180s with countdown
-        wait(driver, 'id', 'submit-btn', 10)         # Wait max 10s with countdown
-        wait(driver, 'class', 'content', 30, countdown=False)  # Wait silently for 30s
+            # Wait for element (Selenium) - pass driver object
+            wait(driver, 'xpath', '//button')            # Wait max 180s with countdown
+            wait(driver, 'id', 'submit-btn', 10)         # Wait max 10s with countdown
+            wait(driver, 'class', 'content', 30, countdown=False)  # Wait silently for 30s
 
-        # Wait for color at pixel
-        wait(100, 200, 255, 0, 0)            # Wait for red (255,0,0) at (100,200) with countdown
-        wait(100, 200, 255, 0, 0, 30)        # Wait for red, max 30s with countdown
-        wait(500, 300, 0, 255, 0, 60, countdown=False)  # Wait silently
+            # Wait for color at pixel
+            wait(100, 200, 255, 0, 0)            # Wait for red (255,0,0) at (100,200) with countdown
+            wait(100, 200, 255, 0, 0, 30)        # Wait for red, max 30s with countdown
+            wait(500, 300, 0, 255, 0, 60, countdown=False)  # Wait silently
     """
 
     # if no argument is passed
@@ -3652,18 +3688,22 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
     Args:
         timeout: Maximum seconds to wait for download completion (default: 1200)
         url: Direct download URL (optional)
-            - If provided: Downloads file directly via requests
-            - If None: Monitors downloads folder for browser-initiated download
+            ::
+                - If provided: Downloads file directly via requests
+                - If None: Monitors downloads folder for browser-initiated download
         filename: Custom filename to save/rename the downloaded file (optional)
-            - With extension (e.g. "myapp.exe")  → used as-is
-            - Without extension (e.g. "myapp")   → extension borrowed from original file
-            - If None: Original filename is kept
-            - If multiple files are downloaded, only the first completed file is renamed
+            ::
+                - With extension (e.g. "myapp.exe")  : used as-is
+                - Without extension (e.g. "myapp")   : extension borrowed from original file
+                - If None: Original filename is kept
+                - If multiple files are downloaded, only the first completed file is renamed
         download_dir: Custom download directory to monitor (monitor mode only, optional)
-            - If provided: Uses specified path and skips all auto-detection
-            - If None: Auto-detects using the priority order described in Note below
+            ::
+                - If provided: Uses specified path and skips all auto-detection
+                - If None: Auto-detects using the priority order described in Note below
 
-    Returns:
+    Returns::
+
         str: Final filename of the downloaded file (always includes extension) on success
         False: On failure (download error, timeout, directory access issue, etc.)
 
@@ -3672,14 +3712,15 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
         - Prints confirmation with final filename and saved path on completion.
         - Prints timeout message if download does not complete in time.
 
-    Example::
+    Example:
+        ::
 
-        wait_download()                                                   # Monitor downloads folder
-        wait_download(url='https://abc.com/file.msix')                    # Direct download via URL
-        wait_download(url='https://abc.com/file.msix', filename='myapp')  # Custom name, borrows extension
-        wait_download(300, filename='our_log.txt')                        # Monitor and rename on completion
-        wait_download(600, download_dir='/downloads')                     # Docker with custom path
-        wait_download(300, download_dir='D:/MyDownloads')                 # Windows custom path
+            wait_download()                                                   # Monitor downloads folder
+            wait_download(url='https://abc.com/file.msix')                    # Direct download via URL
+            wait_download(url='https://abc.com/file.msix', filename='myapp')  # Custom name, borrows extension
+            wait_download(300, filename='our_log.txt')                        # Monitor and rename on completion
+            wait_download(600, download_dir='/downloads')                     # Docker with custom path
+            wait_download(300, download_dir='D:/MyDownloads')                 # Windows custom path
 
     Note:
         - When download_dir is not provided, the folder is auto-detected in this order:
@@ -4012,22 +4053,26 @@ def window(action=None, target=None, *args):
     Unified window management function for Windows and Linux.
 
     Args:
-        action: Window operation to perform (default: 'list')
-            - None or 'list': Get all window titles
-            - 'title': Get active window title (or find full title if target provided)
-            - 'focus': Bring window to foreground
-            - 'close': Close window
-            - 'minimize': Minimize window
-            - 'maximize': Maximize window
-            - 'resize': Resize window (requires width, height)
-            - 'move': Move window (requires x, y)
+        action: Window operation to perform (default: 'list')::
+
+            'list'     : Get all window titles
+            'title'    : Get active window title (or find full title if target provided)
+            'focus'    : Bring window to foreground
+            'close'    : Close window
+            'minimize' : Minimize window
+            'maximize' : Maximize window
+            'resize'   : Resize window (requires width, height)
+            'move'     : Move window (requires x, y)
+
         target: Window title or pattern (required for most actions)
         *args: Additional parameters (width, height for resize; x, y for move)
 
     Returns:
-        - List of strings: When action is None or 'list'
-        - String or None: When action is 'title'
-        - True/False: When action is focus/close/minimize/maximize/resize/move
+        Return type depends on action::
+
+            list/None : List of strings when action is None or 'list'
+            title     : String or None
+            others    : True if successful, False otherwise
 
     Raises:
         ValueError: If invalid action, missing required parameters or invalid
@@ -4039,42 +4084,43 @@ def window(action=None, target=None, *args):
           (focus action only).
         - Prints error if wmctrl or xdotool is not installed (Linux only).
 
-    Example::
+    Example:
+        ::
 
-        # Get all windows (default)
-        window()                                    # ['Chrome', 'Notepad', 'Excel']
-        window('list')                              # ['Chrome', 'Notepad', 'Excel']
+            # Get all windows (default)
+            window()                                    # ['Chrome', 'Notepad', 'Excel']
+            window('list')                              # ['Chrome', 'Notepad', 'Excel']
 
-        # Check if window exists
-        if 'Chrome' in window():
-            print("Chrome is open!")
+            # Check if window exists
+            if 'Chrome' in window():
+                print("Chrome is open!")
 
-        # Get active window title
-        window('title')                             # 'Google Chrome - New Tab'
+            # Get active window title
+            window('title')                             # 'Google Chrome - New Tab'
 
-        # Find full title containing text
-        window('title', 'Chrome')                   # 'Google Chrome - New Tab'
-        window('title', 'Note')                     # 'Untitled - Notepad'
+            # Find full title containing text
+            window('title', 'Chrome')                   # 'Google Chrome - New Tab'
+            window('title', 'Note')                     # 'Untitled - Notepad'
 
-        # Window operations
-        window('focus', 'Chrome')                   # Focus window
-        window('close', 'Notepad')                  # Close window
-        window('minimize', 'Excel')                 # Minimize window
-        window('maximize', 'Word')                  # Maximize window
+            # Window operations
+            window('focus', 'Chrome')                   # Focus window
+            window('close', 'Notepad')                  # Close window
+            window('minimize', 'Excel')                 # Minimize window
+            window('maximize', 'Word')                  # Maximize window
 
-        # Position and size
-        window('resize', 'Chrome', 800, 600)        # Resize to 800x600
-        window('move', 'Chrome', 100, 200)          # Move to (100, 200)
+            # Position and size
+            window('resize', 'Chrome', 800, 600)        # Resize to 800x600
+            window('move', 'Chrome', 100, 200)          # Move to (100, 200)
 
-        # Side-by-side setup (1920x1080 display)
-        window('move', 'Chrome', 0, 0)              # Left side
-        window('resize', 'Chrome', 960, 1080)       # Half screen width
-        window('move', 'Code', 960, 0)              # Right side
-        window('resize', 'Code', 960, 1080)         # Half screen width
+            # Side-by-side setup (1920x1080 display)
+            window('move', 'Chrome', 0, 0)              # Left side
+            window('resize', 'Chrome', 960, 1080)       # Half screen width
+            window('move', 'Code', 960, 0)              # Right side
+            window('resize', 'Code', 960, 1080)         # Half screen width
 
-        # Recording setup
-        window('resize', 'Demo', 1280, 720)         # 720p size
-        window('move', 'Demo', 320, 180)            # Centered on 1920x1080
+            # Recording setup
+            window('resize', 'Demo', 1280, 720)         # 720p size
+            window('move', 'Demo', 320, 180)            # Centered on 1920x1080
 
     Note:
         - On Linux, resize and move automatically remove maximized/minimized
@@ -4493,21 +4539,22 @@ def write(*keys):
         - Prints error message if element was not found (Selenium).
         - Prints error message if invalid arguments are provided.
 
-    Example::
+    Example:
+        ::
 
-        # PyAutoGUI mode (types in any active window)
-        write("Hello World")                                        # Types in active window
-        write("user@example.com")                                   # Types email
-        write("12345")                                              # Types numbers as string
+            # PyAutoGUI mode (types in any active window)
+            write("Hello World")                                        # Types in active window
+            write("user@example.com")                                   # Types email
+            write("12345")                                              # Types numbers as string
 
-        # Selenium mode - type on active element in browser
-        write(driver, "Hello World")                                # Types on active element
-        write(driver, "Search query")                               # Types in focused input
+            # Selenium mode - type on active element in browser
+            write(driver, "Hello World")                                # Types on active element
+            write(driver, "Search query")                               # Types in focused input
 
-        # Selenium mode - type in specific element
-        write(driver, "id", "username", "john_doe")
-        write(driver, "xpath", "//input[@name='email']", "user@example.com")
-        write(driver, "class", "search-box", "Python tutorial")
+            # Selenium mode - type in specific element
+            write(driver, "id", "username", "john_doe")
+            write(driver, "xpath", "//input[@name='email']", "user@example.com")
+            write(driver, "class", "search-box", "Python tutorial")
 
     Note:
         - PyAutoGUI uses typewrite() which types one character at a time.
@@ -4599,8 +4646,9 @@ def zoom(*args):
 
     Args:
         *args: Variable arguments
-            - (value): PyAutoGUI zoom steps/reset
-            - (driver, value): Selenium zoom steps/percentage/reset
+            ::
+                - (value): PyAutoGUI zoom steps/reset
+                - (driver, value): Selenium zoom steps/percentage/reset
 
     Returns:
         True if successful, False otherwise
@@ -4608,7 +4656,7 @@ def zoom(*args):
     Raises:
         ValueError: If arguments are invalid, zoom value is not an integer,
                     PyAutoGUI value is outside -9 to +9 (except 100),
-                    or Selenium percentage is less than 1%
+                    or Selenium percentage is less than 1%.
 
     Output:
         - Prints zoom direction and step count (PyAutoGUI).
@@ -4620,29 +4668,30 @@ def zoom(*args):
         - 100 or 0: Reset to default/100%
         - Outside range (except 100): Percentage (Selenium only)
 
-    Example::
+    Example:
+        ::
 
-        # PyAutoGUI (desktop apps)
-        zoom(3)              # Zoom in 3 steps
-        zoom(-5)             # Zoom out 5 steps
-        zoom(100) or zoom(0) # Reset to default (Ctrl+0)
-        When zoom in/out is performed using UI (Ctrl and +/-) in Chrome,
-        the min %, zoom states % and max % follow this order:
-            (25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500)
+            # PyAutoGUI (desktop apps)
+            zoom(3)              # Zoom in 3 steps
+            zoom(-5)             # Zoom out 5 steps
+            zoom(100) or zoom(0) # Reset to default (Ctrl+0)
+            When zoom in/out is performed using UI (Ctrl and +/-) in Chrome,
+            the min %, zoom states % and max % follow this order:
+                (25, 33, 50, 67, 75, 80, 90, 100, 110, 125, 150, 175, 200, 250, 300, 400, 500)
 
-        # Selenium (browser) - Steps
-        zoom(driver, 3)      # Zoom in current + 3 * 10%
-        zoom(driver, -5)     # Zoom out current - 5 * 10%
+            # Selenium (browser) - Steps
+            zoom(driver, 3)      # Zoom in current + 3 * 10%
+            zoom(driver, -5)     # Zoom out current - 5 * 10%
 
-        # Selenium (browser) - Reset
-        zoom(driver, 100)    # Reset to 100%
-        zoom(driver, 0)      # Reset to 100%
+            # Selenium (browser) - Reset
+            zoom(driver, 100)    # Reset to 100%
+            zoom(driver, 0)      # Reset to 100%
 
-        # Selenium (browser) - Percentage
-        zoom(driver, 150)    # Set zoom to 150%
-        zoom(driver, 75)     # Set zoom to 75%
-        zoom(driver, 50)     # Set zoom to 50%
-        zoom(driver, 200)    # Set zoom to 200%
+            # Selenium (browser) - Percentage
+            zoom(driver, 150)    # Set zoom to 150%
+            zoom(driver, 75)     # Set zoom to 75%
+            zoom(driver, 50)     # Set zoom to 50%
+            zoom(driver, 200)    # Set zoom to 200%
 
     Note:
         - Selenium zoom is applied via JavaScript and is not reflected in

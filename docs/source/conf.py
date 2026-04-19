@@ -37,4 +37,14 @@ html_theme_options = {
     "sidebar_hide_name": True,
 }
 # Custom sections to avoid rendering of those as plain unstyled text.
-napoleon_custom_sections = ['Modes', 'Output', 'Platform', 'Usage', 'Features',]
+napoleon_custom_sections = [
+    'Modes',
+    'Output',
+    'Platform',
+    'Usage',
+    'Features',
+    'Log file format',
+    'Session numbering',
+    'Value Logic',
+    'Supported file formats',
+]

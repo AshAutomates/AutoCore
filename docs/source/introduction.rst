@@ -1,6 +1,8 @@
 Introduction
 ============
 
+AutoCore
+--------
 Automate Core Actions
 
 .. image:: https://img.shields.io/badge/version-1.0-blue
