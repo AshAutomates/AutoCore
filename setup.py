@@ -60,6 +60,8 @@ setup(
     author="Ash",
     url="https://github.com/AshAutomates/AutoCore",
     description="Automate Core Actions",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     packages=find_packages(),
     install_requires=[
         "opencv-python",

@@ -6,11 +6,43 @@ This guide will get you up and running with AutoCore in minutes.
 Basic Usage
 -----------
 
-All functions are available with a single import:
+AutoCore supports three import styles:
 
-.. code-block:: python
+**Style 1: Import everything (recommended)**
 
-   from autocore import *
+    Use functions directly without any prefix:
+
+    .. code-block:: python
+
+       from autocore import *
+
+       click(driver, 'id', 'login-button')
+       write(driver, 'id', 'username', 'myuser')
+       press(driver, 'enter')
+
+**Style 2: Import as module**
+
+    Use functions with ``autocore.`` prefix:
+
+    .. code-block:: python
+
+       import autocore
+
+       autocore.click(driver, 'id', 'login-button')
+       autocore.write(driver, 'id', 'username', 'myuser')
+       autocore.press(driver, 'enter')
+
+**Style 3: Import specific functions**
+
+    Use only what you need:
+
+    .. code-block:: python
+
+       from autocore import browser, click, write, press
+
+       click(driver, 'id', 'login-button')
+       write(driver, 'id', 'username', 'myuser')
+       press(driver, 'enter')
 
 Browser Automation
 ------------------

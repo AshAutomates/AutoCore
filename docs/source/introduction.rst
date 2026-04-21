@@ -35,6 +35,14 @@ This makes it suitable for:
 
 ----
 
+Platform Support
+----------------
+
+- **Supported:** Windows, Linux
+- **Not Supported:** macOS
+
+----
+
 Functions
 ---------
 
@@ -84,7 +92,7 @@ Functions
      - Press keyboard keys
    * - ``read(...)``
      - Read text from screen or browser via OCR or extract text from files
-   * - ``run(item)``
+   * - ``run(target)``
      - Run a file or application
    * - ``say(text)``
      - Speak text using offline Text-to-Speech
@@ -97,7 +105,7 @@ Functions
    * - ``wait(...)``
      - Wait with countdown, wait for element or wait for color
    * - ``wait_download(...)``
-     - Monitor downloads folder for completion or download directly via URL
+     - Monitor downloads folder for completion or fetch via URL
    * - ``window(...)``
      - List, focus, close, minimize, maximize, resize or move windows
    * - ``write(...)``
@@ -107,19 +115,34 @@ Functions
    * - ``zoom(...)``
      - Zoom in/out by steps or set zoom percentage
 
-File Formats supported by ``read()``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-PDF, DOCX, PPTX, ODT, RTF, CSV, TSV, XLSX, SQLite, JSON, YAML, XML, INI/CFG, TXT, LOG, MD, HTML, EML, MSG, EPUB, SH, BAT, PY
-
 ----
 
-Platform Support
-----------------
+File Formats Supported by ``read()``
+------------------------------------
 
-Supported: Windows, Linux
+.. list-table::
+   :widths: 20 80
+   :header-rows: 1
 
-Not Supported: macOS
+   * - Category
+     - Formats
+   * - Documents
+     - PDF, DOCX, PPTX, ODT, RTF
+   * - Tabular
+     - CSV, TSV, XLSX, SQLite
+   * - Structured
+     - JSON, YAML, XML, INI/CFG
+   * - Text
+     - TXT, LOG, MD
+   * - Web
+     - HTML
+   * - Email
+     - EML, MSG
+   * - eBooks
+     - EPUB
+   * - Scripts
+     - SH, BAT, PY
+
 
 ----
 

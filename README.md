@@ -23,6 +23,13 @@ This makes it suitable for:
 
 ---
 
+## Platform Support
+
+- **Supported:** Windows, Linux
+- **Not Supported:** macOS
+
+---
+
 ## Installation
 
 This has been fully tested on Python 3.12, using other versions may lead to compatibility issues with dependencies.
@@ -76,11 +83,41 @@ sudo rpm -i google-chrome-stable_current_x86_64.rpm
 
 ## Usage
 
+**Style 1: Import everything (recommended)**
+
+Use functions directly without any prefix:
+
 ```python
 from autocore import *
+
+click(driver, 'id', 'login-button')
+write(driver, 'id', 'username', 'myuser')
+press(driver, 'enter')
 ```
 
-All functions are available directly without any prefix.
+**Style 2: Import as module**
+
+Use functions with `autocore.` prefix:
+
+```python
+import autocore
+
+autocore.click(driver, 'id', 'login-button')
+autocore.write(driver, 'id', 'username', 'myuser')
+autocore.press(driver, 'enter')
+```
+
+**Style 3: Import specific functions**
+
+Use only what you need:
+
+```python
+from autocore import browser, click, write, press
+
+click(driver, 'id', 'login-button')
+write(driver, 'id', 'username', 'myuser')
+press(driver, 'enter')
+```
 
 ---
 
@@ -108,27 +145,33 @@ All functions are available directly without any prefix.
 | `month()` | Current month (1-12) |
 | `press(...)` | Press keyboard keys |
 | `read(...)` | Read text from screen or browser via OCR or extract text from files |
-| `run(item)` | Run a file or application |
+| `run(target)` | Run a file or application |
 | `say(text)` | Speak text using offline Text-to-Speech |
 | `screenshot(...)` | Take a screenshot of full screen or region |
 | `scroll(...)` | Scroll up, down, to top or to bottom |
 | `second()` | Current second (0-59) |
 | `wait(...)` | Wait with countdown, wait for element or wait for color |
-| `wait_download(...)` | Monitor downloads folder for completion or download directly via URL |
+| `wait_download(...)` | Monitor downloads folder for completion or fetch via URL |
 | `window(...)` | List, focus, close, minimize, maximize, resize or move windows |
 | `write(...)` | Type text in active window or web element |
 | `year()` | Current year |
 | `zoom(...)` | Zoom in/out by steps or set zoom percentage |
 
-### File Formats supported by `read()`
-PDF, DOCX, PPTX, ODT, RTF, CSV, TSV, XLSX, SQLite, JSON, YAML, XML, INI/CFG, TXT, LOG, MD, HTML, EML, MSG, EPUB, SH, BAT, PY
 
 ---
 
-## Platform Support
+## File Formats Supported by `read()`
 
-Supported: Windows, Linux
-Not Supported: macOS
+| Category   | Formats                        |
+|------------|--------------------------------|
+| Documents  | PDF, DOCX, PPTX, ODT, RTF     |
+| Tabular    | CSV, TSV, XLSX, SQLite         |
+| Structured | JSON, YAML, XML, INI/CFG       |
+| Text       | TXT, LOG, MD                   |
+| Web        | HTML                           |
+| Email      | EML, MSG                       |
+| eBooks     | EPUB                           |
+| Scripts    | SH, BAT, PY                    |
 
 ---
 

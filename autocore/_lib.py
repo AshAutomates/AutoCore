@@ -38,14 +38,12 @@ from PIL import Image, ImageTk
 # Third-party imports - Automation
 import pyautogui
 import pyperclip
-import keyboard
 
 # Third-party imports - Web scraping & parsing
 from bs4 import BeautifulSoup
 
 # Third-party imports - Selenium
 import undetected_chromedriver as uc
-from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import *
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -382,7 +380,7 @@ class _CustomRotatingFileNameHandler(RotatingFileHandler):
                         break
 
                     try:
-                        log_file.unlink() # deletes the file from the filesystem.
+                        log_file.unlink()  # deletes the file from the filesystem.
                         total_size_mb -= size / (1024 * 1024)
                         print(f"Deleted old log file: {log_file.name} (folder size: {total_size_mb:.1f}MB)")
                     except Exception as e:
@@ -512,8 +510,8 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     if headless:
         options.add_argument("--headless=new")
         options.add_argument("--window-size=2560,1440")
-        options.add_argument("--disable-gpu")                         # disable GPU (prevents SwiftShader WebGL signal)
-        options.add_argument("--enable-features=OverlayScrollbar")    # mimics real Chrome scrollbar behavior
+        options.add_argument("--disable-gpu")  # disable GPU (prevents SwiftShader WebGL signal)
+        options.add_argument("--enable-features=OverlayScrollbar")  # mimics real Chrome scrollbar behavior
 
     # Fetch installed Chrome version dynamically to keep user-agent current.
     # A matching Chrome version in user-agent makes the browser look more like a real user.
@@ -536,24 +534,32 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     options.add_argument(f"--user-agent={user_agent}")
 
     # Additional options to enhance realism and disable Selenium detection
-    options.add_argument('--start-maximized')                                     # Start browser maximized
-    options.add_argument("--safebrowsing-disable-download-protection")          # allow unverified downloads
-    options.add_argument("--disable-features=InsecureDownloadWarnings")         # disable insecure download warnings
-    options.add_argument("--disable-features=DownloadBubble")                  # disable download bubble UI
-    options.add_argument("--no-sandbox")                                        # disable sandbox restrictions
-    options.add_argument("--lang=en-US")                                        # set language to avoid empty navigator.languages
+    options.add_argument('--start-maximized')  # Start browser maximized
+    options.add_argument("--safebrowsing-disable-download-protection")  # allow unverified downloads
+    options.add_argument("--disable-features=InsecureDownloadWarnings")  # disable insecure download warnings
+    options.add_argument("--disable-features=DownloadBubble")  # disable download bubble UI
+    options.add_argument("--no-sandbox")  # disable sandbox restrictions
+    options.add_argument("--lang=en-US")  # set language to avoid empty navigator.languages
+    options.add_argument("--disable-translate")  # disable Google Translate popup
+    options.add_argument("--no-first-run")  # skip first-run welcome popups
+    options.add_argument("--no-default-browser-check")  # skip default browser prompt
 
     # Set preferences to avoid unnecessary pop-ups and block notifications
     prefs = {
         "profile.default_content_setting_values.notifications": 2,  # block browser notification popups
-        'credentials_enable_service': False,                         # disable save password popup
-        'profile': {'password_manager_enabled': False},              # disable password manager completely
-        "safebrowsing.enabled": False,                               # disable safe browsing to allow downloads
-        "download.prompt_for_download": False,                       # no download confirmation prompt
-        "download.directory_upgrade": True,                          # allow download directory changes
-        "plugins.always_open_pdf_externally": True,                  # download PDFs instead of opening in browser
-        "safebrowsing_for_trusted_sources_enabled": False,           # disable safe browsing for trusted sources
-        "safebrowsing.disable_download_protection": True,            # disable download protection completely
+        'credentials_enable_service': False,  # disable save password popup
+        'profile': {'password_manager_enabled': False},  # disable password manager completely
+        'profile.password_manager_leak_detection': False,  # breach popup
+        "profile.default_content_setting_values.notifications": 2,  # block notification popups
+        "translate.enabled": False,  # disable translate bar
+        "autofill.profile_enabled": False,  # disable autofill suggestions
+        "autofill.credit_card_enabled": False,  # disable credit card autofill
+        "safebrowsing.enabled": False,  # disable safe browsing to allow downloads
+        "download.prompt_for_download": False,  # no download confirmation prompt
+        "download.directory_upgrade": True,  # allow download directory changes
+        "plugins.always_open_pdf_externally": True,  # download PDFs instead of opening in browser
+        "safebrowsing_for_trusted_sources_enabled": False,  # disable safe browsing for trusted sources
+        "safebrowsing.disable_download_protection": True,  # disable download protection completely
     }
     options.add_experimental_option("prefs", prefs)
 
@@ -1621,6 +1627,8 @@ def find_key(data, key):
             data = json.loads(read('data.json'))
             hosts = find_key(data, 'host')            # finds all 'host' values
     """
+
+    results = []
 
     def extract(obj):
         """Recursively search for key in nested structure"""
@@ -3356,6 +3364,10 @@ def scroll(*args, timeout=30):
             scroll(driver, 'bottom')              # Scroll to bottom (auto-detect end)
             scroll(driver, 'top')                 # Scroll to top (auto-detect end)
             scroll(driver, 'bottom', timeout=120) # Scroll to bottom, max 2 minutes
+            scroll(driver, 'Login')               # Scroll to 1st instance of 'Login'
+            scroll(driver, 'Login', 2)            # Scroll to 2nd instance of 'Login'
+            scroll(driver, 'Login', -1)           # Scroll to last instance of 'Login'
+            scroll(driver, 'Login', -2)           # Scroll to 2nd last instance of 'Login'
     """
 
     wait = 3  # Fixed wait time between scrolls (3 seconds)
@@ -3367,11 +3379,13 @@ def scroll(*args, timeout=30):
         driver_obj = None
         direction = 'down'
         count = 1
+        text_mode = False
 
     elif len(args) > 0 and hasattr(args[0], 'execute_script'):
         # Selenium mode - first arg is WebDriver object
         use_selenium = True
         driver_obj = args[0]
+        text_mode = False
 
         if len(args) == 1:
             # scroll(driver) - scroll down 1 time
@@ -3385,6 +3399,11 @@ def scroll(*args, timeout=30):
             # scroll(driver, 'down') or scroll(driver, 'down', 10)
             direction = args[1]
             count = args[2] if len(args) > 2 else 1
+        elif isinstance(args[1], str):
+            # scroll(driver, 'Login') or scroll(driver, 'Login', 2) or scroll(driver, 'Login', -1)
+            text_mode = True
+            search_text = args[1]
+            index = args[2] if len(args) > 2 else 1
         else:
             print(f"Error: Invalid argument '{args[1]}'. Use 'down', 'up', 'bottom', 'top' or a number.")
             return False
@@ -3393,6 +3412,7 @@ def scroll(*args, timeout=30):
         # PyAutoGUI mode
         use_selenium = False
         driver_obj = None
+        text_mode = False
 
         if isinstance(args[0], int):
             # scroll(5) - scroll down 5 times
@@ -3406,8 +3426,8 @@ def scroll(*args, timeout=30):
             print(f"Error: Invalid argument '{args[0]}'. Use 'down', 'up', 'bottom', 'top' or a number.")
             return False
 
-    # Validate direction
-    if direction not in ['down', 'up', 'bottom', 'top']:
+    # Validate direction (only when not text mode)
+    if not text_mode and direction not in ['down', 'up', 'bottom', 'top']:
         print(f"Error: Invalid direction '{direction}'.")
         return False
 
@@ -3416,8 +3436,66 @@ def scroll(*args, timeout=30):
         # SELENIUM MODE
         # ============================================================
         if use_selenium:
+
+            # --------------------------------------------------------
+            # Scroll to text instance
+            # --------------------------------------------------------
+            if text_mode:
+
+                # Reset selection and scroll to top so find always starts from beginning
+                driver_obj.execute_script("window.scrollTo(0, 0);")
+                driver_obj.execute_script("window.getSelection().removeAllRanges();")
+
+                # Count total instances using TreeWalker (text nodes only, no DOM corruption)
+                total = driver_obj.execute_script("""
+                    var text = arguments[0].toLowerCase();
+                    var count = 0;
+                    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                    while (walker.nextNode()) {
+                        var nodeText = walker.currentNode.nodeValue.toLowerCase();
+                        var pos = 0;
+                        while ((pos = nodeText.indexOf(text, pos)) !== -1) {
+                            count++;
+                            pos += text.length;
+                        }
+                    }
+                    return count;
+                """, search_text)
+
+                if total == 0:
+                    print(f"Error: No instances of '{search_text}' found.")
+                    return False
+
+                # Resolve index (1-based positive, negative from end)
+                if index == 0:
+                    print(f"Error: index=0 is invalid. Use 1 to {total} or -1 to -{total}.")
+                    return False
+                elif index < 0:
+                    if abs(index) > total:
+                        print(f"Error: index={index} out of range. Found {total} instance(s) of '{search_text}'.")
+                        return False
+                    resolved_index = total + index + 1
+                else:
+                    if index > total:
+                        print(f"Error: index={index} out of range. Found {total} instance(s) of '{search_text}'.")
+                        return False
+                    resolved_index = index
+
+                # Use window.find() resolved_index times to land on correct instance
+                # window.find() works like Ctrl+F - highlights just the word and scrolls to it
+                driver_obj.execute_script("""
+                    var text = arguments[0];
+                    var count = arguments[1];
+                    for (var i = 0; i < count; i++) {
+                        window.find(text, false, false, true, false, false, false);
+                    }
+                """, search_text, resolved_index)
+
+                print(f"[Selenium] Scrolled to '{search_text}' (instance {resolved_index} of {total})")
+                return True
+
             # Scroll to bottom (with auto-detection)
-            if direction == 'bottom':
+            elif direction == 'bottom':
                 print(f"[Selenium] Scrolling to bottom (timeout={timeout}s)...")
                 start_time = time.time()
                 scrolls = 0
@@ -3875,8 +3953,8 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
     last_print_time = 0
     download_started = False
     monitoring_files = set()
-    completed_files_so_far = []      # tracks files already reported as completed mid-session
-    filename_used = False            # ensures filename rename only applies to first completed file
+    completed_files_so_far = []  # tracks files already reported as completed mid-session
+    filename_used = False  # ensures filename rename only applies to first completed file
 
     while download_time < timeout:
         try:
@@ -3907,7 +3985,8 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                     if len(active_old_temp_files) == 1:
                         print(f"Active download detected: '{list(active_old_temp_files)[0]}'")
                     else:
-                        print(f"{len(active_old_temp_files)} active downloads detected: {', '.join(active_old_temp_files)}")
+                        print(
+                            f"{len(active_old_temp_files)} active downloads detected: {', '.join(active_old_temp_files)}")
 
             # Track any brand new temp files that appeared after monitoring started
             if new_temp_files:
@@ -3926,7 +4005,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             newly_completed = [
                 f for f in (current_files - initial_files)
                 if not f.endswith(temp_extensions)
-                and f not in completed_files_so_far
+                   and f not in completed_files_so_far
             ]
             for f in newly_completed:
                 elapsed = str(datetime.timedelta(seconds=download_time))
@@ -3965,7 +4044,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                 remaining_completed = [
                     f for f in new_files
                     if not f.endswith(temp_extensions)
-                    and f not in completed_files_so_far
+                       and f not in completed_files_so_far
                 ]
 
                 if remaining_completed:
@@ -4039,7 +4118,8 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             if len(still_downloading) == 1:
                 print(f"Timeout after {timeout} seconds while waiting for '{list(still_downloading)[0]}' to complete.")
             else:
-                print(f"Timeout after {timeout} seconds while waiting for {len(still_downloading)} files: {', '.join(still_downloading)}")
+                print(
+                    f"Timeout after {timeout} seconds while waiting for {len(still_downloading)} files: {', '.join(still_downloading)}")
         else:
             print(f'Timeout after {timeout} seconds. Download status unclear.')
     else:
@@ -4446,7 +4526,8 @@ def window(action=None, target=None, *args):
                         if window_title in line:
                             window_id = line.split()[0]
                             # Remove maximized/minimized state before resizing
-                            subprocess.run(['wmctrl', '-i', '-r', window_id, '-b', 'remove,maximized_vert,maximized_horz'])
+                            subprocess.run(
+                                ['wmctrl', '-i', '-r', window_id, '-b', 'remove,maximized_vert,maximized_horz'])
                             subprocess.run(['xdotool', 'windowmap', window_id])  # restore if minimized
                             time.sleep(0.3)
                             subprocess.run(['wmctrl', '-i', '-r', window_id, '-e', f'0,-1,-1,{width},{height}'])
@@ -4513,7 +4594,8 @@ def window(action=None, target=None, *args):
                         if window_title in line:
                             window_id = line.split()[0]
                             # Remove maximized/minimized state before moving
-                            subprocess.run(['wmctrl', '-i', '-r', window_id, '-b', 'remove,maximized_vert,maximized_horz'])
+                            subprocess.run(
+                                ['wmctrl', '-i', '-r', window_id, '-b', 'remove,maximized_vert,maximized_horz'])
                             subprocess.run(['xdotool', 'windowmap', window_id])  # restore if minimized
                             time.sleep(0.3)
                             subprocess.run(['wmctrl', '-i', '-r', window_id, '-e', f'0,{x},{y},-1,-1'])
