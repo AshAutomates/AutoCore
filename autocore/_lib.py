@@ -3859,7 +3859,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                         print(f"Downloading... {elapsed} elapsed ({_format_size(total_bytes)})")
                         last_print_time = elapsed_sec
             print(f"Downloaded file saved at: {os.path.abspath(final_filename)}")
-            return final_filename
+            return os.path.abspath(final_filename)
         except Exception as e:
             print(f"Could not download file: {e}")
             return False
@@ -3944,7 +3944,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             _rename_if_needed(download_dir, most_recent_file, final_filename)
             print(f"Quick download detected: '{final_filename}' (modified {int(age)} seconds ago)")
             print(f"Downloaded file saved at: {os.path.join(download_dir, final_filename)}")
-            return final_filename
+            return os.path.join(download_dir, final_filename)
 
     except Exception as e:
         print(f"Error checking for recent files: {e}")
@@ -4022,6 +4022,12 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
 
             all_monitoring = (current_temp_files & monitoring_files) | new_temp_files
 
+            # Return immediately if a file just completed and no temp files are still active
+            if newly_completed and not (current_temp_files & monitoring_files):
+                primary = completed_files_so_far[0]
+                print(f"Downloaded file saved at: {os.path.join(download_dir, primary)}")
+                return os.path.join(download_dir, primary)
+
             if all_monitoring:
                 # Still downloading — print progress every 10 seconds with size of each file
                 if download_time - last_print_time >= 10:
@@ -4064,7 +4070,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                     # Return the first completed file as the primary result
                     primary = completed_files_so_far[0]
                     print(f"Downloaded file saved at: {os.path.join(download_dir, primary)}")
-                    return primary
+                    return os.path.join(download_dir, primary)
                 else:
                     # Temp files gone but no completed file found yet — keep waiting briefly
                     if download_time - last_print_time >= 10:
@@ -4086,7 +4092,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                         _rename_if_needed(download_dir, original_name, final_filename)
                         print(f"Quick download detected: '{final_filename}'")
                         print(f"Downloaded file saved at: {os.path.join(download_dir, final_filename)}")
-                        return final_filename
+                        return os.path.join(download_dir, final_filename)
 
                     elapsed = str(datetime.timedelta(seconds=download_time))
                     print(f"Waiting for download to start... {elapsed} elapsed")
