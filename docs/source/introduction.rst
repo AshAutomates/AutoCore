@@ -151,26 +151,40 @@ Quick Example
 
 .. code-block:: python
 
-   from autocore import *
+    from autocore import *
+    log_setup("demo")
 
-   # Log setup with auto color change on success/failure
-   log_setup("demo_script")
+    # Open login page
+    dr = browser('https://practice.expandtesting.com/login')
+    
+    # Scroll to the login form
+    find_browser(dr, 'secure area')
 
-   # Open browser and click a button
-   dr = browser('https://example.com')
-   click(dr, 'id', 'login-button')
+    # Login with test credentials
+    write(dr, 'id', 'username', 'practice')
+    write(dr, 'id', 'password', 'SuperSecretPassword!')
+    wait(2)
+    click(dr, 'id', 'submit-login')
+    wait(5)
+    # doing logout
+    click(dr, 'text', 'Logout')
 
-   # Write and press keys on the initiated browser
-   write(dr, 'id', 'username', 'myuser')
-   press(dr, 'enter')
+    # Navigate to secure file download page
+    dr.get('https://practice.expandtesting.com/download')
 
-   # OCR - read text from screen
-   text = read()
-   if 'error' in text:
-       say("Error detected on screen")
+    # Scroll to bottom to make the link visible
+    scroll(dr, 'bottom')
 
-   # Click on button with download text on it
-   click('Download')
+    # Click to download the test file
+    click(dr, 'text', 'some-file.json')
 
-   # Wait for download to complete
-   wait_download(10)
+    # Wait for download to finish with timeout of 2 mins
+    file_location = wait_download(120)
+
+    # Announce completion time with voice
+    say(f"File downloaded at {hour()} hours and {minute()} minutes")
+
+    # Closing the browser
+    dr.quit()
+    print("Content of downloaded file is : ", read(file_location))
+    print('bye bye')

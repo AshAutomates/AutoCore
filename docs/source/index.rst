@@ -7,5 +7,5 @@ AutoCore Documentation
    introduction
    installation
    quickstart
-   function
+   function_reference
    changelog

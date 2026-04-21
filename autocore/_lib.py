@@ -3765,24 +3765,24 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
 
     Args:
         timeout: Maximum seconds to wait for download completion (default: 1200)
-        url: Direct download URL (optional)
-            ::
-                - If provided: Downloads file directly via requests
-                - If None: Monitors downloads folder for browser-initiated download
-        filename: Custom filename to save/rename the downloaded file (optional)
-            ::
-                - With extension (e.g. "myapp.exe")  : used as-is
-                - Without extension (e.g. "myapp")   : extension borrowed from original file
-                - If None: Original filename is kept
-                - If multiple files are downloaded, only the first completed file is renamed
-        download_dir: Custom download directory to monitor (monitor mode only, optional)
-            ::
-                - If provided: Uses specified path and skips all auto-detection
-                - If None: Auto-detects using the priority order described in Note below
+        url: Direct download URL (optional)::
+
+            - If provided: Downloads file directly via requests
+            - If None: Monitors downloads folder for browser-initiated download
+        filename: Custom filename to save/rename the downloaded file (optional)::
+
+            - With extension (e.g. "myapp.exe")  : used as-is
+            - Without extension (e.g. "myapp")   : extension borrowed from original file
+            - If None: Original filename is kept
+            - If multiple files are downloaded, only the first completed file is renamed
+        download_dir: Custom download directory to monitor (monitor mode only, optional)::
+
+            - If provided: Uses specified path and skips all auto-detection
+            - If None: Auto-detects using the priority order described in Note below
 
     Returns::
 
-        str: Final filename of the downloaded file (always includes extension) on success
+        str: Full path of the downloaded file (always includes extension) on success
         False: On failure (download error, timeout, directory access issue, etc.)
 
     Output:
@@ -4733,10 +4733,10 @@ def zoom(*args):
         4. Selenium reset: (driver, 100) or (driver, 0)
 
     Args:
-        *args: Variable arguments
-            ::
-                - (value): PyAutoGUI zoom steps/reset
-                - (driver, value): Selenium zoom steps/percentage/reset
+        *args: Variable arguments::
+
+            - (value): PyAutoGUI zoom steps/reset
+            - (driver, value): Selenium zoom steps/percentage/reset
 
     Returns:
         True if successful, False otherwise
