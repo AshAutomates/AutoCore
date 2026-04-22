@@ -181,8 +181,11 @@ press(driver, 'enter')
 from autocore import *
 log_setup("demo")
 
-# Open login page
+# Open login page in visible browser
 dr = browser('https://practice.expandtesting.com/login')
+
+# Open login page in headless browser
+# dr = browser('https://practice.expandtesting.com/login', True)
 
 # Scroll to the login form
 find_browser(dr, 'secure area')
@@ -192,10 +195,14 @@ write(dr, 'id', 'username', 'practice')
 write(dr, 'id', 'password', 'SuperSecretPassword!')
 wait(2)
 click(dr, 'id', 'submit-login')
-wait(5)
+wait(3)
 # doing logout
 click(dr, 'text', 'Logout')
-
+wait(2)
+print("Logout done.")
+# showing blank page before moving to next website
+dr.get("about:blank")
+#====================================================
 # Navigate to secure file download page
 dr.get('https://practice.expandtesting.com/download')
 
