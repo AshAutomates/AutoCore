@@ -65,7 +65,7 @@ After installing, run the following based on your distro:
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 20 60
+   :widths: 25 20 55
 
    * - Package
      - Used by
