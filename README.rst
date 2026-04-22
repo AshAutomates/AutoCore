@@ -3,14 +3,16 @@ AutoCore
 
 Automate Core Actions
 
-.. image:: https://img.shields.io/badge/version-1.0-blue
+.. |version| image:: https://img.shields.io/badge/version-1.0-blue
    :alt: Version
 
-.. image:: https://img.shields.io/badge/python-3.12-blue
+.. |python| image:: https://img.shields.io/badge/python-3.12-blue
    :alt: Python
 
-.. image:: https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue
+.. |platform| image:: https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue
    :alt: Platform
+
+|version| |python| |platform|
 
 A Python library that combines GUI automation, headless browser control and common actions into a single library.
 
