@@ -706,6 +706,9 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         # No cookies provided so single page load is enough
         driver_instance.get(url)
 
+    # Suppress undetected_chromedriver's __del__ cleanup error on exit
+    driver_instance.__class__.__del__ = lambda self: None
+
     # Return the driver instance - user can name it anything!
     return driver_instance
 
