@@ -156,7 +156,7 @@ Quick Example
 
     # Open login page
     dr = browser('https://practice.expandtesting.com/login')
-    
+
     # Scroll to the login form
     find_browser(dr, 'secure area')
 
