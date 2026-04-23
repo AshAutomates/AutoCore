@@ -9,5 +9,3 @@ AutoCore Documentation
    quickstart
    function_reference
    changelog
-
-.. include:: introduction.rst
