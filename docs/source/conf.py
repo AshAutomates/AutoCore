@@ -6,7 +6,6 @@ project = 'AutoCore'
 copyright = '2026, Ash'
 author = 'Ash'
 release = '1.0'
-master_doc = 'introduction'
 
 extensions = [
     'sphinx.ext.autodoc',
