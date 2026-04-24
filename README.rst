@@ -1,5 +1,6 @@
 .. image:: https://raw.githubusercontent.com/AshAutomates/AutoCore/main/docs/source/_static/logo.png
    :alt: AutoCore Logo
+   :width: 400px
 
 AutoCore
 ========
@@ -15,7 +16,15 @@ Automate Core Actions
 .. |platform| image:: https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue
    :alt: Platform
 
-|version| |python| |platform|
+.. |build| image:: https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml/badge.svg
+   :target: https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml
+   :alt: Build Status
+
+.. |docs| image:: https://readthedocs.org/projects/autocore/badge/?version=latest
+   :target: https://autocore.readthedocs.io
+   :alt: Documentation Status
+
+|version| |python| |platform| |build| |docs|
 
 A Python library that combines GUI automation, headless browser control and common actions into a single library.
 
