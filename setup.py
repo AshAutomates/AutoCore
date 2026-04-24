@@ -8,7 +8,7 @@ class PostInstall(install):
 
         print("\n┌" + "─" * 88 + "┐")
         print("│  AutoCore v1.0 — Installation Complete                                                │")
-        print("│  Docs   : https://autocore.readthedocs.io/en/latest/                                  │")
+        print("│  Docs   : https://autocore.readthedocs.io                                             │")
         print("│  GitHub : https://github.com/AshAutomates/AutoCore                                    │")
         print("└" + "─" * 88 + "┘")
 
