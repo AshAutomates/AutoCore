@@ -1,6 +1,7 @@
 .. image:: https://raw.githubusercontent.com/AshAutomates/AutoCore/main/docs/source/_static/logo.png
    :alt: AutoCore Logo
-   :width: 400px
+   :width: 500px
+   :align: center
 
 AutoCore
 ========
