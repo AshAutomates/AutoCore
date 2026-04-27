@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Version 1.1
+-----------
+
+*Released: April 2026*
+
+- ``browser()`` — Fixed ChromeDriver version mismatch when Chrome update is delayed.
+- Fixed post-install message not shown when installed via ``uv`` or other modern package managers.
+- Fixed ``import autocore`` crash on Linux environments with no display server.
+- Added ``FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true`` to workflow.yml to suppress Node.js 20 deprecation warnings.
+- Centered logo in README.
+- Added build badge to README.
+- Added ReadTheDocs badge to README.
+
 Version 1.0
 -----------
 
