@@ -1,8 +1,7 @@
-.. raw:: html
-
-   <p align="center">
-     <img src="https://raw.githubusercontent.com/AshAutomates/AutoCore/main/docs/source/_static/logo.png" alt="AutoCore Logo" width="500"/>
-   </p>
+.. image:: https://raw.githubusercontent.com/AshAutomates/AutoCore/main/docs/source/_static/logo.png
+   :alt: AutoCore Logo
+   :width: 500px
+   :align: center
 
 AutoCore
 ========
