@@ -9,7 +9,7 @@ AutoCore
 
 Automate Core Actions
 
-.. |version| image:: https://img.shields.io/badge/version-1.0-blue
+.. |version| image:: https://img.shields.io/badge/version-1.1-blue
    :alt: Version
 
 .. |python| image:: https://img.shields.io/badge/python-3.12-blue
