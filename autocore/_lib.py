@@ -7,7 +7,9 @@
 # Install: pip install autocore
 # Usage: from autocore import *
 
-# Standard library imports
+# ============================================================
+# STANDARD LIBRARY IMPORTS
+# ============================================================
 import atexit
 import configparser
 import csv
@@ -19,30 +21,37 @@ import logging
 import os
 import platform
 import re
-import requests
 import sqlite3
 import subprocess
 import sys
 import time
-import tkinter as tk
 import traceback
 import xml.etree.ElementTree as et
 from difflib import get_close_matches
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-# Third-party imports - Image processing
+# ============================================================
+# THIRD-PARTY — NETWORKING
+# ============================================================
+import requests
+
+# ============================================================
+# THIRD-PARTY — IMAGE PROCESSING
+# Safe on all platforms including headless servers
+# PIL.Image does not need a display — only PIL.ImageTk does
+# ============================================================
 import numpy as np
-from PIL import Image, ImageTk
+from PIL import Image
 
-# Third-party imports - Automation
-import pyautogui
-import pyperclip
-
-# Third-party imports - Web scraping & parsing
+# ============================================================
+# THIRD-PARTY — WEB SCRAPING & PARSING
+# ============================================================
 from bs4 import BeautifulSoup
 
-# Third-party imports - Selenium
+# ============================================================
+# THIRD-PARTY — SELENIUM
+# ============================================================
 import undetected_chromedriver as uc
 from selenium.common.exceptions import *
 from selenium.webdriver.common.action_chains import ActionChains
@@ -50,12 +59,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
-# Third-party imports - Windows automation
+# ============================================================
+# THIRD-PARTY — WINDOWS ONLY
+# ============================================================
 if platform.system() == "Windows":
     import win32con
     import win32gui
 
-# Third-party imports - Document processing
+# ============================================================
+# THIRD-PARTY — DOCUMENT PROCESSING
+# Safe on all platforms including headless servers
+# ============================================================
 from PyPDF2 import PdfReader
 from docx import Document
 from openpyxl import Workbook, load_workbook
@@ -68,9 +82,63 @@ from odf.text import P
 import extract_msg
 from striprtf.striprtf import rtf_to_text
 
-# Third-party imports - Utilities
-import pyttsx3
+# ============================================================
+# THIRD-PARTY — UTILITIES
+# ============================================================
 import yaml
+
+# ============================================================
+# THIRD-PARTY — GUI (requires display)
+# Needs: X display server on Linux
+# Works on: Linux desktop, Windows, macOS
+# Fails on: Linux headless servers, Docker, CI/CD, SSH sessions
+# Equivalent of running: export DISPLAY=:0 && xhost +local:
+# ============================================================
+if platform.system() == "Linux":
+    if "DISPLAY" not in os.environ:
+        os.environ["DISPLAY"] = ":0"
+    if os.system("xhost +local: > /dev/null 2>&1") == 0:
+        import tkinter as tk
+        from PIL import ImageTk
+        import pyautogui
+        pyautogui.FAILSAFE = True
+        _GUI_AVAILABLE = True
+    else:
+        tk = None
+        ImageTk = None
+        pyautogui = None
+        _GUI_AVAILABLE = False
+else:
+    import tkinter as tk
+    from PIL import ImageTk
+    import pyautogui
+    pyautogui.FAILSAFE = True
+    _GUI_AVAILABLE = True
+
+# ============================================================
+# THIRD-PARTY — AUDIO (requires sound system)
+# Works on: Linux desktop, Windows, macOS
+# Fails on: Linux headless servers with no audio drivers
+# ============================================================
+try:
+    import pyttsx3
+    _AUDIO_AVAILABLE = True
+except Exception:
+    pyttsx3 = None
+    _AUDIO_AVAILABLE = False
+
+# ============================================================
+# THIRD-PARTY — CLIPBOARD (requires clipboard manager)
+# Works on: Linux desktop, Windows, macOS
+# Fails on: Linux headless servers with no clipboard manager
+# ============================================================
+try:
+    import pyperclip
+    _CLIPBOARD_AVAILABLE = True
+except Exception:
+    pyperclip = None
+    _CLIPBOARD_AVAILABLE = False
+
 
 # print current working directory so user knows where files will be saved
 print(f"Current Working Directory: {os.getcwd()}")
@@ -758,11 +826,12 @@ def click(*where):
             click(driver, 'text', 'Click Here')
             click(driver, 'partial', 'Click')
     """
-    import cv2  # pip install opencv-python
+    import cv2
 
-    # Check if first argument is a WebDriver object
+    # ============================================================
+    # MODE 1 — SELENIUM (no display needed, works on all platforms)
+    # ============================================================
     if len(where) > 0 and hasattr(where[0], 'find_element'):
-        # SELENIUM MODE - driver object passed
         driver_obj = where[0]
 
         if len(where) < 3:
@@ -773,7 +842,6 @@ def click(*where):
         selector = where[2]
 
         try:
-            # Use get_web_element with driver object
             element = _get_web_element(driver_obj, selector_type, selector)
             if element:
                 element.click()
@@ -788,54 +856,57 @@ def click(*where):
             print(f"Error clicking element: {e}")
             return False
 
-    # PYAUTOGUI MODES - no driver object
+    # ============================================================
+    # PYAUTOGUI MODES — display required
+    # ============================================================
+    if not _GUI_AVAILABLE:
+        print("Error: click() requires a display.")
+        return False
+
+    # ============================================================
+    # MODE 2 — IMAGE MATCHING / OCR TEXT (1 argument)
+    # ============================================================
     elif len(where) == 1:
-        # Click on an image file if the argument contains a file extension
         if '.' in where[0]:
-            # Assuming 'where[0]' is the path to an image file
             pyautogui.click(where[0])
             return True
         else:
-            # Click based on OCR requests - 'where[0]' is assumed to be text for OCR
-            # Click first occurrence by default
             result = _click_word_by_ocr(where[0], 1, button='left')
             return result
 
+    # ============================================================
+    # MODE 3 — COORDINATES / OCR WITH OCCURRENCE (2 arguments)
+    # ============================================================
     elif len(where) == 2:
-        # Click on coordinates if both arguments are integers
         if isinstance(where[0], int) and isinstance(where[1], int):
             pyautogui.click(where[0], where[1])
             return True
-        # Check if it's OCR with occurrence number (text, occurrence)
         elif isinstance(where[0], str) and isinstance(where[1], int):
-            # OCR mode with nth occurrence
             result = _click_word_by_ocr(where[0], where[1], button='left')
             return result
         else:
             print("Error: Invalid arguments for click()")
             return False
 
-    # Click by color in a region (7 or 8 arguments)
+    # ============================================================
+    # MODE 4 — COLOR MATCHING IN REGION (7 or 8 arguments)
+    # ============================================================
     elif len(where) in [7, 8]:
         x_from, y_from, x_to, y_to, r, g, b = where[:7]
         tolerance = where[7] if len(where) == 8 else 0
 
         try:
-            # Take a screenshot of the specified area
             screenshot_img = pyautogui.screenshot(region=(x_from, y_from, x_to - x_from, y_to - y_from))
             screenshot_img = np.array(screenshot_img)
             screenshot_img = cv2.cvtColor(screenshot_img, cv2.COLOR_RGB2BGR)
 
-            # Define the lower and upper bounds of the target color
             lower = np.array([b - tolerance, g - tolerance, r - tolerance])
             upper = np.array([b + tolerance, g + tolerance, r + tolerance])
 
-            # Find the color
             mask = cv2.inRange(screenshot_img, lower, upper)
             points = cv2.findNonZero(mask)
 
             if points is not None:
-                # Click the first matching pixel
                 click_x, click_y = points[0][0]
                 pyautogui.click(x_from + click_x, y_from + click_y)
                 print(f'Pixel found and clicked at ({x_from + click_x}, {y_from + click_y}).')
@@ -848,6 +919,9 @@ def click(*where):
             print(f"Error during color search: {e}")
             return False
 
+    # ============================================================
+    # INVALID ARGUMENTS
+    # ============================================================
     else:
         print("Error: Invalid arguments for click()")
         return False
@@ -898,12 +972,12 @@ def click_right(*where):
             click_right(driver, 'text', 'Click Here')
             click_right(driver, 'partial', 'Click')
     """
+    import cv2
 
-    import cv2  # pip install opencv-python
-
-    # Check if first argument is a WebDriver object
+    # ============================================================
+    # MODE 1 — SELENIUM (no display needed, works on all platforms)
+    # ============================================================
     if len(where) > 0 and hasattr(where[0], 'find_element'):
-        # SELENIUM MODE - driver object passed
         driver_obj = where[0]
 
         if len(where) < 3:
@@ -914,10 +988,8 @@ def click_right(*where):
         selector = where[2]
 
         try:
-            # Use get_web_element with driver object
             element = _get_web_element(driver_obj, selector_type, selector)
             if element:
-                # Perform right-click using ActionChains
                 ActionChains(driver_obj).context_click(element).perform()
                 return True
             else:
@@ -930,54 +1002,57 @@ def click_right(*where):
             print(f"Error right-clicking element: {e}")
             return False
 
-    # PYAUTOGUI MODES - no driver object
+    # ============================================================
+    # PYAUTOGUI MODES — display required
+    # ============================================================
+    if not _GUI_AVAILABLE:
+        print("Error: click_right() requires a display.")
+        return False
+
+    # ============================================================
+    # MODE 2 — IMAGE MATCHING / OCR TEXT (1 argument)
+    # ============================================================
     elif len(where) == 1:
-        # Right-click on an image file if the argument contains a file extension
         if '.' in where[0]:
-            # Assuming 'where[0]' is the path to an image file
             pyautogui.rightClick(where[0])
             return True
         else:
-            # Right-click based on OCR requests - 'where[0]' is assumed to be text for OCR
-            # Right-click first occurrence by default
             result = _click_word_by_ocr(where[0], 1, button='right')
             return result
 
+    # ============================================================
+    # MODE 3 — COORDINATES / OCR WITH OCCURRENCE (2 arguments)
+    # ============================================================
     elif len(where) == 2:
-        # Right-click on coordinates if both arguments are integers
         if isinstance(where[0], int) and isinstance(where[1], int):
             pyautogui.rightClick(where[0], where[1])
             return True
-        # Check if it's OCR with occurrence number (text, occurrence)
         elif isinstance(where[0], str) and isinstance(where[1], int):
-            # OCR mode with nth occurrence
             result = _click_word_by_ocr(where[0], where[1], button='right')
             return result
         else:
             print("Error: Invalid arguments for click_right()")
             return False
 
-    # Right-click by color in a region (7 or 8 arguments)
+    # ============================================================
+    # MODE 4 — COLOR MATCHING IN REGION (7 or 8 arguments)
+    # ============================================================
     elif len(where) in [7, 8]:
         x_from, y_from, x_to, y_to, r, g, b = where[:7]
         tolerance = where[7] if len(where) == 8 else 0
 
         try:
-            # Take a screenshot of the specified area
             screenshot_img = pyautogui.screenshot(region=(x_from, y_from, x_to - x_from, y_to - y_from))
             screenshot_img = np.array(screenshot_img)
             screenshot_img = cv2.cvtColor(screenshot_img, cv2.COLOR_RGB2BGR)
 
-            # Define the lower and upper bounds of the target color
             lower = np.array([b - tolerance, g - tolerance, r - tolerance])
             upper = np.array([b + tolerance, g + tolerance, r + tolerance])
 
-            # Find the color
             mask = cv2.inRange(screenshot_img, lower, upper)
             points = cv2.findNonZero(mask)
 
             if points is not None:
-                # Right-click the first matching pixel
                 click_x, click_y = points[0][0]
                 pyautogui.rightClick(x_from + click_x, y_from + click_y)
                 print(f'Pixel found and right-clicked at ({x_from + click_x}, {y_from + click_y}).')
@@ -990,10 +1065,12 @@ def click_right(*where):
             print(f"Error during color search: {e}")
             return False
 
+    # ============================================================
+    # INVALID ARGUMENTS
+    # ============================================================
     else:
         print("Error: Invalid arguments for click_right()")
         return False
-
 
 def copy(*where):
     """
@@ -1016,16 +1093,20 @@ def copy(*where):
         ::
 
             # Active window - Copy everything from current window
-            copy()                                      # Ctrl+A, Ctrl+C from active window
+            # Ctrl+A, Ctrl+C from active window
+            copy()
 
             # Clipboard
-            copy('clipboard')                           # Get current clipboard content
+            # Get current clipboard content
+            copy('clipboard')
 
             # Screen coordinates
-            copy(500, 300)                              # Click at (500, 300) and copy
+            # Click at (500, 300) and copy
+            copy(500, 300)
 
             # Selenium webpage - Copy entire page
-            copy(driver)                                # Copy all webpage content
+            # Copy all webpage content
+            copy(driver)
 
             # Selenium element - Copy text
             copy(driver, 'id', 'username-display')
@@ -1044,76 +1125,103 @@ def copy(*where):
             copy(driver, 'xpath', '//a[@id="link"]', 'title')   # Get title attribute
     """
 
-    # in this variable the copied content will be stored and returned at end
     result = None
 
-    # Clear clipboard before copying fresh content.
-    # Exception: skip clearing when mode is copy('clipboard'),
-    # because in that mode we are reading existing clipboard content,
-    # not copying anything new — clearing it first would wipe what we want to read.
-    if not (len(where) == 1 and where[0] == 'clipboard'):
-        pyperclip.copy('')
-
-    # NO ARGUMENTS - Copy everything from active window
+    # ============================================================
+    # MODE 1 — ACTIVE WINDOW (no arguments)
+    # needs: GUI + clipboard
+    # ============================================================
     if len(where) == 0:
-        pyautogui.hotkey('ctrl', 'a')  # Select all
+        if not _GUI_AVAILABLE:
+            print("Error: copy() requires a display.")
+            return ''
+        if not _CLIPBOARD_AVAILABLE:
+            print("Error: copy() requires a clipboard manager.")
+            return ''
+        pyperclip.copy('')
+        pyautogui.hotkey('ctrl', 'a')
         time.sleep(1)
-        pyautogui.hotkey('ctrl', 'c')  # Copy
+        pyautogui.hotkey('ctrl', 'c')
         time.sleep(1)
         result = pyperclip.paste().strip()
 
+    # ============================================================
     # ONE ARGUMENT
+    # ============================================================
     elif len(where) == 1:
 
-        # Copy from clipboard
+        # --------------------------------------------------------
+        # MODE 2 — CLIPBOARD
+        # needs: clipboard only
+        # --------------------------------------------------------
         if where[0] == 'clipboard':
+            if not _CLIPBOARD_AVAILABLE:
+                print("Error: copy('clipboard') requires a clipboard manager.")
+                return ''
             result = pyperclip.paste().strip()
 
-        # Check if it's a WebDriver object - copy entire webpage
+        # --------------------------------------------------------
+        # MODE 3 — SELENIUM WEBPAGE
+        # needs: clipboard (for paste after Ctrl+C)
+        # --------------------------------------------------------
         elif hasattr(where[0], 'find_element'):
+            if not _CLIPBOARD_AVAILABLE:
+                print("Error: copy(driver) requires a clipboard manager.")
+                return ''
             driver_obj = where[0]
+            pyperclip.copy('')
             try:
                 action = ActionChains(driver_obj)
-                action.key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()  # Select all
+                action.key_down(Keys.CONTROL).send_keys('a').key_up(Keys.CONTROL).perform()
                 time.sleep(1)
-                action.key_down(Keys.CONTROL).send_keys('c').key_up(Keys.CONTROL).perform()  # Copy
+                action.key_down(Keys.CONTROL).send_keys('c').key_up(Keys.CONTROL).perform()
                 time.sleep(1)
                 result = pyperclip.paste().strip()
-                pyperclip.copy('')  # clear clipboard
-                driver_obj.execute_script("window.getSelection().removeAllRanges();")  # Deselect webpage text
+                pyperclip.copy('')
+                driver_obj.execute_script("window.getSelection().removeAllRanges();")
             except Exception as e:
                 print(f"Error copying webpage content: {e}")
 
-        # If string but not 'clipboard', it's invalid
         else:
             print(f"Invalid argument: {where[0]}")
 
+    # ============================================================
     # TWO ARGUMENTS
+    # ============================================================
     elif len(where) == 2:
 
-        # Case 1: Both integers - screen coordinates
+        # --------------------------------------------------------
+        # MODE 4 — SCREEN COORDINATES
+        # needs: GUI + clipboard
+        # --------------------------------------------------------
         if isinstance(where[0], int) and isinstance(where[1], int):
-            pyautogui.click(where[0], where[1])  # Click at specified coordinates
+            if not _GUI_AVAILABLE:
+                print("Error: copy(x, y) requires a display.")
+                return ''
+            if not _CLIPBOARD_AVAILABLE:
+                print("Error: copy(x, y) requires a clipboard manager.")
+                return ''
+            pyperclip.copy('')
+            pyautogui.click(where[0], where[1])
             time.sleep(1)
-            pyautogui.hotkey('ctrl', 'a')  # Select all
+            pyautogui.hotkey('ctrl', 'a')
             time.sleep(1)
-            pyautogui.hotkey('ctrl', 'c')  # Copy
+            pyautogui.hotkey('ctrl', 'c')
             time.sleep(1)
             result = pyperclip.paste().strip()
 
-        # Case 2: First is WebDriver - invalid, selector type is missing
         elif hasattr(where[0], 'find_element'):
             print("Error: Selenium copy requires 3 arguments: copy(driver, selector_type, selector)")
             print("Example: copy(driver, 'id', 'username')")
 
-        # Invalid combination
         else:
             print("Invalid arguments for copy()")
 
-    # THREE OR FOUR ARGUMENTS - Selenium element text or attribute
+    # ============================================================
+    # MODE 5 — SELENIUM ELEMENT TEXT OR ATTRIBUTE (3 or 4 arguments)
+    # needs: nothing — reads directly from DOM, no clipboard needed
+    # ============================================================
     elif len(where) in [3, 4]:
-
-        # Check if first argument is WebDriver
         if hasattr(where[0], 'find_element'):
             driver_obj = where[0]
             selector_type = where[1]
@@ -1122,7 +1230,6 @@ def copy(*where):
 
             try:
                 element = _get_web_element(driver_obj, selector_type, selector)
-
                 if element:
                     if attribute:
                         attr_value = element.get_attribute(attribute)
@@ -1131,29 +1238,24 @@ def copy(*where):
                         result = element.text.strip()
                 else:
                     print(f"Element not found: {selector_type} - {selector}")
-
             except Exception as e:
                 print(f"Error copying from element: {e}")
-
-        # Invalid - no driver object
         else:
             print("Error: For Selenium mode, first argument must be driver object")
 
-    # Invalid number of arguments
+    # ============================================================
+    # INVALID ARGUMENTS
+    # ============================================================
     else:
         print("Invalid arguments provided for copy()")
 
-    # Final check before returning
+    # ============================================================
+    # RETURN RESULT
+    # ============================================================
     if result == '' or result is None:
         print("No content returned from copy()")
-        # Returning '' (empty string) instead of None to prevent TypeError in common usage.
-        # If we returned None, code like this would crash:
-        #     if 'welcome' in copy():   will give   TypeError: argument of type 'NoneType' is not iterable
-        # With '' it works safely:
-        #     if 'welcome' in copy():   will give   False (no crash)
         return ''
     else:
-        # Returning the non-blank result
         return result
 
 
@@ -1293,19 +1395,28 @@ def drag(*args):
             drag(driver2, 'class', 'issue', 'class', 'backlog')
     """
 
-    # PYAUTOGUI MODE - 4 args, all integers
+    # ============================================================
+    # MODE 1 — PYAUTOGUI SCREEN DRAG (4 integer arguments)
+    # needs: display
+    # ============================================================
     if len(args) == 4 and all(isinstance(arg, int) for arg in args):
+        if not _GUI_AVAILABLE:
+            print("Error: drag() requires a display.")
+            return False
         x1, y1, x2, y2 = args
         try:
             pyautogui.moveTo(x1, y1, 1, pyautogui.easeInOutQuad)
-            pyautogui.dragTo(x2, y2, duration=2, button='left')  # 2 seconds default
+            pyautogui.dragTo(x2, y2, duration=2, button='left')
             print(f"Dragged from ({x1}, {y1}) to ({x2}, {y2})")
             return True
         except Exception as e:
             print(f"Error during drag: {e}")
             return False
 
-    # SELENIUM MODE - 5 args, first is WebDriver object
+    # ============================================================
+    # MODE 2 — SELENIUM ELEMENT DRAG (5 arguments, first is WebDriver)
+    # needs: nothing — works on all platforms
+    # ============================================================
     elif len(args) == 5 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
         src_type = args[1]
@@ -1313,7 +1424,6 @@ def drag(*args):
         tgt_type = args[3]
         tgt_selector = args[4]
 
-        # Validate selector types
         valid_selectors = ['id', 'xpath', 'class', 'name', 'css', 'tag', 'text', 'partial']
         if src_type not in valid_selectors:
             raise ValueError(f"Invalid source selector type '{src_type}'. Valid: {', '.join(valid_selectors)}")
@@ -1321,8 +1431,6 @@ def drag(*args):
             raise ValueError(f"Invalid target selector type '{tgt_type}'. Valid: {', '.join(valid_selectors)}")
 
         try:
-
-            # Find elements using the passed driver object
             source = _get_web_element(driver_obj, src_type, src_selector)
             target = _get_web_element(driver_obj, tgt_type, tgt_selector)
 
@@ -1333,7 +1441,6 @@ def drag(*args):
                 print(f"Target element not found: {tgt_type} = '{tgt_selector}'")
                 return False
 
-            # Perform drag and drop using the passed driver object
             ActionChains(driver_obj).drag_and_drop(source, target).perform()
             print(f"Dragged element from {src_type}='{src_selector}' to {tgt_type}='{tgt_selector}'")
             return True
@@ -1342,6 +1449,9 @@ def drag(*args):
             print(f"Error during Selenium drag: {e}")
             return False
 
+    # ============================================================
+    # INVALID ARGUMENTS
+    # ============================================================
     else:
         raise ValueError(
             "Invalid arguments. Use drag(x1, y1, x2, y2) or drag(driver, src_type, src_selector, tgt_type, tgt_selector)")
@@ -1430,7 +1540,7 @@ def erase(*args):
 
             # PyAutoGUI mode (erase active window)
             erase()                                  # Select all and delete (Ctrl+A, Delete)
-    
+
             # Selenium mode (erase specific element)
             erase(driver, 'id', 'username')          # Clear username field
             erase(driver, 'xpath', '//input[@name="email"]')  # Clear email field
@@ -1439,23 +1549,26 @@ def erase(*args):
 
     try:
         # ============================================================
-        # PYAUTOGUI MODE (no arguments)
+        # MODE 1 — PYAUTOGUI ACTIVE WINDOW (no arguments)
+        # needs: display
         # ============================================================
         if len(args) == 0:
-            # Erase active window (Ctrl+A, Delete)
+            if not _GUI_AVAILABLE:
+                print("Error: erase() requires a display.")
+                return False
             pyautogui.hotkey('ctrl', 'a', 'delete')
             print("Erased content in active window")
             return True
 
         # ============================================================
-        # SELENIUM MODE (driver object + selector)
+        # MODE 2 — SELENIUM ELEMENT (driver + selector)
+        # needs: nothing — works on all platforms
         # ============================================================
         elif len(args) == 3 and hasattr(args[0], 'find_element'):
             driver_obj = args[0]
             selector_type = args[1]
             selector = args[2]
 
-            # Find and clear element
             element = _get_web_element(driver_obj, selector_type, selector)
             if element:
                 element.clear()
@@ -1466,7 +1579,7 @@ def erase(*args):
                 return False
 
         # ============================================================
-        # ERROR - Invalid arguments
+        # INVALID ARGUMENTS
         # ============================================================
         else:
             print("Error: Invalid arguments for erase()")
@@ -1515,7 +1628,8 @@ def find_browser(*args):
 
     try:
         # ============================================================
-        # SELENIUM MODE (driver object passed)
+        # MODE 1 — SELENIUM (driver object passed)
+        # needs: nothing — works on all platforms
         # ============================================================
         if len(args) >= 2 and hasattr(args[0], 'execute_script'):
             driver_obj = args[0]
@@ -1557,9 +1671,13 @@ def find_browser(*args):
                 return False
 
         # ============================================================
-        # PYAUTOGUI MODE (no driver object)
+        # MODE 2 — PYAUTOGUI (no driver object)
+        # needs: display
         # ============================================================
         elif len(args) == 1:
+            if not _GUI_AVAILABLE:
+                print("Error: find_browser() requires a display.")
+                return False
             search_text = args[0]
 
             # Open browser find dialog
@@ -1581,6 +1699,9 @@ def find_browser(*args):
             print(f"[PyAutoGUI] Searched for '{search_text}'")
             return True
 
+        # ============================================================
+        # INVALID ARGUMENTS
+        # ============================================================
         else:
             print("Error: Invalid arguments for find_browser()")
             print("Use: find_browser(text) or find_browser(driver, text)")
@@ -1728,6 +1849,16 @@ def inspect():
         - Copies 'x, y, r, g, b' to clipboard.
 
     """
+
+    # ============================================================
+    # GUARD — needs display, tkinter, pyautogui and clipboard
+    # ============================================================
+    if not _GUI_AVAILABLE:
+        print("Error: inspect() requires a display.")
+        return
+    if not _CLIPBOARD_AVAILABLE:
+        print("Error: inspect() requires a clipboard manager.")
+        return
 
     # Track whether the inspector window is still open
     window_open = True
@@ -2296,6 +2427,7 @@ def press(*keys):
     try:
         # ============================================================
         # SELENIUM MODE - Check if first arg is WebDriver object
+        # needs: nothing — works on all platforms
         # ============================================================
         if len(keys) > 0 and hasattr(keys[0], 'find_element'):
             driver_obj = keys[0]
@@ -2402,8 +2534,13 @@ def press(*keys):
 
         # ============================================================
         # PYAUTOGUI MODE - No driver object
+        # needs: display
         # ============================================================
         else:
+            if not _GUI_AVAILABLE:
+                print("Error: press() requires a display.")
+                return False
+
             # Single key press
             if len(keys) == 1:
                 key_name = keys[0].lower()
@@ -2578,9 +2715,13 @@ def read(*args):
         region = (x, y, width, height)
 
     # ============================================================
-    # PERFORM OCR (if OCR mode detected)
+    # PERFORM OCR (modes 1, 2, 3 — needs display)
     # ============================================================
     if is_ocr:
+        if not _GUI_AVAILABLE:
+            print("Error: read() screen/OCR modes require a display.")
+            return None
+
         try:
             # Get shared OCR reader
             reader = _get_ocr_reader()
@@ -2619,6 +2760,7 @@ def read(*args):
 
     # ============================================================
     # MODE 4: Selenium driver - screenshot browser and OCR
+    # needs: nothing for screenshot — OCR runs on bytes, no display needed
     # ============================================================
     elif len(args) == 1 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
@@ -2646,6 +2788,7 @@ def read(*args):
 
     # ============================================================
     # MODE 5: File reading - 1 string (file path)
+    # needs: nothing — safe on all platforms including servers
     # ============================================================
     elif len(args) == 1 and isinstance(args[0], str):
         file = args[0]
@@ -3107,6 +3250,13 @@ def say(text, volume=1.0):
         - Automatically logs spoken text when log_setup() is active.
     """
 
+    # ============================================================
+    # GUARD — needs audio system
+    # ============================================================
+    if not _AUDIO_AVAILABLE:
+        print("Error: say() requires an audio system.")
+        return
+
     # Validate text input
     if not isinstance(text, str):
         raise TypeError("Text to speak must be a string")
@@ -3203,14 +3353,19 @@ def screenshot(*args):
     """
 
     try:
-        # Determine if using Selenium or PyAutoGUI
+        # ============================================================
+        # DETERMINE MODE — Selenium or PyAutoGUI
+        # ============================================================
         if len(args) > 0 and hasattr(args[0], 'save_screenshot'):
             # First argument is a WebDriver object
             use_driver = True
             driver_obj = args[0]
             remaining_args = args[1:]
         else:
-            # PyAutoGUI mode
+            # PyAutoGUI mode — guard display check here
+            if not _GUI_AVAILABLE:
+                print("Error: screenshot() requires a display.")
+                return False
             use_driver = False
             driver_obj = None
             remaining_args = args
@@ -3218,7 +3373,9 @@ def screenshot(*args):
         # Default values
         x, y, width, height, filename = None, None, None, None, None
 
-        # Parse remaining arguments
+        # ============================================================
+        # PARSE ARGUMENTS
+        # ============================================================
         if len(remaining_args) == 0:
             # screenshot() or screenshot(driver)
             # Full screen, auto-named
@@ -3260,7 +3417,9 @@ def screenshot(*args):
         x = int(x) if x is not None else 0
         y = int(y) if y is not None else 0
 
-        # Get screen dimensions
+        # ============================================================
+        # GET SCREEN DIMENSIONS
+        # ============================================================
         if use_driver:
             screen_width = driver_obj.execute_script("return window.innerWidth")
             screen_height = driver_obj.execute_script("return window.innerHeight")
@@ -3282,7 +3441,9 @@ def screenshot(*args):
         if x < 0 or y < 0:
             raise ValueError("Coordinates must be non-negative")
 
-        # Generate filename if not provided
+        # ============================================================
+        # GENERATE FILENAME
+        # ============================================================
         if filename is None:
             now = datetime.datetime.now()
             timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
@@ -3296,7 +3457,9 @@ def screenshot(*args):
         # Get full path
         full_path = os.path.join(os.getcwd(), filename)
 
-        # Take screenshot
+        # ============================================================
+        # TAKE SCREENSHOT
+        # ============================================================
         if use_driver:
             if x == 0 and y == 0 and width == screen_width and height == screen_height:
                 # Full browser window, no cropping needed
@@ -3375,7 +3538,9 @@ def scroll(*args, timeout=30):
 
     wait = 3  # Fixed wait time between scrolls (3 seconds)
 
-    # Parse arguments
+    # ============================================================
+    # PARSE ARGUMENTS — determine mode and direction
+    # ============================================================
     if len(args) == 0:
         # scroll() - default: scroll down 1 time with PyAutoGUI
         use_selenium = False
@@ -3412,7 +3577,11 @@ def scroll(*args, timeout=30):
             return False
 
     else:
-        # PyAutoGUI mode
+        # PyAutoGUI mode - guard display check here
+        if not _GUI_AVAILABLE:
+            print("Error: scroll() requires a display.")
+            return False
+
         use_selenium = False
         driver_obj = None
         text_mode = False
@@ -3429,6 +3598,11 @@ def scroll(*args, timeout=30):
             print(f"Error: Invalid argument '{args[0]}'. Use 'down', 'up', 'bottom', 'top' or a number.")
             return False
 
+    # Also guard the default scroll() case (no args = PyAutoGUI)
+    if not use_selenium and not _GUI_AVAILABLE:
+        print("Error: scroll() requires a display.")
+        return False
+
     # Validate direction (only when not text mode)
     if not text_mode and direction not in ['down', 'up', 'bottom', 'top']:
         print(f"Error: Invalid direction '{direction}'.")
@@ -3437,6 +3611,7 @@ def scroll(*args, timeout=30):
     try:
         # ============================================================
         # SELENIUM MODE
+        # needs: nothing — works on all platforms
         # ============================================================
         if use_selenium:
 
@@ -3547,6 +3722,7 @@ def scroll(*args, timeout=30):
 
         # ============================================================
         # PYAUTOGUI MODE
+        # needs: display (already guarded above)
         # ============================================================
         else:
             # Scroll to bottom/top (time-based, no detection)
@@ -3636,7 +3812,8 @@ def wait(*args, countdown=True):
         args = (3,)  # Set default to 3 seconds
 
     # ============================================================
-    # MODE 1: COUNTDOWN (1 argument, integer or float)
+    # MODE 1 — COUNTDOWN (1 argument, integer or float)
+    # needs: nothing — safe on all platforms
     # ============================================================
     if len(args) == 1 and isinstance(args[0], (int, float)):
         seconds = args[0]
@@ -3662,7 +3839,8 @@ def wait(*args, countdown=True):
         return True
 
     # ============================================================
-    # MODE 2: WAIT FOR ELEMENT (driver object + 2 or 3 arguments)
+    # MODE 2 — WAIT FOR ELEMENT (driver object + 2 or 3 arguments)
+    # needs: nothing — works on all platforms
     # ============================================================
     elif len(args) >= 3 and hasattr(args[0], 'find_element'):
         # Selenium mode - driver object detected
@@ -3712,9 +3890,14 @@ def wait(*args, countdown=True):
         return False
 
     # ============================================================
-    # MODE 3: WAIT FOR COLOR AT PIXEL (5 or 6 arguments, all integers)
+    # MODE 3 — WAIT FOR COLOR AT PIXEL (5 or 6 arguments, all integers)
+    # needs: display
     # ============================================================
     elif len(args) in [5, 6] and all(isinstance(arg, int) for arg in args):
+        if not _GUI_AVAILABLE:
+            print("Error: wait() color mode requires a display.")
+            return False
+
         x = args[0]
         y = args[1]
         target_r = args[2]
@@ -3750,7 +3933,9 @@ def wait(*args, countdown=True):
         print(f"Color not found after {timeout}s timeout.")
         return False
 
-    # Invalid arguments
+    # ============================================================
+    # INVALID ARGUMENTS
+    # ============================================================
     else:
         raise ValueError("Invalid arguments for wait()")
 
@@ -4654,21 +4839,26 @@ def write(*keys):
 
     try:
         # ============================================================
-        # PYAUTOGUI MODE (1 argument - text only)
+        # MODE 1 — PYAUTOGUI (1 argument - text only)
+        # needs: display
         # ============================================================
         if len(keys) == 1:
+            if not _GUI_AVAILABLE:
+                print("Error: write() requires a display.")
+                return False
             pyautogui.typewrite(keys[0])
             time.sleep(1)
             return True
 
         # ============================================================
         # SELENIUM MODE (driver object detected)
+        # needs: nothing — works on all platforms
         # ============================================================
         elif len(keys) >= 2 and hasattr(keys[0], 'find_element'):
             driver_obj = keys[0]
 
             # ----------------------------------------------------------
-            # Type on page (driver, text)
+            # MODE 2 — Type on page (driver, text)
             # ----------------------------------------------------------
             if len(keys) == 2:
                 # write(driver, "Hello World")
@@ -4678,7 +4868,7 @@ def write(*keys):
                 return True
 
             # ----------------------------------------------------------
-            # Type in specific element (driver, selector_type, selector, text)
+            # MODE 3 — Type in specific element (driver, selector_type, selector, text)
             # ----------------------------------------------------------
             elif len(keys) == 4:
                 # write(driver, "id", "username", "john")
@@ -4700,7 +4890,7 @@ def write(*keys):
                 return False
 
         # ============================================================
-        # ERROR - Invalid arguments
+        # INVALID ARGUMENTS
         # ============================================================
         else:
             print("Error: Invalid arguments for write()")
@@ -4793,7 +4983,9 @@ def zoom(*args):
         - Selenium reset explicitly sets zoom to exactly 100%.
     """
 
-    # Determine mode
+    # ============================================================
+    # DETERMINE MODE
+    # ============================================================
     if len(args) == 1:
         # PyAutoGUI mode
         use_driver = False
@@ -4816,10 +5008,11 @@ def zoom(*args):
         raise ValueError("PyAutoGUI mode supports steps (-9 to +9) or reset (100) or (0)")
 
     try:
+        # ============================================================
+        # SELENIUM MODE
+        # needs: nothing — works on all platforms
+        # ============================================================
         if use_driver:
-            # ============================================================
-            # SELENIUM MODE
-            # ============================================================
 
             # Special case: 100 or 0 = Reset
             if value == 100 or value == 0:
@@ -4857,10 +5050,14 @@ def zoom(*args):
                 print(f"Zoom set to {value}%")
                 return True
 
+        # ============================================================
+        # PYAUTOGUI MODE (desktop apps)
+        # needs: display
+        # ============================================================
         else:
-            # ============================================================
-            # PYAUTOGUI MODE (desktop apps)
-            # ============================================================
+            if not _GUI_AVAILABLE:
+                print("Error: zoom() requires a display.")
+                return False
 
             # Special case: 100 or 0 = Reset
             if value == 100 or value == 0:
