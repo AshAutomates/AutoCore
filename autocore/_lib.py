@@ -633,7 +633,11 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
 
     # Attempt to initialize the Chrome driver
     try:
-        driver_instance = uc.Chrome(options=options)
+        # Extract major version from detected Chrome version to prevent ChromeDriver mismatch
+        major_version = int(chrome_version.split('.')[0]) if chrome_version else None
+        # Pass major version to force matching ChromeDriver download
+        driver_instance = uc.Chrome(options=options, version_main=major_version)
+
     except Exception as e:
         print(f"Error initializing Chrome Driver: {e}")
         return None
