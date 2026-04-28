@@ -101,6 +101,7 @@ if platform.system() == "Linux":
         import tkinter as tk
         from PIL import ImageTk
         import pyautogui
+        # Enable PyAutoGUI fail-safe: move mouse to any screen corner to abort script
         pyautogui.FAILSAFE = True
         _GUI_AVAILABLE = True
     else:
@@ -145,9 +146,6 @@ print(f"Current Working Directory: {os.getcwd()}")
 
 # to avoid 'RuntimeError: maximum recursion depth exceeded'
 sys.setrecursionlimit(1500)
-
-# Enable PyAutoGUI fail-safe: move mouse to any screen corner to abort script
-pyautogui.FAILSAFE = True
 
 # Global variables to track logging state
 _log_file_handler: RotatingFileHandler | None = None
