@@ -6,11 +6,12 @@
 
 Automate Core Actions
 
-![Version](https://img.shields.io/badge/version-1.1-blue)
+![Version](https://img.shields.io/badge/version-1.2-blue)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)
 [![Build Status](https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml/badge.svg)](https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml)
 [![Documentation Status](https://readthedocs.org/projects/autocore/badge/?version=latest)](https://autocore.readthedocs.io)
+[![PyPI Downloads](https://static.pepy.tech/badge/autocore)](https://pepy.tech/project/autocore)
 
 A Python library that combines GUI automation, headless browser control and common actions into a single library.
 

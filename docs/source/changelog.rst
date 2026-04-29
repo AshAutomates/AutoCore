@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 1.2
+-----------
+
+*Released: April 2026*
+
+- Fixed ``pyautogui.FAILSAFE`` crash on Linux import.
+- Fixed ``NameError`` in ``browser()`` when Chrome version detection fails.
+- Added PyPI downloads badge.
+- Added ``RELEASE.md`` with version bump checklist and release steps.
+
+
 Version 1.1
 -----------
 

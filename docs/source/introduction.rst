@@ -5,7 +5,7 @@ AutoCore
 --------
 Automate Core Actions
 
-.. image:: https://img.shields.io/badge/version-1.1-blue
+.. image:: https://img.shields.io/badge/version-1.2-blue
    :alt: Version
 
 .. image:: https://img.shields.io/badge/python-3.12-blue
@@ -21,6 +21,10 @@ Automate Core Actions
 .. image:: https://readthedocs.org/projects/autocore/badge/?version=latest
    :target: https://autocore.readthedocs.io
    :alt: Documentation Status
+
+.. image:: https://static.pepy.tech/badge/autocore
+   :target: https://pepy.tech/project/autocore
+   :alt: PyPI Downloads
 
 A Python library that combines GUI automation, headless browser control and common actions into a single library.
 

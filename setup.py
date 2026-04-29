@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="autocore",
-    version="1.1",
+    version="1.2",
     author="Ash",
     url="https://github.com/AshAutomates/AutoCore",
     description="Automate Core Actions",
