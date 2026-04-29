@@ -1,6 +1,6 @@
 # Release Checklist
 
-## 1. Version Bump — update version in these files:
+## 1. Version Bump: update version number in these files:
 1. `autocore/__init__.py`
 2. `setup.py`
 3. `docs/source/conf.py`
