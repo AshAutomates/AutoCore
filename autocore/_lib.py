@@ -1,11 +1,9 @@
-# automation.py header
 # AutoCore - Automate Core Actions
-# Version: 1.0
 # Author: Ash
 # GitHub: https://github.com/AshAutomates/AutoCore
+# Docs: https://autocore.readthedocs.io
+# PyPI: https://pypi.org/project/autocore
 # Supports: Windows, Linux
-# Install: pip install autocore
-# Usage: from autocore import *
 
 # ============================================================
 # STANDARD LIBRARY IMPORTS
@@ -581,6 +579,8 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
 
     # Fetch installed Chrome version dynamically to keep user-agent current.
     # A matching Chrome version in user-agent makes the browser look more like a real user.
+    # Initialize to None so major_version check below does not raise NameError if detection fails.
+    chrome_version = None
     try:
         system = platform.system()
         if system == "Windows":
