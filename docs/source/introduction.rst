@@ -174,6 +174,7 @@ Quick Example
 
     # Scroll to the login form
     find_browser(dr, 'secure area')
+    scroll(dr, 1)
 
     # Login with test credentials
     write(dr, 'id', 'username', 'practice')
