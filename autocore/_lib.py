@@ -864,9 +864,7 @@ def click(*where):
     """
     import cv2
 
-    # ============================================================
-    # MODE 1 : SELENIUM (no display needed, works on all platforms)
-    # ============================================================
+    # --------------- SELENIUM ---------------
     if len(where) > 0 and hasattr(where[0], 'find_element'):
         driver_obj = where[0]
 
@@ -880,7 +878,12 @@ def click(*where):
         try:
             element = _get_web_element(driver_obj, selector_type, selector)
             if element:
-                element.click()
+                driver_obj.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+                try:
+                    element.click()
+                except ElementClickInterceptedException:
+                    # Fall back to JavaScript click when element is blocked by an overlay (e.g. ads)
+                    driver_obj.execute_script("arguments[0].click();", element)
                 return True
             else:
                 print(f"Element not found: {selector_type} - {selector}")
@@ -892,16 +895,12 @@ def click(*where):
             print(f"Error clicking element: {e}")
             return False
 
-    # ============================================================
-    # PYAUTOGUI MODES : display required
-    # ============================================================
+    # --------------- PYAUTOGUI ---------------
     if not _GUI_AVAILABLE:
         print("Error: click() requires a display.")
         return False
 
-    # ============================================================
-    # MODE 2 : IMAGE MATCHING / OCR TEXT (1 argument)
-    # ============================================================
+    # --------------- IMAGE MATCHING / OCR TEXT ---------------
     elif len(where) == 1:
         if '.' in where[0]:
             pyautogui.click(where[0])
@@ -910,9 +909,7 @@ def click(*where):
             result = _click_word_by_ocr(where[0], 1, button='left')
             return result
 
-    # ============================================================
-    # MODE 3 : COORDINATES / OCR WITH OCCURRENCE (2 arguments)
-    # ============================================================
+    # --------------- COORDINATES / OCR WITH OCCURRENCE ---------------
     elif len(where) == 2:
         if isinstance(where[0], int) and isinstance(where[1], int):
             pyautogui.click(where[0], where[1])
@@ -924,9 +921,7 @@ def click(*where):
             print("Error: Invalid arguments for click()")
             return False
 
-    # ============================================================
-    # MODE 4 : COLOR MATCHING IN REGION (7 or 8 arguments)
-    # ============================================================
+    # --------------- COLOR MATCHING IN REGION ---------------
     elif len(where) in [7, 8]:
         x_from, y_from, x_to, y_to, r, g, b = where[:7]
         tolerance = where[7] if len(where) == 8 else 0
@@ -955,9 +950,7 @@ def click(*where):
             print(f"Error during color search: {e}")
             return False
 
-    # ============================================================
-    # INVALID ARGUMENTS
-    # ============================================================
+    # --------------- INVALID ARGUMENTS ---------------
     else:
         print("Error: Invalid arguments for click()")
         return False
@@ -1010,9 +1003,7 @@ def click_right(*where):
     """
     import cv2
 
-    # ============================================================
-    # MODE 1 : SELENIUM (no display needed, works on all platforms)
-    # ============================================================
+    # --------------- SELENIUM ---------------
     if len(where) > 0 and hasattr(where[0], 'find_element'):
         driver_obj = where[0]
 
@@ -1026,6 +1017,7 @@ def click_right(*where):
         try:
             element = _get_web_element(driver_obj, selector_type, selector)
             if element:
+                driver_obj.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
                 ActionChains(driver_obj).context_click(element).perform()
                 return True
             else:
@@ -1038,16 +1030,12 @@ def click_right(*where):
             print(f"Error right-clicking element: {e}")
             return False
 
-    # ============================================================
-    # PYAUTOGUI MODES : display required
-    # ============================================================
+    # --------------- PYAUTOGUI ---------------
     if not _GUI_AVAILABLE:
         print("Error: click_right() requires a display.")
         return False
 
-    # ============================================================
-    # MODE 2 : IMAGE MATCHING / OCR TEXT (1 argument)
-    # ============================================================
+    # --------------- IMAGE MATCHING / OCR TEXT ---------------
     elif len(where) == 1:
         if '.' in where[0]:
             pyautogui.rightClick(where[0])
@@ -1056,9 +1044,7 @@ def click_right(*where):
             result = _click_word_by_ocr(where[0], 1, button='right')
             return result
 
-    # ============================================================
-    # MODE 3 : COORDINATES / OCR WITH OCCURRENCE (2 arguments)
-    # ============================================================
+    # --------------- COORDINATES / OCR WITH OCCURRENCE ---------------
     elif len(where) == 2:
         if isinstance(where[0], int) and isinstance(where[1], int):
             pyautogui.rightClick(where[0], where[1])
@@ -1070,9 +1056,7 @@ def click_right(*where):
             print("Error: Invalid arguments for click_right()")
             return False
 
-    # ============================================================
-    # MODE 4 : COLOR MATCHING IN REGION (7 or 8 arguments)
-    # ============================================================
+    # --------------- COLOR MATCHING IN REGION ---------------
     elif len(where) in [7, 8]:
         x_from, y_from, x_to, y_to, r, g, b = where[:7]
         tolerance = where[7] if len(where) == 8 else 0
@@ -1101,12 +1085,11 @@ def click_right(*where):
             print(f"Error during color search: {e}")
             return False
 
-    # ============================================================
-    # INVALID ARGUMENTS
-    # ============================================================
+    # --------------- INVALID ARGUMENTS ---------------
     else:
         print("Error: Invalid arguments for click_right()")
         return False
+
 
 def copy(*where):
     """
