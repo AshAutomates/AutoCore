@@ -15,10 +15,10 @@ After installing, run the following based on your distro:
 .. code-block:: bash
 
    # Ubuntu/Debian
-   sudo apt-get install wmctrl xdotool python3-tk xclip xdg-utils
+   sudo apt-get install wmctrl xdotool python3-tk xclip xdg-utils espeak-ng alsa-utils
 
    # RHEL/CentOS/Fedora
-   sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils
+   sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils espeak-ng alsa-utils
 
 .. list-table::
    :header-rows: 1
@@ -42,6 +42,12 @@ After installing, run the following based on your distro:
    * - ``xdg-utils``
      - ``run()``
      - Open files with their default application via xdg-open
+   * - ``espeak-ng``
+     - ``say()``
+     - Text-to-phoneme conversion required internally by piper-tts
+   * - ``alsa-utils``
+     - ``say()``
+     - Provides ``aplay`` command used to play synthesized audio
 
 Chrome Installation
 -------------------

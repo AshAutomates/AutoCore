@@ -19,36 +19,40 @@ import logging
 import os
 import platform
 import re
+import shutil
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import time
 import traceback
+import warnings
+import wave
 import xml.etree.ElementTree as et
 from difflib import get_close_matches
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 # ============================================================
-# THIRD-PARTY — NETWORKING
+# THIRD-PARTY : NETWORKING
 # ============================================================
 import requests
 
 # ============================================================
-# THIRD-PARTY — IMAGE PROCESSING
+# THIRD-PARTY : IMAGE PROCESSING
 # Safe on all platforms including headless servers
-# PIL.Image does not need a display — only PIL.ImageTk does
+# PIL.Image does not need a display : only PIL.ImageTk does
 # ============================================================
 import numpy as np
 from PIL import Image
 
 # ============================================================
-# THIRD-PARTY — WEB SCRAPING & PARSING
+# THIRD-PARTY : WEB SCRAPING & PARSING
 # ============================================================
 from bs4 import BeautifulSoup
 
 # ============================================================
-# THIRD-PARTY — SELENIUM
+# THIRD-PARTY : SELENIUM
 # ============================================================
 import undetected_chromedriver as uc
 from selenium.common.exceptions import *
@@ -58,14 +62,14 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
 # ============================================================
-# THIRD-PARTY — WINDOWS ONLY
+# THIRD-PARTY : WINDOWS ONLY
 # ============================================================
 if platform.system() == "Windows":
     import win32con
     import win32gui
 
 # ============================================================
-# THIRD-PARTY — DOCUMENT PROCESSING
+# THIRD-PARTY : DOCUMENT PROCESSING
 # Safe on all platforms including headless servers
 # ============================================================
 from PyPDF2 import PdfReader
@@ -81,12 +85,12 @@ import extract_msg
 from striprtf.striprtf import rtf_to_text
 
 # ============================================================
-# THIRD-PARTY — UTILITIES
+# THIRD-PARTY : UTILITIES
 # ============================================================
 import yaml
 
 # ============================================================
-# THIRD-PARTY — GUI (requires display)
+# THIRD-PARTY : GUI (requires display)
 # Needs: X display server on Linux
 # Works on: Linux desktop, Windows, macOS
 # Fails on: Linux headless servers, Docker, CI/CD, SSH sessions
@@ -115,19 +119,30 @@ else:
     _GUI_AVAILABLE = True
 
 # ============================================================
-# THIRD-PARTY — AUDIO (requires sound system)
-# Works on: Linux desktop, Windows, macOS
+# THIRD-PARTY : AUDIO (requires sound system)
+# Works on: Linux desktop, Windows
 # Fails on: Linux headless servers with no audio drivers
+# piper-tts is loaded lazily inside say() : we just check
+# here whether the platform has a usable audio system at all
+#
+# Linux check 1 : aplay command is available (alsa-utils installed)
+# Linux check 2 : at least one real audio playback device exists
+#                 on Ubuntu Server with no audio hardware,
+#                 'aplay -l' returns non-zero with "no soundcards found"
+#                 on Ubuntu Desktop / Linux Mint with real audio hardware,
+#                 'aplay -l' returns zero : so _AUDIO_AVAILABLE = True
 # ============================================================
-try:
-    import pyttsx3
-    _AUDIO_AVAILABLE = True
-except Exception:
-    pyttsx3 = None
-    _AUDIO_AVAILABLE = False
+if platform.system() == "Windows":
+    _AUDIO_AVAILABLE = True  # winsound is always available on Windows
+elif platform.system() == "Linux":
+    aplay_exists       = os.system("aplay --version > /dev/null 2>&1") == 0  # alsa-utils installed?
+    audio_device_exists = os.system("aplay -l > /dev/null 2>&1") == 0        # real audio hardware present?
+    _AUDIO_AVAILABLE   = aplay_exists and audio_device_exists
+else:
+    _AUDIO_AVAILABLE = False  # unsupported platform
 
 # ============================================================
-# THIRD-PARTY — CLIPBOARD (requires clipboard manager)
+# THIRD-PARTY : CLIPBOARD (requires clipboard manager)
 # Works on: Linux desktop, Windows, macOS
 # Fails on: Linux headless servers with no clipboard manager
 # ============================================================
@@ -298,7 +313,7 @@ def _get_ocr_reader():
 
     Note:
         - Lazily imports easyocr inside the function to avoid slow startup time
-          when running 'from autocore import *' — easyocr is only loaded when
+          when running 'from autocore import *' : easyocr is only loaded when
           OCR is actually needed.
         - Tries GPU first, falls back to CPU if GPU is unavailable.
         - Shared across all OCR functions (click, read, etc.).
@@ -545,6 +560,11 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
             # Headless mode
             driver = browser('https://google.com', headless=True)
 
+            # Trigger a download and wait for it
+            driver = browser('https://example.com')
+            click(driver, 'id', 'download-button')
+            wait_download(download_dir=driver.download_dir)
+
     Note:
         Uses undetected-chromedriver (uc) to bypass bot detection.
         Requires Google Chrome to be installed.
@@ -610,8 +630,19 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     options.add_argument("--no-first-run")  # skip first-run welcome popups
     options.add_argument("--no-default-browser-check")  # skip default browser prompt
 
+    # Resolve download directory using same priority as wait_download()
+    # Pre-create it before Chrome launches so Chrome finds and uses it
+    if os.getenv('DOWNLOAD_DIR'):
+        download_dir = os.getenv('DOWNLOAD_DIR')
+    elif os.path.exists('/.dockerenv'):
+        download_dir = '/downloads'
+    else:
+        download_dir = str(Path.home() / 'Downloads')
+    os.makedirs(download_dir, exist_ok=True)
+
     # Set preferences to avoid unnecessary pop-ups and block notifications
     prefs = {
+        "download.default_directory": download_dir,  # explicitly set download folder
         "profile.default_content_setting_values.notifications": 2,  # block browser notification popups
         'credentials_enable_service': False,  # disable save password popup
         'profile': {'password_manager_enabled': False},  # disable password manager completely
@@ -779,6 +810,9 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     # Suppress undetected_chromedriver's __del__ cleanup error on exit
     driver_instance.__class__.__del__ = lambda self: None
 
+    # Store resolved download directory so caller can pass it to wait_download()
+    driver_instance.download_dir = download_dir
+
     # Return the driver instance - user can name it anything!
     return driver_instance
 
@@ -831,7 +865,7 @@ def click(*where):
     import cv2
 
     # ============================================================
-    # MODE 1 — SELENIUM (no display needed, works on all platforms)
+    # MODE 1 : SELENIUM (no display needed, works on all platforms)
     # ============================================================
     if len(where) > 0 and hasattr(where[0], 'find_element'):
         driver_obj = where[0]
@@ -859,14 +893,14 @@ def click(*where):
             return False
 
     # ============================================================
-    # PYAUTOGUI MODES — display required
+    # PYAUTOGUI MODES : display required
     # ============================================================
     if not _GUI_AVAILABLE:
         print("Error: click() requires a display.")
         return False
 
     # ============================================================
-    # MODE 2 — IMAGE MATCHING / OCR TEXT (1 argument)
+    # MODE 2 : IMAGE MATCHING / OCR TEXT (1 argument)
     # ============================================================
     elif len(where) == 1:
         if '.' in where[0]:
@@ -877,7 +911,7 @@ def click(*where):
             return result
 
     # ============================================================
-    # MODE 3 — COORDINATES / OCR WITH OCCURRENCE (2 arguments)
+    # MODE 3 : COORDINATES / OCR WITH OCCURRENCE (2 arguments)
     # ============================================================
     elif len(where) == 2:
         if isinstance(where[0], int) and isinstance(where[1], int):
@@ -891,7 +925,7 @@ def click(*where):
             return False
 
     # ============================================================
-    # MODE 4 — COLOR MATCHING IN REGION (7 or 8 arguments)
+    # MODE 4 : COLOR MATCHING IN REGION (7 or 8 arguments)
     # ============================================================
     elif len(where) in [7, 8]:
         x_from, y_from, x_to, y_to, r, g, b = where[:7]
@@ -977,7 +1011,7 @@ def click_right(*where):
     import cv2
 
     # ============================================================
-    # MODE 1 — SELENIUM (no display needed, works on all platforms)
+    # MODE 1 : SELENIUM (no display needed, works on all platforms)
     # ============================================================
     if len(where) > 0 and hasattr(where[0], 'find_element'):
         driver_obj = where[0]
@@ -1005,14 +1039,14 @@ def click_right(*where):
             return False
 
     # ============================================================
-    # PYAUTOGUI MODES — display required
+    # PYAUTOGUI MODES : display required
     # ============================================================
     if not _GUI_AVAILABLE:
         print("Error: click_right() requires a display.")
         return False
 
     # ============================================================
-    # MODE 2 — IMAGE MATCHING / OCR TEXT (1 argument)
+    # MODE 2 : IMAGE MATCHING / OCR TEXT (1 argument)
     # ============================================================
     elif len(where) == 1:
         if '.' in where[0]:
@@ -1023,7 +1057,7 @@ def click_right(*where):
             return result
 
     # ============================================================
-    # MODE 3 — COORDINATES / OCR WITH OCCURRENCE (2 arguments)
+    # MODE 3 : COORDINATES / OCR WITH OCCURRENCE (2 arguments)
     # ============================================================
     elif len(where) == 2:
         if isinstance(where[0], int) and isinstance(where[1], int):
@@ -1037,7 +1071,7 @@ def click_right(*where):
             return False
 
     # ============================================================
-    # MODE 4 — COLOR MATCHING IN REGION (7 or 8 arguments)
+    # MODE 4 : COLOR MATCHING IN REGION (7 or 8 arguments)
     # ============================================================
     elif len(where) in [7, 8]:
         x_from, y_from, x_to, y_to, r, g, b = where[:7]
@@ -1130,7 +1164,7 @@ def copy(*where):
     result = None
 
     # ============================================================
-    # MODE 1 — ACTIVE WINDOW (no arguments)
+    # MODE 1 : ACTIVE WINDOW (no arguments)
     # needs: GUI + clipboard
     # ============================================================
     if len(where) == 0:
@@ -1153,7 +1187,7 @@ def copy(*where):
     elif len(where) == 1:
 
         # --------------------------------------------------------
-        # MODE 2 — CLIPBOARD
+        # MODE 2 : CLIPBOARD
         # needs: clipboard only
         # --------------------------------------------------------
         if where[0] == 'clipboard':
@@ -1163,7 +1197,7 @@ def copy(*where):
             result = pyperclip.paste().strip()
 
         # --------------------------------------------------------
-        # MODE 3 — SELENIUM WEBPAGE
+        # MODE 3 : SELENIUM WEBPAGE
         # needs: clipboard (for paste after Ctrl+C)
         # --------------------------------------------------------
         elif hasattr(where[0], 'find_element'):
@@ -1193,7 +1227,7 @@ def copy(*where):
     elif len(where) == 2:
 
         # --------------------------------------------------------
-        # MODE 4 — SCREEN COORDINATES
+        # MODE 4 : SCREEN COORDINATES
         # needs: GUI + clipboard
         # --------------------------------------------------------
         if isinstance(where[0], int) and isinstance(where[1], int):
@@ -1220,8 +1254,8 @@ def copy(*where):
             print("Invalid arguments for copy()")
 
     # ============================================================
-    # MODE 5 — SELENIUM ELEMENT TEXT OR ATTRIBUTE (3 or 4 arguments)
-    # needs: nothing — reads directly from DOM, no clipboard needed
+    # MODE 5 : SELENIUM ELEMENT TEXT OR ATTRIBUTE (3 or 4 arguments)
+    # needs: nothing : reads directly from DOM, no clipboard needed
     # ============================================================
     elif len(where) in [3, 4]:
         if hasattr(where[0], 'find_element'):
@@ -1398,7 +1432,7 @@ def drag(*args):
     """
 
     # ============================================================
-    # MODE 1 — PYAUTOGUI SCREEN DRAG (4 integer arguments)
+    # MODE 1 : PYAUTOGUI SCREEN DRAG (4 integer arguments)
     # needs: display
     # ============================================================
     if len(args) == 4 and all(isinstance(arg, int) for arg in args):
@@ -1416,8 +1450,8 @@ def drag(*args):
             return False
 
     # ============================================================
-    # MODE 2 — SELENIUM ELEMENT DRAG (5 arguments, first is WebDriver)
-    # needs: nothing — works on all platforms
+    # MODE 2 : SELENIUM ELEMENT DRAG (5 arguments, first is WebDriver)
+    # needs: nothing : works on all platforms
     # ============================================================
     elif len(args) == 5 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
@@ -1551,7 +1585,7 @@ def erase(*args):
 
     try:
         # ============================================================
-        # MODE 1 — PYAUTOGUI ACTIVE WINDOW (no arguments)
+        # MODE 1 : PYAUTOGUI ACTIVE WINDOW (no arguments)
         # needs: display
         # ============================================================
         if len(args) == 0:
@@ -1563,8 +1597,8 @@ def erase(*args):
             return True
 
         # ============================================================
-        # MODE 2 — SELENIUM ELEMENT (driver + selector)
-        # needs: nothing — works on all platforms
+        # MODE 2 : SELENIUM ELEMENT (driver + selector)
+        # needs: nothing : works on all platforms
         # ============================================================
         elif len(args) == 3 and hasattr(args[0], 'find_element'):
             driver_obj = args[0]
@@ -1630,8 +1664,8 @@ def find_browser(*args):
 
     try:
         # ============================================================
-        # MODE 1 — SELENIUM (driver object passed)
-        # needs: nothing — works on all platforms
+        # MODE 1 : SELENIUM (driver object passed)
+        # needs: nothing : works on all platforms
         # ============================================================
         if len(args) >= 2 and hasattr(args[0], 'execute_script'):
             driver_obj = args[0]
@@ -1673,7 +1707,7 @@ def find_browser(*args):
                 return False
 
         # ============================================================
-        # MODE 2 — PYAUTOGUI (no driver object)
+        # MODE 2 : PYAUTOGUI (no driver object)
         # needs: display
         # ============================================================
         elif len(args) == 1:
@@ -1853,7 +1887,7 @@ def inspect():
     """
 
     # ============================================================
-    # GUARD — needs display, tkinter, pyautogui and clipboard
+    # GUARD : needs display, tkinter, pyautogui and clipboard
     # ============================================================
     if not _GUI_AVAILABLE:
         print("Error: inspect() requires a display.")
@@ -2017,7 +2051,7 @@ def inspect():
     # Start the live update loop
     update_color_and_position()
 
-    # Start the tkinter event loop — blocks here until window is closed
+    # Start the tkinter event loop : blocks here until window is closed
     root.mainloop()
 
 
@@ -2177,7 +2211,7 @@ def log_setup(title):
     _log_file_handler.setFormatter(formatter)
     logger.addHandler(_log_file_handler)
 
-    # Silence the root logger for the entire session so third-party libraries (e.g. pyttsx3)
+    # Silence the root logger for the entire session so third-party libraries
     # that add StreamHandlers to it cannot produce duplicate "INFO:..." lines in our logs.
     # Setting level above CRITICAL blocks all messages at the source,
     # regardless of how many handlers any library adds to the root logger.
@@ -2429,7 +2463,7 @@ def press(*keys):
     try:
         # ============================================================
         # SELENIUM MODE - Check if first arg is WebDriver object
-        # needs: nothing — works on all platforms
+        # needs: nothing : works on all platforms
         # ============================================================
         if len(keys) > 0 and hasattr(keys[0], 'find_element'):
             driver_obj = keys[0]
@@ -2717,7 +2751,7 @@ def read(*args):
         region = (x, y, width, height)
 
     # ============================================================
-    # PERFORM OCR (modes 1, 2, 3 — needs display)
+    # PERFORM OCR (modes 1, 2, 3 : needs display)
     # ============================================================
     if is_ocr:
         if not _GUI_AVAILABLE:
@@ -2762,7 +2796,7 @@ def read(*args):
 
     # ============================================================
     # MODE 4: Selenium driver - screenshot browser and OCR
-    # needs: nothing for screenshot — OCR runs on bytes, no display needed
+    # needs: nothing for screenshot : OCR runs on bytes, no display needed
     # ============================================================
     elif len(args) == 1 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
@@ -2790,7 +2824,7 @@ def read(*args):
 
     # ============================================================
     # MODE 5: File reading - 1 string (file path)
-    # needs: nothing — safe on all platforms including servers
+    # needs: nothing : safe on all platforms including servers
     # ============================================================
     elif len(args) == 1 and isinstance(args[0], str):
         file = args[0]
@@ -3229,10 +3263,10 @@ def run(target):
 
 def say(text, volume=1.0):
     """
-    Speak text using offline Text-to-Speech.
+    Speak text using offline Text-to-Speech via Piper TTS.
 
     Args:
-        text: Text to speak
+        text:   Text to speak
         volume: Volume level 0.0 to 1.0 (default: 1.0)
 
     Returns:
@@ -3241,47 +3275,238 @@ def say(text, volume=1.0):
     Example:
         ::
 
-            say("Download complete", volume=0.7)
-            say("Error occurred")
-
-    Output:
-        - Prints spoken text to console.
+            say("Hello, how are you?")
+            say("Download complete.")
+            say("Error occurred, please try again.", volume=0.7)
+            say("Warning: Low battery.", volume=0.5)
 
     Note:
-        - Speech rate is fixed at 130 words/minute for optimal clarity.
         - Automatically logs spoken text when log_setup() is active.
+        - Requires: pip install piper-tts huggingface_hub
+        - Linux requires: sudo apt install espeak-ng alsa-utils
+        - Model files are saved in: Windows → %LOCALAPPDATA%\\autocore\\piper_models\\
+                                    Linux   → ~/.local/share/autocore/piper_models/
+        - Model size is approximately 60MB, downloaded once and reused.
+        - Browse all voices at: https://huggingface.co/rhasspy/piper-voices
     """
 
     # ============================================================
     # GUARD — needs audio system
+    # _AUDIO_AVAILABLE is set at file level during library import.
+    # if audio init failed (headless server, no sound drivers etc.)
+    # we bail out early instead of crashing deep inside piper
     # ============================================================
     if not _AUDIO_AVAILABLE:
         print("Error: say() requires an audio system.")
         return
 
-    # Validate text input
+    # ensure caller passed a string — piper will crash on anything else
     if not isinstance(text, str):
         raise TypeError("Text to speak must be a string")
 
-    # Validate volume range
+    # piper's SynthesisConfig will silently clamp or error outside this range
     if not (0.0 <= volume <= 1.0):
         raise ValueError("Volume must be between 0.0 and 1.0")
 
-    # Initialize fresh engine (prevents silent failures in repeated usage)
-    engine = pyttsx3.init()
+    try:
+        # ============================================================
+        # LAZY IMPORTS
+        # kept here intentionally and NOT moved to the top of the file
+        # because:
+        #   - piper and huggingface_hub are optional heavy dependencies
+        #     if not installed, the rest of the library still works fine
+        #   - winsound is Windows-only, importing at file level would
+        #     crash on Linux
+        # ============================================================
+        from piper.voice import PiperVoice, SynthesisConfig
 
-    # Set properties
-    engine.setProperty('rate', 130)  # Fixed rate for clarity across platforms
-    engine.setProperty('volume', volume)
+        # ============================================================
+        # MODEL PATHS
+        # models are stored in a user-writable location on each platform
+        # so we never hit permission errors writing into Program Files
+        # or other system-protected directories
+        #
+        # Windows → C:\Users\YourUsername\AppData\Local\autocore\piper_models\
+        # Linux   → /home/yourusername/.local/share/autocore/piper_models/
+        #
+        # os.environ["LOCALAPPDATA"] on Windows always points to the
+        # current user's AppData\Local folder which is always writable
+        # without admin rights, unlike C:\Program Files\
+        # ============================================================
+        model_name      = "en_US-libritts_r-medium.onnx"
+        model_json      = "en_US-libritts_r-medium.onnx.json"
 
-    # Speak text
-    engine.say(text)
-    engine.runAndWait()
+        if platform.system() == "Windows":
+            model_dir = Path(os.environ["LOCALAPPDATA"]) / "autocore" / "piper_models"
+        else:
+            model_dir = Path.home() / ".local" / "share" / "autocore" / "piper_models"
 
-    # Cleanup to prevent stuck engine
-    engine.stop()
+        model_path      = model_dir / model_name   # full path to the .onnx model
+        model_json_path = model_dir / model_json   # full path to the .json config
 
-    # Log spoken text (integrates with log_setup for audit trail)
+        # ============================================================
+        # VALIDATION HELPERS
+        # defined as inner functions so they can access model_dir
+        # from the enclosing scope without passing it as an argument
+        # ============================================================
+        def _is_valid_onnx(path):
+            # valid onnx must exist AND be at least 50MB
+            # we know the model is ~60MB so anything under 50MB
+            # means the download was interrupted or corrupted
+            p = Path(path)
+            return p.exists() and p.stat().st_size > 50 * 1024 * 1024  # 50MB in bytes
+
+        def _is_valid_json(path):
+            # valid json config must exist, be non-empty, and parse
+            # without errors — a corrupt json would crash piper at
+            # load time so we catch it here and re-download instead
+            p = Path(path)
+            if not p.exists() or p.stat().st_size == 0:
+                return False
+            try:
+                with open(p, 'r', encoding='utf-8') as f:
+                    json.load(f)  # json already imported at file level
+                return True
+            except Exception:
+                return False
+
+        def _download_file(filename, is_onnx=False):
+            # downloads one file from HuggingFace into model_dir
+            # hf_hub_download saves into HuggingFace's own cache first
+            # (~/.cache/huggingface/) then we move it to piper_models/
+            # retries up to 3 times for network hiccups or incomplete downloads
+            # returns the final Path if successful, None if all retries failed
+            try:
+                from huggingface_hub import hf_hub_download  # lazy — optional dependency
+            except ImportError:
+                print("Error: huggingface_hub not installed. Run: pip install huggingface_hub")
+                return None
+
+            max_retries = 3
+            for attempt in range(1, max_retries + 1):
+                try:
+                    # suppress HuggingFace's own progress/warning output
+                    # so our print messages stay clean and readable
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        cached_path = hf_hub_download(
+                            repo_id="rhasspy/piper-voices",
+                            filename=f"en/en_US/libritts_r/medium/{filename}",  # path inside the HuggingFace repo
+                            local_dir=str(model_dir),
+                        )
+
+                    # hf_hub_download may save into a subdirectory inside model_dir
+                    # move it to model_dir root so our fixed model_path always finds it
+                    final_path = model_dir / filename
+                    if os.path.abspath(cached_path) != os.path.abspath(final_path):
+                        shutil.move(cached_path, final_path)  # move from hf cache subdir to model_dir root
+
+                    # validate the downloaded file before declaring success
+                    # size check for onnx, json parse check for config file
+                    valid = _is_valid_onnx(final_path) if is_onnx else _is_valid_json(final_path)
+                    if valid:
+                        return final_path  # download succeeded and file is healthy
+
+                    # file exists but failed validation — delete it so
+                    # the next attempt starts a completely fresh download
+                    print(f"Attempt {attempt}/{max_retries}: {filename} appears incomplete, retrying...")
+                    if final_path.exists():
+                        final_path.unlink()  # delete corrupt/incomplete file
+                    if Path(cached_path).exists():
+                        Path(cached_path).unlink()  # also clean up the hf cache copy
+
+                except Exception as e:
+                    print(f"Attempt {attempt}/{max_retries} failed: {e}")
+                    final_path = model_dir / filename
+                    if final_path.exists():
+                        final_path.unlink()  # clean up any partial download
+
+                if attempt < max_retries:
+                    print("Retrying in 3 seconds...")
+                    time.sleep(3)  # brief pause before retry to let network recover
+
+            print(f"Error: Failed to download {filename} after {max_retries} attempts.")
+            return None
+
+        # ============================================================
+        # DOWNLOAD MODEL IF MISSING OR INCOMPLETE
+        # both files are checked independently — if only the json is
+        # missing or corrupt we skip re-downloading the 60MB onnx and
+        # just fetch the small config file again
+        # ============================================================
+        onnx_valid = _is_valid_onnx(model_path)
+        json_valid = _is_valid_json(model_json_path)
+
+        if not onnx_valid or not json_valid:
+            print("Piper voice model not found or incomplete. Downloading...")
+            model_dir.mkdir(parents=True, exist_ok=True)  # create piper_models/ if it doesn't exist yet
+
+            if not onnx_valid:
+                if model_path.exists():
+                    print(f"Removing incomplete {model_name}...")
+                    model_path.unlink()  # delete the corrupt file before re-downloading
+                print(f"Downloading {model_name} (~60MB)...")
+                if _download_file(model_name, is_onnx=True) is None:
+                    return  # download failed after all retries, abort
+                print(f"{model_name} ready.")
+
+            if not json_valid:
+                if model_json_path.exists():
+                    print(f"Removing incomplete {model_json}...")
+                    model_json_path.unlink()  # delete the corrupt config before re-downloading
+                print(f"Downloading {model_json}...")
+                if _download_file(model_json, is_onnx=False) is None:
+                    return  # download failed after all retries, abort
+                print(f"{model_json} ready.")
+
+            print("Piper model ready.")
+
+        # ============================================================
+        # SYNTHESIZE SPEECH
+        # PiperVoice.load() reads the .onnx model into memory
+        # SynthesisConfig carries volume into piper so it scales
+        # the audio during synthesis — no manual audio work needed
+        # synthesize_wav() runs the neural network and writes raw
+        # PCM audio into the wav file handle
+        # ============================================================
+        voice      = PiperVoice.load(str(model_path))  # load model from piper_models/
+        syn_config = SynthesisConfig(volume=volume)     # package volume setting for piper
+
+        # delete=False because the file must persist after the 'with'
+        # block closes so aplay/winsound can open and play it —
+        # we manually delete it ourselves after playback is done
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+            tmp_path = tmp.name  # grab the path before the handle closes
+
+        with wave.open(tmp_path, "wb") as wav_file:
+            voice.synthesize_wav(text, wav_file, syn_config=syn_config)  # neural network runs here
+
+        # ============================================================
+        # PLAY AUDIO — platform specific
+        # each OS has its own built-in audio playback tool:
+        #   Linux   — aplay   (part of alsa-utils, -q means quiet/no output)
+        #   Windows — winsound (Python standard library, Windows only)
+        # ============================================================
+        if platform.system() == "Linux":
+            os.system(f"aplay -q {tmp_path}")
+        elif platform.system() == "Windows":
+            import winsound                                       # lazy — Windows only
+            winsound.PlaySound(tmp_path, winsound.SND_FILENAME)
+
+        # temp WAV is deleted immediately after playback —
+        # only the model files in piper_models/ are kept permanently
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+    except ImportError:
+        print("Error: piper-tts not installed. Run: pip install piper-tts")
+        return
+    except Exception as e:
+        print(f"Error using piper TTS: {e}")
+        return
+
+    # integrates with log_setup() if active —
+    # provides an audit trail of everything spoken during a session
     print(f"Spoken: {text}")
 
 
@@ -3356,7 +3581,7 @@ def screenshot(*args):
 
     try:
         # ============================================================
-        # DETERMINE MODE — Selenium or PyAutoGUI
+        # DETERMINE MODE : Selenium or PyAutoGUI
         # ============================================================
         if len(args) > 0 and hasattr(args[0], 'save_screenshot'):
             # First argument is a WebDriver object
@@ -3364,7 +3589,7 @@ def screenshot(*args):
             driver_obj = args[0]
             remaining_args = args[1:]
         else:
-            # PyAutoGUI mode — guard display check here
+            # PyAutoGUI mode : guard display check here
             if not _GUI_AVAILABLE:
                 print("Error: screenshot() requires a display.")
                 return False
@@ -3541,7 +3766,7 @@ def scroll(*args, timeout=30):
     wait = 3  # Fixed wait time between scrolls (3 seconds)
 
     # ============================================================
-    # PARSE ARGUMENTS — determine mode and direction
+    # PARSE ARGUMENTS : determine mode and direction
     # ============================================================
     if len(args) == 0:
         # scroll() - default: scroll down 1 time with PyAutoGUI
@@ -3613,7 +3838,7 @@ def scroll(*args, timeout=30):
     try:
         # ============================================================
         # SELENIUM MODE
-        # needs: nothing — works on all platforms
+        # needs: nothing : works on all platforms
         # ============================================================
         if use_selenium:
 
@@ -3814,8 +4039,8 @@ def wait(*args, countdown=True):
         args = (3,)  # Set default to 3 seconds
 
     # ============================================================
-    # MODE 1 — COUNTDOWN (1 argument, integer or float)
-    # needs: nothing — safe on all platforms
+    # MODE 1 : COUNTDOWN (1 argument, integer or float)
+    # needs: nothing : safe on all platforms
     # ============================================================
     if len(args) == 1 and isinstance(args[0], (int, float)):
         seconds = args[0]
@@ -3841,8 +4066,8 @@ def wait(*args, countdown=True):
         return True
 
     # ============================================================
-    # MODE 2 — WAIT FOR ELEMENT (driver object + 2 or 3 arguments)
-    # needs: nothing — works on all platforms
+    # MODE 2 : WAIT FOR ELEMENT (driver object + 2 or 3 arguments)
+    # needs: nothing : works on all platforms
     # ============================================================
     elif len(args) >= 3 and hasattr(args[0], 'find_element'):
         # Selenium mode - driver object detected
@@ -3892,7 +4117,7 @@ def wait(*args, countdown=True):
         return False
 
     # ============================================================
-    # MODE 3 — WAIT FOR COLOR AT PIXEL (5 or 6 arguments, all integers)
+    # MODE 3 : WAIT FOR COLOR AT PIXEL (5 or 6 arguments, all integers)
     # needs: display
     # ============================================================
     elif len(args) in [5, 6] and all(isinstance(arg, int) for arg in args):
@@ -3990,6 +4215,11 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             wait_download(600, download_dir='/downloads')                     # Docker with custom path
             wait_download(300, download_dir='D:/MyDownloads')                 # Windows custom path
 
+            # Use with browser() : pass driver.download_dir to guarantee alignment
+            driver = browser('https://example.com')
+            click(driver, 'id', 'download-button')
+            wait_download(download_dir=driver.download_dir)
+
     Note:
         - When download_dir is not provided, the folder is auto-detected in this order:
             1. DOWNLOAD_DIR environment variable (if set at OS level)
@@ -4022,7 +4252,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
         return f"{bytes_count / (1024 * 1024):.1f} MB"
 
     # ============================================================
-    # MODE 1 — Direct download via requests
+    # MODE 1 : Direct download via requests
     # ============================================================
     if url is not None:
         try:
@@ -4055,7 +4285,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             return False
 
     # ============================================================
-    # MODE 2 — Monitor browser downloads folder
+    # MODE 2 : Monitor browser downloads folder
     # ============================================================
 
     # Determine download directory using the following priority order:
@@ -4190,7 +4420,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                     else:
                         print(f"{len(truly_new)} new downloads started: {', '.join(truly_new)}")
 
-            # Check for any newly completed files — catches mid-session completions including
+            # Check for any newly completed files : catches mid-session completions including
             # small files that complete too quickly for temp file tracking to catch
             newly_completed = [
                 f for f in (current_files - initial_files)
@@ -4219,7 +4449,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                 return os.path.join(download_dir, primary)
 
             if all_monitoring:
-                # Still downloading — print progress every 10 seconds with size of each file
+                # Still downloading : print progress every 10 seconds with size of each file
                 if download_time - last_print_time >= 10:
                     elapsed = str(datetime.timedelta(seconds=download_time))
                     if len(all_monitoring) == 1:
@@ -4235,7 +4465,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                     last_print_time = download_time
 
             elif download_started:
-                # All temp files are gone — find any remaining unreported completed files
+                # All temp files are gone : find any remaining unreported completed files
                 new_files = current_files - initial_files
                 remaining_completed = [
                     f for f in new_files
@@ -4262,14 +4492,14 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
                     print(f"Downloaded file saved at: {os.path.join(download_dir, primary)}")
                     return os.path.join(download_dir, primary)
                 else:
-                    # Temp files gone but no completed file found yet — keep waiting briefly
+                    # Temp files gone but no completed file found yet : keep waiting briefly
                     if download_time - last_print_time >= 10:
                         elapsed = str(datetime.timedelta(seconds=download_time))
                         print(f"Verifying download... (elapsed: {elapsed})")
                         last_print_time = download_time
 
             else:
-                # No download detected yet — no size to report, just print elapsed time
+                # No download detected yet : no size to report, just print elapsed time
                 if download_time - last_print_time >= 10:
                     recent_complete_files = [
                         f for f in current_files
@@ -4304,7 +4534,7 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             for f in completed_files_so_far:
                 print(f"  - {f}")
 
-    # Timeout reached — report what was still in progress if anything
+    # Timeout reached : report what was still in progress if anything
     if monitoring_files or download_started:
         current_files = set(os.listdir(download_dir))
         current_temp_files = set([f for f in current_files if f.endswith(temp_extensions)])
@@ -4841,7 +5071,7 @@ def write(*keys):
 
     try:
         # ============================================================
-        # MODE 1 — PYAUTOGUI (1 argument - text only)
+        # MODE 1 : PYAUTOGUI (1 argument - text only)
         # needs: display
         # ============================================================
         if len(keys) == 1:
@@ -4854,13 +5084,13 @@ def write(*keys):
 
         # ============================================================
         # SELENIUM MODE (driver object detected)
-        # needs: nothing — works on all platforms
+        # needs: nothing : works on all platforms
         # ============================================================
         elif len(keys) >= 2 and hasattr(keys[0], 'find_element'):
             driver_obj = keys[0]
 
             # ----------------------------------------------------------
-            # MODE 2 — Type on page (driver, text)
+            # MODE 2 : Type on page (driver, text)
             # ----------------------------------------------------------
             if len(keys) == 2:
                 # write(driver, "Hello World")
@@ -4870,7 +5100,7 @@ def write(*keys):
                 return True
 
             # ----------------------------------------------------------
-            # MODE 3 — Type in specific element (driver, selector_type, selector, text)
+            # MODE 3 : Type in specific element (driver, selector_type, selector, text)
             # ----------------------------------------------------------
             elif len(keys) == 4:
                 # write(driver, "id", "username", "john")
@@ -5012,7 +5242,7 @@ def zoom(*args):
     try:
         # ============================================================
         # SELENIUM MODE
-        # needs: nothing — works on all platforms
+        # needs: nothing : works on all platforms
         # ============================================================
         if use_driver:
 

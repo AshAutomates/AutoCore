@@ -1,10 +1,11 @@
+__version__ = "1.3"
 import os
 import platform
 
 def _show_install_info():
 
     print("\n┌" + "─" * 88 + "┐")
-    print("│  AutoCore v1.2 — Installation Complete                                                 │")
+    print("│  AutoCore v1.3 — Installation Complete                                                 │")
     print("│  Docs   : https://autocore.readthedocs.io                                              │")
     print("│  GitHub : https://github.com/AshAutomates/AutoCore                                     │")
     print("└" + "─" * 88 + "┘")
@@ -18,10 +19,10 @@ def _show_install_info():
         print("│  To install, run:                                                                      │")
         print("│                                                                                        │")
         print("│  Ubuntu/Debian/Mint:                                                                   │")
-        print("│    sudo apt-get install wmctrl xdotool python3-tk xclip xdg-utils                      │")
+        print("│    sudo apt-get install wmctrl xdotool python3-tk xclip xdg-utils espeak-ng            │")
         print("│                                                                                        │")
         print("│  RHEL/CentOS/Fedora:                                                                   │")
-        print("│    sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils                     │")
+        print("│    sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils espeak-ng           │")
         print("└" + "─" * 88 + "┘")
 
         print("\n┌" + "─" * 88 + "┐")

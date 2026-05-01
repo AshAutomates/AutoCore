@@ -6,7 +6,7 @@
 
 Automate Core Actions
 
-![Version](https://img.shields.io/badge/version-1.2-blue)
+![Version](https://img.shields.io/badge/version-1.3-blue)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)
 [![Build Status](https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml/badge.svg)](https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml)
@@ -52,10 +52,10 @@ After installing, run the following based on your distro:
 
 ```bash
 # Ubuntu/Debian
-sudo apt-get install wmctrl xdotool python3-tk xclip xdg-utils
+sudo apt-get install wmctrl xdotool python3-tk xclip xdg-utils espeak-ng alsa-utils
 
 # RHEL/CentOS/Fedora
-sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils
+sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils espeak-ng alsa-utils
 ```
 
 | Package | Used by | Purpose |
@@ -65,6 +65,8 @@ sudo yum install wmctrl xdotool python3-tkinter xclip xdg-utils
 | `python3-tk` | `inspect()` | Render the Pixel Inspector GUI window |
 | `xclip` | `copy()`, `inspect()` | Read and write clipboard content via pyperclip |
 | `xdg-utils` | `run()` | Open files with their default application via xdg-open |
+| `espeak-ng` | `say()` | Text-to-phoneme conversion required internally by piper-tts |
+| `alsa-utils` | `say()` | Provides `aplay` command used to play synthesized audio |
 
 ### Chrome Installation
 

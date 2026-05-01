@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Version 1.3
+-----------
+
+*Released: May 2026*
+
+- ``say()`` : Switched from pyttsx3 to Piper TTS (offline neural TTS) using ``en_US-libritts_r-medium`` voice model.
+- ``browser()`` : Explicitly set Chrome download directory and exposed it as ``driver.download_dir``.
+- Improved audio engine check at import where it verifies ``aplay`` availability and real audio hardware.
+- Removed unused dependencies ``pyttsx3`` & ``keyboard``.
+- Added ``espeak-ng`` and ``alsa-utils`` to Linux dependencies.
+- Added ``__version__`` in ``__init__.py`` to support ``autocore.__version__`` checks.
+- Added ``quick_example.py`` in tests folder.
+
 Version 1.2
 -----------
 

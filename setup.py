@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="autocore",
-    version="1.2",
+    version="1.3",
     author="Ash",
     url="https://github.com/AshAutomates/AutoCore",
     description="Automate Core Actions",
@@ -15,7 +15,6 @@ setup(
         "Pillow",
         "pyautogui",
         "pyperclip",
-        "keyboard",
         "easyocr",
         "beautifulsoup4",
         "selenium",
@@ -31,7 +30,6 @@ setup(
         "striprtf",
         "undetected-chromedriver",
         "requests",
-        "pyttsx3",
         "pyyaml",
     ],
 )
