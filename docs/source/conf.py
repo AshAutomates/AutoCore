@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 project = 'AutoCore'
 copyright = '2026, Ash'
 author = 'Ash'
-release = '1.3'
+release = '1.4'
 
 extensions = [
     'sphinx.ext.autodoc',

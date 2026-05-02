@@ -6,7 +6,7 @@
 
 Automate Core Actions
 
-![Version](https://img.shields.io/badge/version-1.3-blue)
+![Version](https://img.shields.io/badge/version-1.4-blue)
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-blue)
 [![Build Status](https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml/badge.svg)](https://github.com/AshAutomates/AutoCore/actions/workflows/workflow.yml)

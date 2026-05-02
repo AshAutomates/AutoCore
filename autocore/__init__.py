@@ -1,11 +1,11 @@
-__version__ = "1.3"
+__version__ = "1.4"
 import os
 import platform
 
 def _show_install_info():
 
     print("\n┌" + "─" * 88 + "┐")
-    print("│  AutoCore v1.3 — Installation Complete                                                 │")
+    print("│  AutoCore v1.4 — Installation Complete                                                 │")
     print("│  Docs   : https://autocore.readthedocs.io                                              │")
     print("│  GitHub : https://github.com/AshAutomates/AutoCore                                     │")
     print("└" + "─" * 88 + "┘")

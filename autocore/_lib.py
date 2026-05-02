@@ -4059,10 +4059,10 @@ def wait(*args, countdown=True):
         print(f"Element not found after {timeout}s timeout.")
         return False
 
-    # ------------------------------------------------------------
+    # ------------------------------------------------------------------
     # MODE 3 : WAIT FOR COLOR AT PIXEL (5 or 6 arguments, all integers)
     # needs: display
-    # ------------------------------------------------------------
+    # ------------------------------------------------------------------
     elif len(args) in [5, 6] and all(isinstance(arg, int) for arg in args):
         if not _GUI_AVAILABLE:
             print("Error: wait() color mode requires a display.")

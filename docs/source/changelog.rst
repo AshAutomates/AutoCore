@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 1.4
+-----------
+
+*Released: May 2026*
+
+- ``click()`` : Added JS fallback when element click is intercepted by overlays or ads.
+- ``click()`` : Scroll element into view before clicking to handle off-viewport elements.
+- ``click_right()`` : Scroll element into view before right-clicking to handle off-viewport elements.
+- Fixed missing ``piper-tts`` and ``huggingface_hub`` from ``install_requires`` in ``setup.py``.
+- Changed comment style from ``#=====`` to ``#-----abc-----`` across the library.
+
+
 Version 1.3
 -----------
 
@@ -13,6 +25,7 @@ Version 1.3
 - Added ``espeak-ng`` and ``alsa-utils`` to Linux dependencies.
 - Added ``__version__`` in ``__init__.py`` to support ``autocore.__version__`` checks.
 - Added ``quick_example.py`` in tests folder.
+
 
 Version 1.2
 -----------

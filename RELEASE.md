@@ -1,7 +1,7 @@
 # Release Checklist
 
 ## 1. Version Bump: update version number in these files:
-1. `autocore/__init__.py`
+1. `autocore/__init__.py` 2 places, rest 1 place.
 2. `setup.py`
 3. `docs/source/conf.py`
 4. `README.md`

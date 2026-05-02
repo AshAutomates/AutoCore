@@ -5,7 +5,7 @@ AutoCore
 --------
 Automate Core Actions
 
-.. image:: https://img.shields.io/badge/version-1.3-blue
+.. image:: https://img.shields.io/badge/version-1.4-blue
    :alt: Version
 
 .. image:: https://img.shields.io/badge/python-3.12-blue
