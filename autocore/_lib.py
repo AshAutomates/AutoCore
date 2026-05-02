@@ -5,9 +5,9 @@
 # PyPI: https://pypi.org/project/autocore
 # Supports: Windows, Linux
 
-# ============================================================
-# STANDARD LIBRARY IMPORTS
-# ============================================================
+
+#---------------standard library imports---------------
+
 import atexit
 import configparser
 import csv
@@ -33,27 +33,20 @@ from difflib import get_close_matches
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-# ============================================================
-# THIRD-PARTY : NETWORKING
-# ============================================================
-import requests
 
-# ============================================================
-# THIRD-PARTY : IMAGE PROCESSING
+#---------------networking---------------
+import requests
+from bs4 import BeautifulSoup
+
+#------------------------------------------------------------
+# Image Processing
 # Safe on all platforms including headless servers
 # PIL.Image does not need a display : only PIL.ImageTk does
-# ============================================================
+#------------------------------------------------------------
 import numpy as np
 from PIL import Image
 
-# ============================================================
-# THIRD-PARTY : WEB SCRAPING & PARSING
-# ============================================================
-from bs4 import BeautifulSoup
-
-# ============================================================
-# THIRD-PARTY : SELENIUM
-# ============================================================
+#---------------Selenium------------------------
 import undetected_chromedriver as uc
 from selenium.common.exceptions import *
 from selenium.webdriver.common.action_chains import ActionChains
@@ -61,17 +54,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
-# ============================================================
-# THIRD-PARTY : WINDOWS ONLY
-# ============================================================
+
+#--------------- Windows Only---------------
 if platform.system() == "Windows":
     import win32con
     import win32gui
 
-# ============================================================
-# THIRD-PARTY : DOCUMENT PROCESSING
+#------------------------------------------------------------
+# Document Processing
 # Safe on all platforms including headless servers
-# ============================================================
+#------------------------------------------------------------
 from PyPDF2 import PdfReader
 from docx import Document
 from openpyxl import Workbook, load_workbook
@@ -83,19 +75,15 @@ from odf.opendocument import load as odf_load
 from odf.text import P
 import extract_msg
 from striprtf.striprtf import rtf_to_text
-
-# ============================================================
-# THIRD-PARTY : UTILITIES
-# ============================================================
 import yaml
 
-# ============================================================
-# THIRD-PARTY : GUI (requires display)
+#------------------------------------------------------------
+# GUI (requires display)
 # Needs: X display server on Linux
 # Works on: Linux desktop, Windows, macOS
 # Fails on: Linux headless servers, Docker, CI/CD, SSH sessions
 # Equivalent of running: export DISPLAY=:0 && xhost +local:
-# ============================================================
+#------------------------------------------------------------
 if platform.system() == "Linux":
     if "DISPLAY" not in os.environ:
         os.environ["DISPLAY"] = ":0"
@@ -118,8 +106,8 @@ else:
     pyautogui.FAILSAFE = True
     _GUI_AVAILABLE = True
 
-# ============================================================
-# THIRD-PARTY : AUDIO (requires sound system)
+#---------------------------------------------------------------------------
+# Audio (requires sound system)
 # Works on: Linux desktop, Windows
 # Fails on: Linux headless servers with no audio drivers
 # piper-tts is loaded lazily inside say() : we just check
@@ -131,7 +119,7 @@ else:
 #                 'aplay -l' returns non-zero with "no soundcards found"
 #                 on Ubuntu Desktop / Linux Mint with real audio hardware,
 #                 'aplay -l' returns zero : so _AUDIO_AVAILABLE = True
-# ============================================================
+#---------------------------------------------------------------------------
 if platform.system() == "Windows":
     _AUDIO_AVAILABLE = True  # winsound is always available on Windows
 elif platform.system() == "Linux":
@@ -141,11 +129,11 @@ elif platform.system() == "Linux":
 else:
     _AUDIO_AVAILABLE = False  # unsupported platform
 
-# ============================================================
-# THIRD-PARTY : CLIPBOARD (requires clipboard manager)
+#------------------------------------------------------------
+# Clipboard (requires clipboard manager)
 # Works on: Linux desktop, Windows, macOS
 # Fails on: Linux headless servers with no clipboard manager
-# ============================================================
+#------------------------------------------------------------
 try:
     import pyperclip
     _CLIPBOARD_AVAILABLE = True
@@ -950,7 +938,7 @@ def click(*where):
             print(f"Error during color search: {e}")
             return False
 
-    # --------------- INVALID ARGUMENTS ---------------
+    # ---------------Invalid Arguments---------------
     else:
         print("Error: Invalid arguments for click()")
         return False
@@ -1085,7 +1073,7 @@ def click_right(*where):
             print(f"Error during color search: {e}")
             return False
 
-    # --------------- INVALID ARGUMENTS ---------------
+    # ---------------Invalid Arguments---------------
     else:
         print("Error: Invalid arguments for click_right()")
         return False
@@ -1146,10 +1134,10 @@ def copy(*where):
 
     result = None
 
-    # ============================================================
+    #-------------------------------------------------------------
     # MODE 1 : ACTIVE WINDOW (no arguments)
     # needs: GUI + clipboard
-    # ============================================================
+    #-------------------------------------------------------------
     if len(where) == 0:
         if not _GUI_AVAILABLE:
             print("Error: copy() requires a display.")
@@ -1164,9 +1152,7 @@ def copy(*where):
         time.sleep(1)
         result = pyperclip.paste().strip()
 
-    # ============================================================
-    # ONE ARGUMENT
-    # ============================================================
+    #------------------------ONE ARGUMENT------------------------
     elif len(where) == 1:
 
         # --------------------------------------------------------
@@ -1204,9 +1190,7 @@ def copy(*where):
         else:
             print(f"Invalid argument: {where[0]}")
 
-    # ============================================================
-    # TWO ARGUMENTS
-    # ============================================================
+    #------------------------ TWO ARGUMENTS------------------------
     elif len(where) == 2:
 
         # --------------------------------------------------------
@@ -1236,10 +1220,10 @@ def copy(*where):
         else:
             print("Invalid arguments for copy()")
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 5 : SELENIUM ELEMENT TEXT OR ATTRIBUTE (3 or 4 arguments)
     # needs: nothing : reads directly from DOM, no clipboard needed
-    # ============================================================
+    # ------------------------------------------------------------
     elif len(where) in [3, 4]:
         if hasattr(where[0], 'find_element'):
             driver_obj = where[0]
@@ -1262,15 +1246,13 @@ def copy(*where):
         else:
             print("Error: For Selenium mode, first argument must be driver object")
 
-    # ============================================================
-    # INVALID ARGUMENTS
-    # ============================================================
+    # ---------------Invalid Arguments---------------
     else:
         print("Invalid arguments provided for copy()")
 
-    # ============================================================
+    # ------------------------------------------------------------
     # RETURN RESULT
-    # ============================================================
+    # ------------------------------------------------------------
     if result == '' or result is None:
         print("No content returned from copy()")
         return ''
@@ -1414,10 +1396,10 @@ def drag(*args):
             drag(driver2, 'class', 'issue', 'class', 'backlog')
     """
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 1 : PYAUTOGUI SCREEN DRAG (4 integer arguments)
     # needs: display
-    # ============================================================
+    # ------------------------------------------------------------
     if len(args) == 4 and all(isinstance(arg, int) for arg in args):
         if not _GUI_AVAILABLE:
             print("Error: drag() requires a display.")
@@ -1432,10 +1414,10 @@ def drag(*args):
             print(f"Error during drag: {e}")
             return False
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 2 : SELENIUM ELEMENT DRAG (5 arguments, first is WebDriver)
     # needs: nothing : works on all platforms
-    # ============================================================
+    # ------------------------------------------------------------
     elif len(args) == 5 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
         src_type = args[1]
@@ -1468,9 +1450,7 @@ def drag(*args):
             print(f"Error during Selenium drag: {e}")
             return False
 
-    # ============================================================
-    # INVALID ARGUMENTS
-    # ============================================================
+    # ---------------Invalid Arguments---------------
     else:
         raise ValueError(
             "Invalid arguments. Use drag(x1, y1, x2, y2) or drag(driver, src_type, src_selector, tgt_type, tgt_selector)")
@@ -1567,10 +1547,10 @@ def erase(*args):
     """
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # MODE 1 : PYAUTOGUI ACTIVE WINDOW (no arguments)
         # needs: display
-        # ============================================================
+        # ------------------------------------------------------------
         if len(args) == 0:
             if not _GUI_AVAILABLE:
                 print("Error: erase() requires a display.")
@@ -1579,10 +1559,10 @@ def erase(*args):
             print("Erased content in active window")
             return True
 
-        # ============================================================
+        # ------------------------------------------------------------
         # MODE 2 : SELENIUM ELEMENT (driver + selector)
         # needs: nothing : works on all platforms
-        # ============================================================
+        # ------------------------------------------------------------
         elif len(args) == 3 and hasattr(args[0], 'find_element'):
             driver_obj = args[0]
             selector_type = args[1]
@@ -1597,9 +1577,7 @@ def erase(*args):
                 print(f"Element not found: {selector_type} - {selector}")
                 return False
 
-        # ============================================================
-        # INVALID ARGUMENTS
-        # ============================================================
+        # ---------------Invalid Arguments---------------
         else:
             print("Error: Invalid arguments for erase()")
             print("Use: erase() or erase(driver, selector_type, selector)")
@@ -1646,10 +1624,10 @@ def find_browser(*args):
     wait_time = 1  # Default wait time (1 second)
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # MODE 1 : SELENIUM (driver object passed)
         # needs: nothing : works on all platforms
-        # ============================================================
+        # ------------------------------------------------------------
         if len(args) >= 2 and hasattr(args[0], 'execute_script'):
             driver_obj = args[0]
             search_text = args[1]
@@ -1689,10 +1667,10 @@ def find_browser(*args):
                 print(f"[Selenium] Text '{search_text}' not found on page")
                 return False
 
-        # ============================================================
+        # ------------------------------------------------------------
         # MODE 2 : PYAUTOGUI (no driver object)
         # needs: display
-        # ============================================================
+        # ------------------------------------------------------------
         elif len(args) == 1:
             if not _GUI_AVAILABLE:
                 print("Error: find_browser() requires a display.")
@@ -1718,9 +1696,7 @@ def find_browser(*args):
             print(f"[PyAutoGUI] Searched for '{search_text}'")
             return True
 
-        # ============================================================
-        # INVALID ARGUMENTS
-        # ============================================================
+        # ---------------Invalid Arguments---------------
         else:
             print("Error: Invalid arguments for find_browser()")
             print("Use: find_browser(text) or find_browser(driver, text)")
@@ -1869,9 +1845,9 @@ def inspect():
 
     """
 
-    # ============================================================
+    # ------------------------------------------------------------
     # GUARD : needs display, tkinter, pyautogui and clipboard
-    # ============================================================
+    # ------------------------------------------------------------
     if not _GUI_AVAILABLE:
         print("Error: inspect() requires a display.")
         return
@@ -2095,7 +2071,7 @@ def log_setup(title):
 
     global _log_file_handler, _original_stdout, _original_stderr, _log_folder
 
-    # ========== TERMINAL SETUP ==========
+    # ---------- TERMINAL SETUP ----------
     system = platform.system()
 
     if system == "Windows":
@@ -2125,12 +2101,12 @@ def log_setup(title):
     elif system == "Darwin":
         print("Terminal colors not supported on macOS (logging will still work)")
 
-    # ========== LOGGING SETUP ==========
+    # ---------- LOGGING SETUP ----------
 
     # Create logs folder if it doesn't exist
     _log_folder.mkdir(exist_ok=True)
 
-    # ========== DETERMINE SESSION NUMBER ==========
+    # ---------- DETERMINE SESSION NUMBER ----------
 
     # Find all existing log files for this script title
     existing_logs = list(_log_folder.glob(f"log_{title}_*_session-*.txt"))
@@ -2154,7 +2130,7 @@ def log_setup(title):
 
     print(f"Starting session {next_session} for '{title}'")
 
-    # ========== GET TIMESTAMP WITH TIMEZONE ==========
+    # ---------- GET TIMESTAMP WITH TIMEZONE ----------
 
     # Get current time with system's local timezone
     try:
@@ -2169,7 +2145,7 @@ def log_setup(title):
     log_filename = f"log_{title}_{timestamp}_{time_zone_name}_session-{next_session}.txt"
     log_filepath = _log_folder / log_filename
 
-    # ========== CONFIGURE LOGGER ==========
+    # ---------- CONFIGURE LOGGER ----------
 
     # Configure logger
     logger = logging.getLogger(title)
@@ -2214,7 +2190,7 @@ def log_setup(title):
     logger.info(f"Logging started for: {title} (Session {next_session})")
     logger.info(f"Log file: {log_filepath}")
 
-    # ========== SETUP SUCCESS/ERROR COLOR HANDLERS ==========
+    # ---------- SETUP SUCCESS/ERROR COLOR HANDLERS ----------
 
     global _script_had_error  # Declare at start of this section
 
@@ -2444,10 +2420,10 @@ def press(*keys):
     }
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # SELENIUM MODE - Check if first arg is WebDriver object
         # needs: nothing : works on all platforms
-        # ============================================================
+        # ------------------------------------------------------------
         if len(keys) > 0 and hasattr(keys[0], 'find_element'):
             driver_obj = keys[0]
 
@@ -2551,10 +2527,10 @@ def press(*keys):
                     action.perform()
                     return True
 
-        # ============================================================
+        # ------------------------------------------------------------
         # PYAUTOGUI MODE - No driver object
         # needs: display
-        # ============================================================
+        # ------------------------------------------------------------
         else:
             if not _GUI_AVAILABLE:
                 print("Error: press() requires a display.")
@@ -2683,9 +2659,9 @@ def read(*args):
         OCR first run downloads models (~100MB), subsequent runs are fast.
     """
 
-    # ============================================================
+    # ------------------------------------------------------------
     # DETERMINE MODE AND VALIDATE ARGUMENTS
-    # ============================================================
+    # ------------------------------------------------------------
     is_ocr = False
     region = None
 
@@ -2733,9 +2709,9 @@ def read(*args):
 
         region = (x, y, width, height)
 
-    # ============================================================
+    # ------------------------------------------------------------
     # PERFORM OCR (modes 1, 2, 3 : needs display)
-    # ============================================================
+    # ------------------------------------------------------------
     if is_ocr:
         if not _GUI_AVAILABLE:
             print("Error: read() screen/OCR modes require a display.")
@@ -2777,10 +2753,10 @@ def read(*args):
             print(f"Error during OCR: {e}")
             return None
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 4: Selenium driver - screenshot browser and OCR
     # needs: nothing for screenshot : OCR runs on bytes, no display needed
-    # ============================================================
+    # ------------------------------------------------------------
     elif len(args) == 1 and hasattr(args[0], 'find_element'):
         driver_obj = args[0]
 
@@ -2805,16 +2781,16 @@ def read(*args):
             print(f"Could not read text from browser window: {e}")
             return None
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 5: File reading - 1 string (file path)
     # needs: nothing : safe on all platforms including servers
-    # ============================================================
+    # ------------------------------------------------------------
     elif len(args) == 1 and isinstance(args[0], str):
         file = args[0]
 
-        # ============================================================
+        # ------------------------------------------------------------
         # AUTO-DETECT FILE EXTENSION IF NOT PROVIDED
-        # ============================================================
+        # ------------------------------------------------------------
         if not os.path.splitext(file)[1]:  # No extension provided
             # Get directory and filename
             if os.path.dirname(file):
@@ -2852,9 +2828,9 @@ def read(*args):
         ext = ext.lower()
 
         try:
-            # ============================================================
+            # ------------------------------------------------------------
             # DOCUMENTS
-            # ============================================================
+            # ------------------------------------------------------------
 
             # PDF files
             if ext == '.pdf':
@@ -2890,9 +2866,9 @@ def read(*args):
                 with open(file, 'r', encoding='utf-8', errors='ignore') as f:
                     return rtf_to_text(f.read())
 
-            # ============================================================
+            # ------------------------------------------------------------
             # TABULAR DATA (with >>>Row_X: format)
-            # ============================================================
+            # ------------------------------------------------------------
 
             # CSV files
             elif ext == '.csv':
@@ -2998,9 +2974,9 @@ def read(*args):
                 conn.close()
                 return '\n'.join(text)
 
-            # ============================================================
+            # ------------------------------------------------------------
             # STRUCTURED DATA
-            # ============================================================
+            # ------------------------------------------------------------
 
             # JSON files
             elif ext == '.json':
@@ -3031,18 +3007,18 @@ def read(*args):
                     text.append('')
                 return '\n'.join(text)
 
-            # ============================================================
+            # ------------------------------------------------------------
             # TEXT FILES
-            # ============================================================
+            # ------------------------------------------------------------
 
             # Plain text, log files, markdown
             elif ext in ['.txt', '.log', '.md']:
                 with open(file, 'r', encoding='utf-8', errors='ignore') as f:
                     return f.read()
 
-            # ============================================================
+            # ------------------------------------------------------------
             # WEB
-            # ============================================================
+            # ------------------------------------------------------------
 
             # HTML files
             elif ext in ['.html', '.htm']:
@@ -3050,9 +3026,9 @@ def read(*args):
                     soup = BeautifulSoup(f.read(), 'html.parser')
                     return soup.get_text('\n').strip()
 
-            # ============================================================
+            # ------------------------------------------------------------
             # EMAIL
-            # ============================================================
+            # ------------------------------------------------------------
 
             # EML files (standard email)
             elif ext == '.eml':
@@ -3091,9 +3067,9 @@ def read(*args):
                 msg.close()
                 return '\n'.join(text)
 
-            # ============================================================
+            # ------------------------------------------------------------
             # EBOOKS
-            # ============================================================
+            # ------------------------------------------------------------
 
             # EPUB files
             elif ext == '.epub':
@@ -3104,9 +3080,9 @@ def read(*args):
                     text.append(soup.get_text())
                 return '\n\n'.join(text)
 
-            # ============================================================
+            # ------------------------------------------------------------
             # SCRIPT FILES
-            # ============================================================
+            # ------------------------------------------------------------
 
             # Shell scripts (Linux)
             elif ext == '.sh':
@@ -3123,9 +3099,9 @@ def read(*args):
                 with open(file, 'r', encoding='utf-8', errors='ignore') as f:
                     return f.read()
 
-            # ============================================================
+            # ------------------------------------------------------------
             # UNSUPPORTED FORMAT
-            # ============================================================
+            # ------------------------------------------------------------
 
             else:
                 print(f"Unsupported file format: {ext}")
@@ -3138,9 +3114,7 @@ def read(*args):
             print(f"Error reading file {file}: {e}")
             return None
 
-    # ============================================================
-    # INVALID ARGUMENTS
-    # ============================================================
+    # ---------------Invalid Arguments---------------
     else:
         print("Error: Invalid arguments for read()")
         print("Use: read() - OCR full screen")
@@ -3202,9 +3176,9 @@ def run(target):
         )
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # WINDOWS
-        # ============================================================
+        # ------------------------------------------------------------
         if sys.platform.startswith('win'):
             if os.path.isfile(target):
                 # File exists - open with default application
@@ -3215,9 +3189,9 @@ def run(target):
                 # Use shell=True to allow PATH resolution
                 subprocess.Popen(target, shell=True)
 
-        # ============================================================
+        # ------------------------------------------------------------
         # LINUX
-        # ============================================================
+        # ------------------------------------------------------------
         elif sys.platform.startswith('linux'):
             if os.path.isfile(target):
                 # File exists - open with default application using xdg-open
@@ -3273,12 +3247,12 @@ def say(text, volume=1.0):
         - Browse all voices at: https://huggingface.co/rhasspy/piper-voices
     """
 
-    # ============================================================
+    # ------------------------------------------------------------
     # GUARD — needs audio system
     # _AUDIO_AVAILABLE is set at file level during library import.
     # if audio init failed (headless server, no sound drivers etc.)
     # we bail out early instead of crashing deep inside piper
-    # ============================================================
+    # ------------------------------------------------------------
     if not _AUDIO_AVAILABLE:
         print("Error: say() requires an audio system.")
         return
@@ -3292,7 +3266,7 @@ def say(text, volume=1.0):
         raise ValueError("Volume must be between 0.0 and 1.0")
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # LAZY IMPORTS
         # kept here intentionally and NOT moved to the top of the file
         # because:
@@ -3300,10 +3274,10 @@ def say(text, volume=1.0):
         #     if not installed, the rest of the library still works fine
         #   - winsound is Windows-only, importing at file level would
         #     crash on Linux
-        # ============================================================
+        # ------------------------------------------------------------
         from piper.voice import PiperVoice, SynthesisConfig
 
-        # ============================================================
+        # ------------------------------------------------------------
         # MODEL PATHS
         # models are stored in a user-writable location on each platform
         # so we never hit permission errors writing into Program Files
@@ -3315,7 +3289,7 @@ def say(text, volume=1.0):
         # os.environ["LOCALAPPDATA"] on Windows always points to the
         # current user's AppData\Local folder which is always writable
         # without admin rights, unlike C:\Program Files\
-        # ============================================================
+        # ------------------------------------------------------------
         model_name      = "en_US-libritts_r-medium.onnx"
         model_json      = "en_US-libritts_r-medium.onnx.json"
 
@@ -3327,11 +3301,11 @@ def say(text, volume=1.0):
         model_path      = model_dir / model_name   # full path to the .onnx model
         model_json_path = model_dir / model_json   # full path to the .json config
 
-        # ============================================================
+        # ------------------------------------------------------------
         # VALIDATION HELPERS
         # defined as inner functions so they can access model_dir
         # from the enclosing scope without passing it as an argument
-        # ============================================================
+        # ------------------------------------------------------------
         def _is_valid_onnx(path):
             # valid onnx must exist AND be at least 50MB
             # we know the model is ~60MB so anything under 50MB
@@ -3411,12 +3385,12 @@ def say(text, volume=1.0):
             print(f"Error: Failed to download {filename} after {max_retries} attempts.")
             return None
 
-        # ============================================================
+        # ------------------------------------------------------------
         # DOWNLOAD MODEL IF MISSING OR INCOMPLETE
         # both files are checked independently — if only the json is
         # missing or corrupt we skip re-downloading the 60MB onnx and
         # just fetch the small config file again
-        # ============================================================
+        # ------------------------------------------------------------
         onnx_valid = _is_valid_onnx(model_path)
         json_valid = _is_valid_json(model_json_path)
 
@@ -3444,14 +3418,14 @@ def say(text, volume=1.0):
 
             print("Piper model ready.")
 
-        # ============================================================
+        # ------------------------------------------------------------
         # SYNTHESIZE SPEECH
         # PiperVoice.load() reads the .onnx model into memory
         # SynthesisConfig carries volume into piper so it scales
         # the audio during synthesis — no manual audio work needed
         # synthesize_wav() runs the neural network and writes raw
         # PCM audio into the wav file handle
-        # ============================================================
+        # ------------------------------------------------------------
         voice      = PiperVoice.load(str(model_path))  # load model from piper_models/
         syn_config = SynthesisConfig(volume=volume)     # package volume setting for piper
 
@@ -3464,12 +3438,12 @@ def say(text, volume=1.0):
         with wave.open(tmp_path, "wb") as wav_file:
             voice.synthesize_wav(text, wav_file, syn_config=syn_config)  # neural network runs here
 
-        # ============================================================
+        # ------------------------------------------------------------
         # PLAY AUDIO — platform specific
         # each OS has its own built-in audio playback tool:
         #   Linux   — aplay   (part of alsa-utils, -q means quiet/no output)
         #   Windows — winsound (Python standard library, Windows only)
-        # ============================================================
+        # ------------------------------------------------------------
         if platform.system() == "Linux":
             os.system(f"aplay -q {tmp_path}")
         elif platform.system() == "Windows":
@@ -3563,9 +3537,9 @@ def screenshot(*args):
     """
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # DETERMINE MODE : Selenium or PyAutoGUI
-        # ============================================================
+        # ------------------------------------------------------------
         if len(args) > 0 and hasattr(args[0], 'save_screenshot'):
             # First argument is a WebDriver object
             use_driver = True
@@ -3583,9 +3557,9 @@ def screenshot(*args):
         # Default values
         x, y, width, height, filename = None, None, None, None, None
 
-        # ============================================================
+        # ------------------------------------------------------------
         # PARSE ARGUMENTS
-        # ============================================================
+        # ------------------------------------------------------------
         if len(remaining_args) == 0:
             # screenshot() or screenshot(driver)
             # Full screen, auto-named
@@ -3627,9 +3601,9 @@ def screenshot(*args):
         x = int(x) if x is not None else 0
         y = int(y) if y is not None else 0
 
-        # ============================================================
+        # ------------------------------------------------------------
         # GET SCREEN DIMENSIONS
-        # ============================================================
+        # ------------------------------------------------------------
         if use_driver:
             screen_width = driver_obj.execute_script("return window.innerWidth")
             screen_height = driver_obj.execute_script("return window.innerHeight")
@@ -3651,9 +3625,9 @@ def screenshot(*args):
         if x < 0 or y < 0:
             raise ValueError("Coordinates must be non-negative")
 
-        # ============================================================
+        # ------------------------------------------------------------
         # GENERATE FILENAME
-        # ============================================================
+        # ------------------------------------------------------------
         if filename is None:
             now = datetime.datetime.now()
             timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
@@ -3667,9 +3641,9 @@ def screenshot(*args):
         # Get full path
         full_path = os.path.join(os.getcwd(), filename)
 
-        # ============================================================
+        # ------------------------------------------------------------
         # TAKE SCREENSHOT
-        # ============================================================
+        # ------------------------------------------------------------
         if use_driver:
             if x == 0 and y == 0 and width == screen_width and height == screen_height:
                 # Full browser window, no cropping needed
@@ -3748,9 +3722,9 @@ def scroll(*args, timeout=30):
 
     wait = 3  # Fixed wait time between scrolls (3 seconds)
 
-    # ============================================================
+    # ------------------------------------------------------------
     # PARSE ARGUMENTS : determine mode and direction
-    # ============================================================
+    # ------------------------------------------------------------
     if len(args) == 0:
         # scroll() - default: scroll down 1 time with PyAutoGUI
         use_selenium = False
@@ -3819,10 +3793,10 @@ def scroll(*args, timeout=30):
         return False
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # SELENIUM MODE
         # needs: nothing : works on all platforms
-        # ============================================================
+        # ------------------------------------------------------------
         if use_selenium:
 
             # --------------------------------------------------------
@@ -3930,10 +3904,10 @@ def scroll(*args, timeout=30):
                 print(f"Scrolled {direction} {count} time(s)")
                 return True
 
-        # ============================================================
+        # ------------------------------------------------------------
         # PYAUTOGUI MODE
         # needs: display (already guarded above)
-        # ============================================================
+        # ------------------------------------------------------------
         else:
             # Scroll to bottom/top (time-based, no detection)
             if direction in ['bottom', 'top']:
@@ -4021,10 +3995,10 @@ def wait(*args, countdown=True):
     if len(args) == 0:
         args = (3,)  # Set default to 3 seconds
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 1 : COUNTDOWN (1 argument, integer or float)
     # needs: nothing : safe on all platforms
-    # ============================================================
+    # ------------------------------------------------------------
     if len(args) == 1 and isinstance(args[0], (int, float)):
         seconds = args[0]
 
@@ -4048,10 +4022,10 @@ def wait(*args, countdown=True):
 
         return True
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 2 : WAIT FOR ELEMENT (driver object + 2 or 3 arguments)
     # needs: nothing : works on all platforms
-    # ============================================================
+    # ------------------------------------------------------------
     elif len(args) >= 3 and hasattr(args[0], 'find_element'):
         # Selenium mode - driver object detected
         driver_obj = args[0]
@@ -4099,10 +4073,10 @@ def wait(*args, countdown=True):
         print(f"Element not found after {timeout}s timeout.")
         return False
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 3 : WAIT FOR COLOR AT PIXEL (5 or 6 arguments, all integers)
     # needs: display
-    # ============================================================
+    # ------------------------------------------------------------
     elif len(args) in [5, 6] and all(isinstance(arg, int) for arg in args):
         if not _GUI_AVAILABLE:
             print("Error: wait() color mode requires a display.")
@@ -4143,9 +4117,7 @@ def wait(*args, countdown=True):
         print(f"Color not found after {timeout}s timeout.")
         return False
 
-    # ============================================================
-    # INVALID ARGUMENTS
-    # ============================================================
+    # ---------------Invalid Arguments---------------
     else:
         raise ValueError("Invalid arguments for wait()")
 
@@ -4234,9 +4206,9 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
         """Convert bytes to a human-readable MB string."""
         return f"{bytes_count / (1024 * 1024):.1f} MB"
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 1 : Direct download via requests
-    # ============================================================
+    # ------------------------------------------------------------
     if url is not None:
         try:
             original_filename = url.split('/')[-1].split('?')[0]
@@ -4267,9 +4239,9 @@ def wait_download(timeout=1200, url=None, filename=None, download_dir=None):
             print(f"Could not download file: {e}")
             return False
 
-    # ============================================================
+    # ------------------------------------------------------------
     # MODE 2 : Monitor browser downloads folder
-    # ============================================================
+    # ------------------------------------------------------------
 
     # Determine download directory using the following priority order:
     # 1. User provided path via download_dir argument
@@ -4644,9 +4616,9 @@ def window(action=None, target=None, *args):
         raise ValueError(f"Action '{action}' requires a target window")
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # LIST - Get all window titles
-        # ============================================================
+        # ------------------------------------------------------------
         if action == 'list':
             if system == "Windows":
                 titles = []
@@ -4674,9 +4646,9 @@ def window(action=None, target=None, *args):
                     print("Install with: sudo apt-get install wmctrl")
                     return []
 
-        # ============================================================
+        # ------------------------------------------------------------
         # TITLE - Get active window title OR find window title
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'title':
             # No target - get active window title
             if target is None:
@@ -4706,9 +4678,9 @@ def window(action=None, target=None, *args):
                 # Not found
                 return None
 
-        # ============================================================
+        # ------------------------------------------------------------
         # FOCUS - Bring window to foreground
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'focus':
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
@@ -4751,9 +4723,9 @@ def window(action=None, target=None, *args):
                                         capture_output=True, text=True)
                 return result.returncode == 0
 
-        # ============================================================
+        # ------------------------------------------------------------
         # CLOSE - Close window
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'close':
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
@@ -4789,9 +4761,9 @@ def window(action=None, target=None, *args):
                                         capture_output=True, text=True)
                 return result.returncode == 0
 
-        # ============================================================
+        # ------------------------------------------------------------
         # MINIMIZE - Minimize window
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'minimize':
             all_windows = window('list')
             matches = [w for w in all_windows if target.lower() in w.lower()]
@@ -4832,9 +4804,9 @@ def window(action=None, target=None, *args):
                             return True
                 return False
 
-        # ============================================================
+        # ------------------------------------------------------------
         # MAXIMIZE - Maximize window
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'maximize':
             if not window('focus', target):
                 return False
@@ -4876,9 +4848,9 @@ def window(action=None, target=None, *args):
                                         capture_output=True, text=True)
                 return result.returncode == 0
 
-        # ============================================================
+        # ------------------------------------------------------------
         # RESIZE - Resize window to specific dimensions
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'resize':
             if len(args) < 2:
                 raise ValueError("Action 'resize' requires width and height: window('resize', 'Chrome', 800, 600)")
@@ -4943,9 +4915,9 @@ def window(action=None, target=None, *args):
                             return True
                 return False
 
-        # ============================================================
+        # ------------------------------------------------------------
         # MOVE - Move window to specific coordinates
-        # ============================================================
+        # ------------------------------------------------------------
         elif action == 'move':
             if len(args) < 2:
                 raise ValueError("Action 'move' requires x and y coordinates: window('move', 'Chrome', 100, 200)")
@@ -5053,10 +5025,10 @@ def write(*keys):
     """
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # MODE 1 : PYAUTOGUI (1 argument - text only)
         # needs: display
-        # ============================================================
+        # ------------------------------------------------------------
         if len(keys) == 1:
             if not _GUI_AVAILABLE:
                 print("Error: write() requires a display.")
@@ -5065,10 +5037,10 @@ def write(*keys):
             time.sleep(1)
             return True
 
-        # ============================================================
+        # ------------------------------------------------------------
         # SELENIUM MODE (driver object detected)
         # needs: nothing : works on all platforms
-        # ============================================================
+        # ------------------------------------------------------------
         elif len(keys) >= 2 and hasattr(keys[0], 'find_element'):
             driver_obj = keys[0]
 
@@ -5104,9 +5076,7 @@ def write(*keys):
                 print("Use: write(driver, text) or write(driver, selector_type, selector, text)")
                 return False
 
-        # ============================================================
-        # INVALID ARGUMENTS
-        # ============================================================
+        # ---------------Invalid Arguments---------------
         else:
             print("Error: Invalid arguments for write()")
             print("Use: write(text) or write(driver, text) or write(driver, selector_type, selector, text)")
@@ -5198,9 +5168,9 @@ def zoom(*args):
         - Selenium reset explicitly sets zoom to exactly 100%.
     """
 
-    # ============================================================
+    # ------------------------------------------------------------
     # DETERMINE MODE
-    # ============================================================
+    # ------------------------------------------------------------
     if len(args) == 1:
         # PyAutoGUI mode
         use_driver = False
@@ -5223,10 +5193,10 @@ def zoom(*args):
         raise ValueError("PyAutoGUI mode supports steps (-9 to +9) or reset (100) or (0)")
 
     try:
-        # ============================================================
+        # ------------------------------------------------------------
         # SELENIUM MODE
         # needs: nothing : works on all platforms
-        # ============================================================
+        # ------------------------------------------------------------
         if use_driver:
 
             # Special case: 100 or 0 = Reset
@@ -5265,10 +5235,10 @@ def zoom(*args):
                 print(f"Zoom set to {value}%")
                 return True
 
-        # ============================================================
+        # ------------------------------------------------------------
         # PYAUTOGUI MODE (desktop apps)
         # needs: display
-        # ============================================================
+        # ------------------------------------------------------------
         else:
             if not _GUI_AVAILABLE:
                 print("Error: zoom() requires a display.")
