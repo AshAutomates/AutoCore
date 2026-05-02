@@ -33,7 +33,6 @@ from difflib import get_close_matches
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-
 #---------------networking---------------
 import requests
 from bs4 import BeautifulSoup
@@ -53,7 +52,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-
 
 #--------------- Windows Only---------------
 if platform.system() == "Windows":
@@ -91,6 +89,7 @@ if platform.system() == "Linux":
         import tkinter as tk
         from PIL import ImageTk
         import pyautogui
+
         # Enable PyAutoGUI fail-safe: move mouse to any screen corner to abort script
         pyautogui.FAILSAFE = True
         _GUI_AVAILABLE = True
@@ -103,6 +102,7 @@ else:
     import tkinter as tk
     from PIL import ImageTk
     import pyautogui
+
     pyautogui.FAILSAFE = True
     _GUI_AVAILABLE = True
 
@@ -123,9 +123,9 @@ else:
 if platform.system() == "Windows":
     _AUDIO_AVAILABLE = True  # winsound is always available on Windows
 elif platform.system() == "Linux":
-    aplay_exists       = os.system("aplay --version > /dev/null 2>&1") == 0  # alsa-utils installed?
-    audio_device_exists = os.system("aplay -l > /dev/null 2>&1") == 0        # real audio hardware present?
-    _AUDIO_AVAILABLE   = aplay_exists and audio_device_exists
+    aplay_exists = os.system("aplay --version > /dev/null 2>&1") == 0  # alsa-utils installed?
+    audio_device_exists = os.system("aplay -l > /dev/null 2>&1") == 0  # real audio hardware present?
+    _AUDIO_AVAILABLE = aplay_exists and audio_device_exists
 else:
     _AUDIO_AVAILABLE = False  # unsupported platform
 
@@ -136,11 +136,11 @@ else:
 #------------------------------------------------------------
 try:
     import pyperclip
+
     _CLIPBOARD_AVAILABLE = True
 except Exception:
     pyperclip = None
     _CLIPBOARD_AVAILABLE = False
-
 
 # print current working directory so user knows where files will be saved
 print(f"Current Working Directory: {os.getcwd()}")
@@ -578,13 +578,14 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     # Initialize options for Chrome
     options = uc.ChromeOptions()
 
-    # confirming headless mode
+    # --------------- HEADLESS MODE ---------------
     if headless:
         options.add_argument("--headless=new")
         options.add_argument("--window-size=2560,1440")
         options.add_argument("--disable-gpu")  # disable GPU (prevents SwiftShader WebGL signal)
         options.add_argument("--enable-features=OverlayScrollbar")  # mimics real Chrome scrollbar behavior
 
+    # --------------- CHROME VERSION ---------------
     # Fetch installed Chrome version dynamically to keep user-agent current.
     # A matching Chrome version in user-agent makes the browser look more like a real user.
     # Initialize to None so major_version check below does not raise NameError if detection fails.
@@ -618,6 +619,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     options.add_argument("--no-first-run")  # skip first-run welcome popups
     options.add_argument("--no-default-browser-check")  # skip default browser prompt
 
+    # --------------- DOWNLOAD DIRECTORY ---------------
     # Resolve download directory using same priority as wait_download()
     # Pre-create it before Chrome launches so Chrome finds and uses it
     if os.getenv('DOWNLOAD_DIR'):
@@ -628,6 +630,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         download_dir = str(Path.home() / 'Downloads')
     os.makedirs(download_dir, exist_ok=True)
 
+    # --------------- CHROME PREFERENCES ---------------
     # Set preferences to avoid unnecessary pop-ups and block notifications
     prefs = {
         "download.default_directory": download_dir,  # explicitly set download folder
@@ -648,7 +651,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     }
     options.add_experimental_option("prefs", prefs)
 
-    # Attempt to initialize the Chrome driver
+    # --------------- INITIALIZE DRIVER ---------------
     try:
         # Extract major version from detected Chrome version to prevent ChromeDriver mismatch
         major_version = int(chrome_version.split('.')[0]) if chrome_version else None
@@ -659,6 +662,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
         print(f"Error initializing Chrome Driver: {e}")
         return None
 
+    # --------------- BOT DETECTION PATCHES ---------------
     # Inject JS to patch remaining bot detection signals
     driver_instance.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         "source": """
@@ -690,7 +694,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
                     return arr;
                 }
             });
-                        
+
             // Fix permissions to return 'prompt' instead of 'denied'
             const originalQuery = window.navigator.permissions.query.bind(window.navigator.permissions);
             window.navigator.permissions.query = (parameters) => {
@@ -705,7 +709,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
                 }
                 return originalQuery(parameters);
             };
-            
+
             // Also patch inside iframes
             if (window.top !== window.self) {
                 window.navigator.permissions.query = (parameters) => {
@@ -762,6 +766,7 @@ def browser(url, headless=False, timeout=30, cookie_path=None):
     # Load a blank page to initialize the driver properly before cookie injection
     driver_instance.get("about:blank")
 
+    # --------------- COOKIES ---------------
     # Load cookies from the specified path, if available.
     if cookie_path and os.path.exists(cookie_path):
         # Load target page to inject cookie
@@ -1134,10 +1139,8 @@ def copy(*where):
 
     result = None
 
-    #-------------------------------------------------------------
-    # MODE 1 : ACTIVE WINDOW (no arguments)
+    # --------------- MODE 1 : ACTIVE WINDOW ---------------
     # needs: GUI + clipboard
-    #-------------------------------------------------------------
     if len(where) == 0:
         if not _GUI_AVAILABLE:
             print("Error: copy() requires a display.")
@@ -1152,23 +1155,19 @@ def copy(*where):
         time.sleep(1)
         result = pyperclip.paste().strip()
 
-    #------------------------ONE ARGUMENT------------------------
+    # --------------- ONE ARGUMENT ---------------
     elif len(where) == 1:
 
-        # --------------------------------------------------------
-        # MODE 2 : CLIPBOARD
+        # --------------- MODE 2 : CLIPBOARD ---------------
         # needs: clipboard only
-        # --------------------------------------------------------
         if where[0] == 'clipboard':
             if not _CLIPBOARD_AVAILABLE:
                 print("Error: copy('clipboard') requires a clipboard manager.")
                 return ''
             result = pyperclip.paste().strip()
 
-        # --------------------------------------------------------
-        # MODE 3 : SELENIUM WEBPAGE
+        # --------------- MODE 3 : SELENIUM WEBPAGE ---------------
         # needs: clipboard (for paste after Ctrl+C)
-        # --------------------------------------------------------
         elif hasattr(where[0], 'find_element'):
             if not _CLIPBOARD_AVAILABLE:
                 print("Error: copy(driver) requires a clipboard manager.")
@@ -1190,13 +1189,11 @@ def copy(*where):
         else:
             print(f"Invalid argument: {where[0]}")
 
-    #------------------------ TWO ARGUMENTS------------------------
+    # --------------- TWO ARGUMENTS ---------------
     elif len(where) == 2:
 
-        # --------------------------------------------------------
-        # MODE 4 : SCREEN COORDINATES
+        # --------------- MODE 4 : SCREEN COORDINATES ---------------
         # needs: GUI + clipboard
-        # --------------------------------------------------------
         if isinstance(where[0], int) and isinstance(where[1], int):
             if not _GUI_AVAILABLE:
                 print("Error: copy(x, y) requires a display.")
@@ -1220,10 +1217,8 @@ def copy(*where):
         else:
             print("Invalid arguments for copy()")
 
-    # ------------------------------------------------------------
-    # MODE 5 : SELENIUM ELEMENT TEXT OR ATTRIBUTE (3 or 4 arguments)
+    # --------------- MODE 5 : SELENIUM ELEMENT TEXT OR ATTRIBUTE ---------------
     # needs: nothing : reads directly from DOM, no clipboard needed
-    # ------------------------------------------------------------
     elif len(where) in [3, 4]:
         if hasattr(where[0], 'find_element'):
             driver_obj = where[0]
@@ -1246,13 +1241,11 @@ def copy(*where):
         else:
             print("Error: For Selenium mode, first argument must be driver object")
 
-    # ---------------Invalid Arguments---------------
+    # --------------- INVALID ARGUMENTS ---------------
     else:
         print("Invalid arguments provided for copy()")
 
-    # ------------------------------------------------------------
-    # RETURN RESULT
-    # ------------------------------------------------------------
+    # --------------- RETURN RESULT ---------------
     if result == '' or result is None:
         print("No content returned from copy()")
         return ''
@@ -3290,16 +3283,16 @@ def say(text, volume=1.0):
         # current user's AppData\Local folder which is always writable
         # without admin rights, unlike C:\Program Files\
         # ------------------------------------------------------------
-        model_name      = "en_US-libritts_r-medium.onnx"
-        model_json      = "en_US-libritts_r-medium.onnx.json"
+        model_name = "en_US-libritts_r-medium.onnx"
+        model_json = "en_US-libritts_r-medium.onnx.json"
 
         if platform.system() == "Windows":
             model_dir = Path(os.environ["LOCALAPPDATA"]) / "autocore" / "piper_models"
         else:
             model_dir = Path.home() / ".local" / "share" / "autocore" / "piper_models"
 
-        model_path      = model_dir / model_name   # full path to the .onnx model
-        model_json_path = model_dir / model_json   # full path to the .json config
+        model_path = model_dir / model_name  # full path to the .onnx model
+        model_json_path = model_dir / model_json  # full path to the .json config
 
         # ------------------------------------------------------------
         # VALIDATION HELPERS
@@ -3426,8 +3419,8 @@ def say(text, volume=1.0):
         # synthesize_wav() runs the neural network and writes raw
         # PCM audio into the wav file handle
         # ------------------------------------------------------------
-        voice      = PiperVoice.load(str(model_path))  # load model from piper_models/
-        syn_config = SynthesisConfig(volume=volume)     # package volume setting for piper
+        voice = PiperVoice.load(str(model_path))  # load model from piper_models/
+        syn_config = SynthesisConfig(volume=volume)  # package volume setting for piper
 
         # delete=False because the file must persist after the 'with'
         # block closes so aplay/winsound can open and play it —
@@ -3447,7 +3440,7 @@ def say(text, volume=1.0):
         if platform.system() == "Linux":
             os.system(f"aplay -q {tmp_path}")
         elif platform.system() == "Windows":
-            import winsound                                       # lazy — Windows only
+            import winsound  # lazy — Windows only
             winsound.PlaySound(tmp_path, winsound.SND_FILENAME)
 
         # temp WAV is deleted immediately after playback —
@@ -3722,9 +3715,7 @@ def scroll(*args, timeout=30):
 
     wait = 3  # Fixed wait time between scrolls (3 seconds)
 
-    # ------------------------------------------------------------
-    # PARSE ARGUMENTS : determine mode and direction
-    # ------------------------------------------------------------
+    # --------------- PARSE ARGUMENTS ---------------
     if len(args) == 0:
         # scroll() - default: scroll down 1 time with PyAutoGUI
         use_selenium = False
@@ -3793,15 +3784,11 @@ def scroll(*args, timeout=30):
         return False
 
     try:
-        # ------------------------------------------------------------
-        # SELENIUM MODE
+        # --------------- SELENIUM MODE ---------------
         # needs: nothing : works on all platforms
-        # ------------------------------------------------------------
         if use_selenium:
 
-            # --------------------------------------------------------
-            # Scroll to text instance
-            # --------------------------------------------------------
+            # --------------- SCROLL TO TEXT INSTANCE ---------------
             if text_mode:
 
                 # Reset selection and scroll to top so find always starts from beginning
@@ -3856,7 +3843,7 @@ def scroll(*args, timeout=30):
                 print(f"[Selenium] Scrolled to '{search_text}' (instance {resolved_index} of {total})")
                 return True
 
-            # Scroll to bottom (with auto-detection)
+            # --------------- SCROLL TO BOTTOM ---------------
             elif direction == 'bottom':
                 print(f"[Selenium] Scrolling to bottom (timeout={timeout}s)...")
                 start_time = time.time()
@@ -3881,7 +3868,7 @@ def scroll(*args, timeout=30):
                 print(f"Scrolled {scrolls} times")
                 return True
 
-            # Scroll to top
+            # --------------- SCROLL TO TOP ---------------
             elif direction == 'top':
                 print(f"[Selenium] Scrolling to top...")
                 driver_obj.execute_script("window.scrollTo(0, 0);")
@@ -3889,7 +3876,7 @@ def scroll(*args, timeout=30):
                 print("Scrolled to top")
                 return True
 
-            # Scroll down/up N times
+            # --------------- SCROLL DOWN / UP N TIMES ---------------
             else:
                 scroll_pixels = 500 if direction == 'down' else -500
                 print(f"[Selenium] Scrolling {direction} {count} time(s)...")
@@ -3904,12 +3891,11 @@ def scroll(*args, timeout=30):
                 print(f"Scrolled {direction} {count} time(s)")
                 return True
 
-        # ------------------------------------------------------------
-        # PYAUTOGUI MODE
+        # --------------- PYAUTOGUI MODE ---------------
         # needs: display (already guarded above)
-        # ------------------------------------------------------------
         else:
-            # Scroll to bottom/top (time-based, no detection)
+
+            # --------------- SCROLL TO BOTTOM / TOP ---------------
             if direction in ['bottom', 'top']:
                 scroll_amount = -500 if direction == 'bottom' else 500
                 print(f"[PyAutoGUI] Scrolling {direction} continuously for {timeout}s...")
@@ -3928,7 +3914,7 @@ def scroll(*args, timeout=30):
                 print(f"Scrolled {direction} for {timeout}s ({scrolls} total scrolls)")
                 return True
 
-            # Scroll down/up N times
+            # --------------- SCROLL DOWN / UP N TIMES ---------------
             else:
                 scroll_amount = -500 if direction == 'down' else 500
                 print(f"[PyAutoGUI] Scrolling {direction} {count} time(s)...")
